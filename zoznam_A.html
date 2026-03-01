@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Triedenie PDF - Sxx=Stavebný, Pxx=Prevádzkový</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 1200px; margin: 0 auto; padding: 20px; background: #f5f5f5; }
+        h1 { color: #333; }
+        .drop-zone { 
+            border: 3px dashed #ccc; 
+            padding: 40px; 
+            text-align: center; 
+            margin: 20px 0; 
+            cursor: pointer; 
+            transition: all 0.3s;
+            background: white;
+            border-radius: 8px;
+        }
+        .drop-zone.dragover { border-color: #007bff; background: #f8f9ff; }
+        .files-list, .objekty-inputs { 
+            margin: 20px 0; 
+            background: white; 
+            padding: 15px; 
+            border-radius: 8px; 
+        }
+        table { 
+            border-collapse: collapse; 
+            width: 100%; 
+            background: white; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background: #007bff; color: white; font-weight: bold; }
+        tr:nth-child(even) { background: #f9f9f9; }
+        tr.sxx { background: #e8f5e8 !important; } /* Stavebné zelené */
+        tr.pxx { background: #fff3cd !important; } /* Prevádzkové žlté */
+        input[type="text"] { 
+            width: 250px; 
+            padding: 8px; 
+            margin: 5px; 
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button { 
+            background: #28a745; 
+            color: white; 
+            padding: 12px 24px; 
+            border: none; 
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+        button:hover { background: #218838; }
+        .objekt-row { margin: 10px 0; padding: 5px; }
+        .objekt-row label { display: inline-block; width: 120px; font-weight: bold; }
+        .legend { background: white; padding: 10px; border-radius: 5px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>📄 Triedenie PDF súborov - Sxx=Stavebný | Pxx=Prevádzkový</h1>
+    
+    <div class="legend">
+        <strong>Sxx</strong> = Stavebný objekt xx (🟢 zelené) | 
+        <strong>Pxx</strong> = Prevádzkový súbor xx (🟡 žlté) | 
+        A00/B00/C00/E00 = Časť A/B/C/E
+    </div>
+
+    <div id="dropZone" class="drop-zone">
+        <p>📁 Klikni alebo pretiahni PDF súbory sem</p>
+        <input type="file" id="fileInput" multiple accept=".pdf" style="display:none;">
+    </div>
+
+    <div id="filesList" class="files-list" style="display:none;"></div>
+
+    <div id="objektySection" style="display:none;">
+        <h3>👷 Zadaj projektantov pre objekty:</h3>
+        <div id="objektyInputs"></div>
+    </div>
+
+    <div id="previewSection" style="display:none;">
+        <h3>📊 Zoradená tabuľka (Časť > Typ objektu > Číslo > Súbor):</h3>
+        <table id="previewTable">
+            <thead><tr><th>Súbor</th><th>Kód časti</th><th>Časť</th><th>Typ objektu</th><th>Projektant</th></tr></thead>
+            <tbody></tbody>
+        </table>
+        <button onclick="exportExcel()">💾 Exportovať do Excelu</button>
+    </div>
+
+    <script>
+        const SECTION_MAP = {
+            "A00": "Časť A", "B00": "Časť B", "C00": "Časť C", "E00": "Časť E"
+        };
+        const PART_REGEX = /(A00|B00|C00|E[0O]{2}|(S|P)(\d{2}))/i;
+
+        let files = [];
+        let projektanti = {};
+        let currentData = [];
+
+        // Parse názvu súboru - NOVÁ LOGIKA Sxx/Pxx
+        function parsePart(filename) {
+            const m = PART_REGEX.exec(filename);
+            if (!m) return {code: null, part: null, typ: null, cislo: null};
+
+            let rawCode = m[1].toUpperCase().replace("OO", "00");
+            let typ = m[2]; // S alebo P
+            let cislo = m[3] ? m[3].padStart(2, '0') : null;
+
+            let part;
+            if (rawCode in SECTION_MAP) {
+                part = SECTION_MAP[rawCode];
+            } else if (typ === 'S' || typ === 'P') {
+                part = "Časť D";
+            } else {
+                part = null;
+            }
+
+            let typObjektu = '';
+            if (typ === 'S') {
+                typObjektu = `Stavebný objekt ${cislo}`;
+            } else if (typ === 'P') {
+                typObjektu = `Prevádzkový súbor ${cislo}`;
+            }
+
+            return {code: rawCode, part, typ, cislo, typObjektu};
+        }
+
+        // Načítanie súborov
+        function loadFiles(fileList) {
+            files = Array.from(fileList).filter(f => f.name.toLowerCase().endsWith('.pdf'));
+            if (files.length === 0) {
+                alert('Nie sú vybrané žiadne PDF súbory!');
+                return;
+            }
+
+            const filesListDiv = document.getElementById('filesList');
+            filesListDiv.innerHTML = `<p>✅ Nahralo sa <strong>${files.length}</strong> PDF súborov</p>`;
+            filesListDiv.style.display = 'block';
+
+            // Nájdi unikátne objekty (Sxx aj Pxx)
+            const objekty = new Map(); // typ_cislo -> typ
+            files.forEach(f => {
+                const {typ, cislo} = parsePart(f.name);
+                if (typ && cislo) {
+                    const key = `${typ}${cislo}`;
+                    if (!objekty.has(key)) objekty.set(key, typ);
+                }
+            });
+
+            if (objekty.size > 0) {
+                const inputsHtml = Array.from(objekty.entries()).sort((a, b) => {
+                    const numA = parseInt(a[0].slice(1));
+                    const numB = parseInt(b[0].slice(1));
+                    return numA - numB;
+                }).map(([key, typ]) => {
+                    const cislo = key.slice(1);
+                    const label = typ === 'S' ? 'Stavebný' : 'Prevádzkový';
+                    return `<div class="objekt-row">
+                        <label>${label} ${cislo}:</label>
+                        <input type="text" id="proj_${key}" placeholder="Zadaj meno projektanta" />
+                    </div>`;
+                }).join('');
+                document.getElementById('objektyInputs').innerHTML = inputsHtml;
+                document.getElementById('objektySection').style.display = 'block';
+            }
+
+            updatePreview();
+        }
+
+        // Update preview tabuľky
+        function updatePreview() {
+            projektanti = {};
+            document.querySelectorAll('input[id^="proj_"]').forEach(input => {
+                const key = input.id.replace('proj_', '');
+                if (input.value.trim()) projektanti[key] = input.value.trim();
+            });
+
+            let rows = files.map(f => {
+                const parsed = parsePart(f.name);
+                const projektantKey = parsed.typ && parsed.cislo ? `${parsed.typ}${parsed.cislo}` : null;
+                const projektant = projektantKey && projektanti[projektantKey] ? projektanti[projektantKey] : '';
+                return {
+                    subor: f.name,
+                    kod: parsed.code || '',
+                    cast: parsed.part || '',
+                    typObjektu: parsed.typObjektu || '',
+                    projektant,
+                    typClass: parsed.typ === 'S' ? 'sxx' : parsed.typ === 'P' ? 'pxx' : ''
+                };
+            });
+
+            // Zoradenie: Časť > Typ (S pred P) > Číslo > Súbor
+            rows.sort((a, b) => {
+                if (a.cast !== b.cast) return a.cast.localeCompare(b.cast);
+                const typA = a.typObjektu.startsWith('Stavebný') ? 0 : 1;
+                const typB = b.typObjektu.startsWith('Stavebný') ? 0 : 1;
+                if (typA !== typB) return typA - typB;
+                const numA = a.typObjektu.match(/\d+/)?.[0] || 999;
+                const numB = b.typObjektu.match(/\d+/)?.[0] || 999;
+                if (numA !== numB) return parseInt(numA) - parseInt(numB);
+                return a.subor.localeCompare(b.subor);
+            });
+
+            currentData = rows;
+
+            const tbody = document.querySelector('#previewTable tbody');
+            tbody.innerHTML = rows.map(r => 
+                `<tr class="${r.typClass}">
+                    <td>${r.subor}</td>
+                    <td>${r.kod}</td>
+                    <td>${r.cast}</td>
+                    <td>${r.typObjektu}</td>
+                    <td>${r.projektant}</td>
+                </tr>`
+            ).join('');
+
+            document.getElementById('previewSection').style.display = 'block';
+        }
+
+        // Export XLSX
+        function exportExcel() {
+            if (currentData.length === 0) {
+                alert('Žiadne dáta na export!');
+                return;
+            }
+
+            const excelData = [
+                ['Súbor', 'Kód časti', 'Časť', 'Typ objektu', 'Projektant'],
+                ...currentData.map(r => [r.subor, r.kod, r.cast, r.typObjektu, r.projektant])
+            ];
+
+            const ws = XLSX.utils.aoa_to_sheet(excelData);
+            ws['!cols'] = [{wch: 40}, {wch: 12}, {wch: 12}, {wch: 20}, {wch: 25}];
+
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Súbory');
+            XLSX.writeFile(wb, 'rozdelenie_casti_Sxx_Pxx.xlsx');
+            
+            console.log('✅ Exportovaný Excel:', excelData.length - 1, 'riadkov');
+        }
+
+        // Event listeners (rovnaké ako predtým)
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(event => {
+            dropZone.addEventListener(event, e => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (event === 'dragenter' || event === 'dragover') {
+                    dropZone.classList.add('dragover');
+                } else {
+                    dropZone.classList.remove('dragover');
+                }
+            });
+        });
+
+        dropZone.addEventListener('drop', e => loadFiles(e.dataTransfer.files));
+        fileInput.addEventListener('change', e => loadFiles(e.target.files));
+
+        document.addEventListener('input', e => {
+            if (e.target.matches('input[id^="proj_"]')) updatePreview();
+        });
+    </script>
+</body>
+</html>

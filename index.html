@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zoznamy príloh</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            display: flex;
+            gap: 30px;
+            max-width: 800px;
+            width: 100%;
+        }
+        .btn-panel {
+            flex: 1;
+            padding: 0;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-decoration: none;
+            display: block;
+            color: inherit;
+        }
+        .btn-panel:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+        }
+        .btn-header {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            padding: 30px 25px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+        .btn-panel:hover .btn-header::after {
+            left: 100%;
+        }
+        .btn-body {
+            padding: 30px 25px;
+            text-align: center;
+        }
+        .btn-body p {
+            margin: 0 0 20px 0;
+            color: #666;
+            font-size: 16px;
+        }
+        .btn-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                gap: 20px;
+            }
+            .btn-header {
+                font-size: 20px;
+                padding: 25px 20px;
+            }
+            .btn-body {
+                padding: 25px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="zoznam_A.html" class="btn-panel">
+            <div class="btn-header">Prílohy A</div>
+            <div class="btn-body">
+                <div class="btn-icon">📎</div>
+                <p>Zoznam všeobecných príloh projektu (A00, A01...)</p>
+            </div>
+        </a>
+        <a href="zoznam_D.html" class="btn-panel">
+            <div class="btn-header">Prílohy objektu</div>
+            <div class="btn-body">
+                <div class="btn-icon">🏗️</div>
+                <p>Zoznam špecifických príloh objektov (S01, P01...)</p>
+            </div>
+        </a>
+    </div>
+</body>
+</html>
