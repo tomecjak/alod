@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <title>Zoznam výkresov – časť D</title>
+  <!-- SheetJS for XLSX export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <style>
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -56,16 +58,29 @@
       padding: 4px 8px;
       font-size: 0.9rem;
       cursor: pointer;
+      border: none;
+      border-radius: 3px;
     }
     .btn-primary {
       background-color: #1976d2;
       color: white;
-      border: none;
+    }
+    .btn-success {
+      background-color: #4caf50;
+      color: white;
+    }
+    .btn-warning {
+      background-color: #ff9800;
+      color: white;
     }
     .btn-danger {
       background-color: #d32f2f;
       color: white;
-      border: none;
+    }
+    .btn-move {
+      padding: 2px 6px;
+      font-size: 0.8rem;
+      margin: 0 1px;
     }
     .small {
       font-size: 0.8rem;
@@ -82,6 +97,10 @@
       table {
         font-size: 0.8rem;
       }
+      .btn-move {
+        padding: 1px 4px;
+        font-size: 0.7rem;
+      }
     }
   </style>
 </head>
@@ -93,129 +112,129 @@
     <div class="inline-group">
       <label>
         ID stavby (pozícia 1):
-        <input type="text" id="idStavby" placeholder="napr. 25AB123" />
+        <input type="text" id="idStavby" placeholder="napr. 25AB123"/>
       </label>
       <label>
         Stupeň dokumentácie (pozícia 2):
         <select id="stupeň">
-          <option value="PSO">PSO – Projekt stavby na ohlásenie</option>
-          <option value="SZP">SZP – Stavebný zámer</option>
-          <option value="SZZ">SZZ – Zmena stavebného zámeru</option>
-          <option value="PSP">PSP – Projekt stavby</option>
-          <option value="PSZ">PSZ – Zmena projektu stavby</option>
-          <option value="VPP">VPP – Vykonávací projekt</option>
-          <option value="RDS">RDS – Realizačná dokumentácia stavby</option>
-          <option value="DSZ">DSZ – Dokumentácia skutočného zhotovenia</option>
-          <option value="ZDS">ZDS – Zjednodušená dokumentácia (pasport)</option>
+          <option value="PSO">Projekt stavby na ohlásenie "PSO"</option>
+          <option value="SZP">Stavebný zámer "SZP"</option>
+          <option value="SZZ">Zmena stavebného zámeru "SZZ"</option>
+          <option value="PSP">Projekt stavby "PSP"</option>
+          <option value="PSZ">Zmena projektu stavby "PSZ"</option>
+          <option value="VPP">Vykonávací projekt "VPP"</option>
+          <option value="RDS">Realizačná dokumentácia stavby "RDS"</option>
+          <option value="DSZ">Dokumentácia skutočného zhotovenia "DSZ"</option>
+          <option value="ZDS">Zjednodušená dokumentácia (pasport) "ZDS"</option>
         </select>
       </label>
       <label>
         Určenie stavby (pozícia 3):
-          <input type="text" id="urcenie" placeholder="napr. 01" value="01"/>
+          <input type="text" id="urcenie" placeholder="napr. 01" value="01" maxlength="2"/>
       </label>
       <label>
         Identifikačný kód (pozícia 4):
         <select id="idKod">
           <optgroup label="Bytové budovy">
-            <option value="1111">1111 Jednobytové budovy</option>
-            <option value="1112">1112 Dvojbytové budovy</option>
-            <option value="1113">1113 Trojbytové budovy</option>
-            <option value="1120">1120 Viacbytové budovy</option>
-            <option value="1130">1130 Iné bytové budovy</option>
+            <option value="1111">Jednobytové budovy</option>
+            <option value="1112">Dvojbytové budovy</option>
+            <option value="1113">Trojbytové budovy</option>
+            <option value="1120">Viacbytové budovy</option>
+            <option value="1130">Iné bytové budovy</option>
           </optgroup>
           <optgroup label="Nebytové budovy pre vybavenosť">
-            <option value="1211">1211 Hotelové budovy</option>
-            <option value="1212">1212 Iné budovy pre cestovný ruch a</option>
-            <option value="1213">1213 Budovy verejného stravovania</option>
-            <option value="1220">1220 Budovy pre administratívu</option>
-            <option value="1230">1230 Budovy pre obchod a služby</option>
-            <option value="1241">1241 Budovy pre kultúru</option>
-            <option value="1242">1242 Budovy pre cirkev</option>
-            <option value="1250">1250 Budovy pre výchovu a</option>
-            <option value="1260">1260 Budovy pre zdravotníctvo</option>
-            <option value="1271">1271 Budovy pre šport</option>
-            <option value="1272">1272 Budovy pre rekreáciu</option>
-            <option value="1280">1280 Budovy pre sociálne služby</option>
-            <option value="1290">1290 Iné budovy pre vybavenosť</option>
+            <option value="1211">Hotelové budovy</option>
+            <option value="1212">Iné budovy pre cestovný ruch a ubytovanie</option>
+            <option value="1213">Budovy verejného stravovania</option>
+            <option value="1220">Budovy pre administratívu</option>
+            <option value="1230">Budovy pre obchod a služby</option>
+            <option value="1241">Budovy pre kultúru</option>
+            <option value="1242">Budovy pre cirkev</option>
+            <option value="1250">Budovy pre výchovu a vzdelávanie</option>
+            <option value="1260">Budovy pre zdravotníctvo</option>
+            <option value="1271">Budovy pre šport</option>
+            <option value="1272">Budovy pre rekreáciu</option>
+            <option value="1280">Budovy pre sociálne služby</option>
+            <option value="1290">Iné budovy pre vybavenosť</option>
           </optgroup>
           <optgroup label="Nebytové budovy pre výrobu">
-            <option value="1311">1311 Budovy potravinárskej výroby</option>
-            <option value="1312">1312 Budovy spracovateľského</option>
-            <option value="1313">1313 Iné priemyselné budovy</option>
-            <option value="1314">1314 Sklady</option>
-            <option value="1321">1321 Poľnohospodárske budovy pre</option>
-            <option value="1322">1322 Poľnohospodárske budovy pre</option>
-            <option value="1323">1323 Budovy pre lesníctvo a</option>
-            <option value="1330">1330 Budovy pre inú výrobu</option>
+            <option value="1311">Budovy potravinárskej výroby</option>
+            <option value="1312">Budovy spracovateľského priemyslu</option>
+            <option value="1313">Iné priemyselné budovy</option>
+            <option value="1314">Sklady</option>
+            <option value="1321">Poľnohospodárske budovy pre rastlinnú výrobu</option>
+            <option value="1322">Poľnohospodárske budovy pre živočíšnu výrobu</option>
+            <option value="1323">Budovy pre lesníctvo a poľovníctvo</option>
+            <option value="1330">Budovy pre inú výrobu</option>
           </optgroup>
           <optgroup label="Nebytové budovy pre dopravnú infraštruktúru">
-            <option value="1410">1410 Budovy pre dopravnú</option>
-            <option value="1420">1420 Budovy pre technickú vybavenosť</option>
+            <option value="1410">Budovy pre dopravnú vybavenosť</option>
+            <option value="1420">Budovy pre technickú vybavenosť</option>
           </optgroup>
           <optgroup label="Iné nebytové budovy">
-            <option value="1511">1511 Drobné stavby prízemné</option>
-            <option value="1512">1512 Drobné stavby podzemné</option>
+            <option value="1511">Drobné stavby prízemné</option>
+            <option value="1512">Drobné stavby podzemné</option>
           </optgroup>
           <optgroup label="Inžinierske stavby dopravnej vybavenosti">
-            <option value="2111">2111 Diaľnice</option>
-            <option value="2112">2112 Cesty I. Triedy</option>
-            <option value="2113">2113 Cesty II. Triedy a cesty III. Triedy</option>
-            <option value="2114">2114 Miestne cesty a účelové cesty</option>
-            <option value="2115">2115 Cyklotrasy, chodníky</option>
-            <option value="2121">2121 Železničné dráhy</option>
-            <option value="2122">2122 Iné dráhy</option>
-            <option value="2130">2130 Letiskové stavby a stavby pre</option>
-            <option value="2141">2141 Mosty a mimoúrovňové</option>
-            <option value="2142">2142 Tunely</option>
-            <option value="2151">2151 Iné stavby a zariadenia dopravnej</option>
+            <option value="2111">Diaľnice</option>
+            <option value="2112">Cesty I. triedy</option>
+            <option value="2113">Cesty II. triedy a cesty III. triedy</option>
+            <option value="2114">Miestne cesty a účelové cesty</option>
+            <option value="2115">Cyklotrasy, chodníky</option>
+            <option value="2121">Železničné dráhy</option>
+            <option value="2122">Iné dráhy</option>
+            <option value="2130">Letiskové stavby a stavby pre letecké pozemné zariadenia</option>
+            <option value="2141">Mosty a mimoúrovňové prepojenie</option>
+            <option value="2142">Tunely</option>
+            <option value="2151">Iné stavby a zariadenia dopravnej vybavenosti</option>
           </optgroup>
           <optgroup label="Inžinierske vodné stavby">
-            <option value="2211">2211 Prístavy, vodné cesty</option>
-            <option value="2212">2212 Vodné nádrže, priehrady,</option>
-            <option value="2213">2213 Hydromeliorácie</option>
-            <option value="2214">2214 Stavby pre zásobovanie vodou</option>
-            <option value="2215">2215 Stavby pre odpadové vody a vody</option>
-            <option value="2216">2216 Historické vodohospodárske</option>
+            <option value="2211">Prístavy, vodné cesty</option>
+            <option value="2212">Vodné nádrže, priehrady, odkaliská a iné vodné stavby</option>
+            <option value="2213">Hydromeliorácie</option>
+            <option value="2214">Stavby pre zásobovanie vodou</option>
+            <option value="2215">Stavby pre odpadové vody a vody z povrchového odtoku</option>
+            <option value="2216">Historické vodohospodárske diela, fontány</option>
           </optgroup>
           <optgroup label="Inžinierske stavby technického vybavenia územia">
-            <option value="2311">2311 Rozvody ropy a plynu</option>
-            <option value="2312">2312 Rozvody vody</option>
-            <option value="2313">2313 Kanalizačné a stokové siete</option>
-            <option value="2314">2314 Elektronické komunikačné siete</option>
-            <option value="2315">2315 Prenosové a distribučné sústavy</option>
-            <option value="2321">2321 Prípojky plynu</option>
-            <option value="2322">2322 Prípojky vody</option>
-            <option value="2323">2323 Prípojky elektronických</option>
-            <option value="2324">2324 Prípojky elektrické</option>
-            <option value="2325">2325 Prípojky kanalizácie</option>
-            <option value="2331">2331 Stavby energetických zdrojov</option>
-            <option value="2332">2332 Iné stavby a zariadenia</option>
+            <option value="2311">Rozvody ropy a plynu</option>
+            <option value="2312">Rozvody vody</option>
+            <option value="2313">Kanalizačné a stokové siete</option>
+            <option value="2314">Elektronické komunikačné siete</option>
+            <option value="2315">Prenosové a distribučné sústavy elektrickej energie</option>
+            <option value="2321">Prípojky plynu</option>
+            <option value="2322">Prípojky vody</option>
+            <option value="2323">Prípojky elektronických komunikačných sietí</option>
+            <option value="2324">Prípojky elektrické</option>
+            <option value="2325">Prípojky kanalizácie</option>
+            <option value="2331">Stavby energetických zdrojov</option>
+            <option value="2332">Iné stavby a zariadenia technického vybavenia územia</option>
           </optgroup>
           <optgroup label="Inžinierske stavby priemyselnej výroby">
-            <option value="2411">2411 Banské stavby a ťažobné</option>
-            <option value="2412">2412 Stavby chemických zariadení</option>
-            <option value="2413">2413 Stavby ťažkého priemyslu</option>
-            <option value="2420">2420 Nádrže a silá, priemyselné kolóny</option>
+            <option value="2411">Banské stavby a ťažobné zariadenia</option>
+            <option value="2412">Stavby chemických zariadení</option>
+            <option value="2413">Stavby ťažkého priemyslu</option>
+            <option value="2420">Nádrže a silá, priemyselné kolóny a veže</option>
           </optgroup>
           <optgroup label="Inžinierske stavby vybavenosti">
-            <option value="2511">2511 Športové ihriská</option>
-            <option value="2512">2512 Iné športové a rekreačné stavby</option>
-            <option value="2520">2520 Stavby pre kultúru</option>
-            <option value="2530">2530 Iné stavby pre vybavenosť</option>
+            <option value="2511">Športové ihriská</option>
+            <option value="2512">Iné športové a rekreačné stavby</option>
+            <option value="2520">Stavby pre kultúru</option>
+            <option value="2530">Iné stavby pre vybavenosť</option>
           </optgroup>
           <optgroup label="Informačné konštrukcie">
-            <option value="2611">2611 Drobné informačné konštrukcie</option>
-            <option value="2612">2612 Jednoduché informačné</option>
+            <option value="2611">Drobné informačné konštrukcie</option>
+            <option value="2612">Jednoduché informačné konštrukcie</option>
           </optgroup>
           <optgroup label="Iné inžinierske stavby">
-            <option value="2711">2711 Drobné inžinierske stavby</option>
-            <option value="2712">2712 Drobné inžinierske stavby</option>
-            <option value="2713">2713 Drobné inžinierske stavby</option>
-            <option value="2720">2720 Výškové konštrukcie</option>
+            <option value="2711">Drobné inžinierske stavby nadzemné</option>
+            <option value="2712">Drobné inžinierske stavby podzemné</option>
+            <option value="2713">Drobné inžinierske stavby energetické</option>
+            <option value="2720">Výškové konštrukcie</option>
           </optgroup>
           <optgroup label="Stavebné úpravy pozemku">
-            <option value="2811">2811 Terénne úpravy</option>
-            <option value="2812">2812 Vonkajšie úpravy</option>
+            <option value="2811">Terénne úpravy</option>
+            <option value="2812">Vonkajšie úpravy</option>
           </optgroup>
         </select>
       </label>
@@ -224,8 +243,8 @@
       <label>
         Typ časti D (pozícia 5):
         <select id="cast5DTyp">
-          <option value="S">S – stavebný objekt</option>
-          <option value="P">P – prevádzkový súbor</option>
+          <option value="S">Stavebný objekt</option>
+          <option value="P">Prevádzkový súbor</option>
         </select>
       </label>
       <label>
@@ -233,21 +252,26 @@
         <input type="text" id="cast5Dcislo" value="01" size="3" maxlength="2" />
       </label>
       <label>
+        Pozícia 5:
+        <input type="text" id="poz5Fixed" readonly />
+      </label>
+      <label>
         Profesie (pozícia 6):
         <select id="globalTyp6">
           <option value="">– vyber –</option>
         </select>
-      </label>
-      <label>
-        Pozícia 5:
-        <input type="text" id="poz5Fixed" readonly />
       </label>
     </div>
   </fieldset>
 
   <fieldset>
     <legend>Zoznam výkresov (pozície 7 – 9)</legend>
-    <button type="button" class="btn-primary" id="btnAddRow">Pridať riadok</button>
+    <div style="margin-bottom:8px;">
+      <button type="button" class="btn-primary" id="btnAddRow">Pridať riadok</button>
+      <button type="button" class="btn-success" id="btnExportXLS">Export XLSX</button>
+      <button type="button" class="btn-primary" id="btnImportXLS">Import XLSX</button>
+      <input type="file" id="fileXlsInput" accept=".xlsx" style="display:none" />
+    </div>
 
     <table>
       <thead>
@@ -278,6 +302,18 @@
 
     function pad3(num) {
       return String(num).padStart(3, "0");
+    }
+
+    function getPoz3() {
+      const Poz3cisloRaw = document.getElementById("urcenie").value.trim() || "1";
+      const Poz3cislo = pad2(parseInt(Poz3cisloRaw, 10) || 1);
+      return Poz3cislo;
+    }
+
+    function getPoz5Num() {
+      const Poz5cisloRaw = document.getElementById("cast5Dcislo").value.trim() || "1";
+      const Poz5cislo = pad2(parseInt(Poz5cisloRaw, 10) || 1);
+      return Poz5cislo;
     }
 
     function getPoz5() {
@@ -381,7 +417,7 @@
     function updateCodes() {
       const idStavby = document.getElementById("idStavby").value.trim();
       const stupen = document.getElementById("stupeň").value;
-      const urcenie = document.getElementById("urcenie").value;
+      const urcenie = getPoz3();
       const idKod = document.getElementById("idKod").value.trim();
       const poz5 = getPoz5();
       const typ6 = document.getElementById("globalTyp6").value;
@@ -419,6 +455,60 @@
       return select;
     }
 
+    function createTyp6Select() {
+      const select = document.createElement("select");
+      select.id = "globalTyp6";
+      fillTypOptions(select);
+      select.addEventListener("change", updateCodes);
+      return select;
+    }
+
+    function createTyp6Input() {
+      const input = document.createElement("input");
+      input.type = "text";
+      input.id = "globalTyp6";
+      input.placeholder = "napr. 011";
+      input.maxLength = "3";
+      input.addEventListener("input", updateCodes);
+      return input;
+    }
+
+    function replaceTyp6Element() {
+      const oldElem = document.getElementById("globalTyp6");
+      if (!oldElem) return;
+      
+      const oldValue = oldElem.value;
+      const cast5DTyp = document.getElementById("cast5DTyp").value || "S";
+      
+      let newElem;
+      if (cast5DTyp === "P") {
+        newElem = createTyp6Input();
+      } else {
+        newElem = createTyp6Select();
+      }
+      
+      newElem.value = oldValue;
+      oldElem.replaceWith(newElem);
+    }
+
+    function moveRowUp(tr) {
+      const tbody = document.getElementById("prilohyBody");
+      const prevSibling = tr.previousElementSibling;
+      if (prevSibling) {
+        tbody.insertBefore(tr, prevSibling);
+        updateCodes();
+      }
+    }
+
+    function moveRowDown(tr) {
+      const tbody = document.getElementById("prilohyBody");
+      const nextSibling = tr.nextElementSibling;
+      if (nextSibling) {
+        tbody.insertBefore(nextSibling, tr);
+        updateCodes();
+      }
+    }
+
     function addRow() {
       const tbody = document.getElementById("prilohyBody");
       const rowCount = tbody.querySelectorAll("tr").length;
@@ -436,27 +526,110 @@
         <td>
           <input type="text" class="kodOutput" readonly />
         </td>
-        <td>
-          <button type="button" class="btn-danger btnDelete">X</button>
+        <td class="action-cell">
+          <button type="button" class="btn-move btn-success btnUp" title="Hore">↑</button>
+          <button type="button" class="btn-move btn-warning btnDown" title="Dole">↓</button>
+          <button type="button" class="btn-danger btnDelete" title="Odstrániť">X</button>
         </td>
       `;
 
       const nazovCell = tr.querySelector(".cell-nazov");
       nazovCell.appendChild(createNazovSelect());
 
+      // Event listenery pre nové tlačidlá
+      tr.querySelector(".btnUp").addEventListener("click", () => moveRowUp(tr));
+      tr.querySelector(".btnDown").addEventListener("click", () => moveRowDown(tr));
+      tr.querySelector(".rev9").addEventListener("input", updateCodes);
+      tr.querySelector(".popis").addEventListener("input", updateCodes);
+
       tbody.appendChild(tr);
       updateCodes();
     }
 
+    // --- Excel import/export helpers -------------------------------------
+    function exportToExcel() {
+      const idStavby = document.getElementById("idStavby").value.trim();
+      const stupen = document.getElementById("stupeň").value;
+      const urcenie = getPoz3();
+      const idKod = document.getElementById("idKod").value.trim();
+      const cast5DTyp = document.getElementById("cast5DTyp").value;
+      const cast5Dcislo = getPoz5Num();
+      const typ6 = document.getElementById("globalTyp6").value;
+
+      const data = [];
+      data.push(["idStavby","stupeň","určenie","idKod","cast5DTyp","cast5Dcislo","globalTyp6"]);
+      data.push([idStavby, stupen, urcenie, idKod, cast5DTyp, cast5Dcislo, typ6]);
+      data.push([]);
+      data.push(["nazov","rev","popis"]);
+
+      const rows = document.querySelectorAll("#prilohyBody tr");
+      rows.forEach(tr => {
+        const nazov = tr.querySelector(".nazov8").value;
+        const rev = tr.querySelector(".rev9").value;
+        const popis = tr.querySelector(".popis").value;
+        data.push([nazov, rev, popis]);
+      });
+
+      const ws = XLSX.utils.aoa_to_sheet(data);
+      ws['!cols'] = [{wch:20},{wch:8},{wch:20},{wch:12},{wch:8},{wch:8},{wch:12}];
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'ZoznamD');
+      XLSX.writeFile(wb, 'zoznam_D.xlsx');
+    }
+
+    function importFromExcel(file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const wb = XLSX.read(e.target.result, { type: 'binary' });
+        const sheet = wb.Sheets[wb.SheetNames[0]];
+        const arr = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' });
+        // arr rows: [meta header], [meta values], [], [nazov,rev,popis], [row...]
+        if (arr.length < 2) return;
+        const meta = arr[1];
+        document.getElementById("idStavby").value = meta[0] || '';
+        document.getElementById("stupeň").value = meta[1] || '';
+        document.getElementById("urcenie").value = meta[2] || '';
+        document.getElementById("idKod").value = meta[3] || '';
+        document.getElementById("cast5DTyp").value = meta[4] || 'S';
+        document.getElementById("cast5Dcislo").value = meta[5] || '1';
+        document.getElementById("globalTyp6").value = meta[6] || '';
+        getPoz5();
+        // find header row index
+        let startIdx = arr.findIndex(r => r[0] === 'nazov');
+        if (startIdx === -1) startIdx = 3;
+        const tbody = document.getElementById("prilohyBody");
+        tbody.innerHTML = '';
+        for (let i = startIdx + 1; i < arr.length; i++) {
+          const row = arr[i];
+          if (!row || row.length === 0) continue;
+          addRow();
+          const tr = tbody.lastElementChild;
+          tr.querySelector(".nazov8").value = row[0] || '';
+          tr.querySelector(".rev9").value = row[1] || '00';
+          tr.querySelector(".popis").value = row[2] || '';
+        }
+        updateCodes();
+      };
+      reader.readAsBinaryString(file);
+    }
+
+
     // Event listeners
     document.getElementById("btnAddRow").addEventListener("click", addRow);
+    document.getElementById("btnExportXLS").addEventListener("click", exportToExcel);
+    document.getElementById("btnImportXLS").addEventListener("click", () => document.getElementById("fileXlsInput").click());
+    document.getElementById("fileXlsInput").addEventListener("change", function () {
+      if (this.files.length) importFromExcel(this.files[0]);
+    });
     document.getElementById("idStavby").addEventListener("input", updateCodes);
     document.getElementById("stupeň").addEventListener("change", updateCodes);
     document.getElementById("urcenie").addEventListener("change", updateCodes);
     document.getElementById("idKod").addEventListener("input", updateCodes);
-    document.getElementById("cast5DTyp").addEventListener("change", updateCodes);
+    document.getElementById("cast5DTyp").addEventListener("change", function() {
+      replaceTyp6Element();
+      updateCodes();
+    });
     document.getElementById("cast5Dcislo").addEventListener("input", updateCodes);
-    document.getElementById("globalTyp6").addEventListener("change", updateCodes);
 
     document.getElementById("prilohyBody").addEventListener("click", function (e) {
       if (e.target.classList.contains("btnDelete")) {
