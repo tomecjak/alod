@@ -8,27 +8,27 @@
     <style>
         body { font-family: Arial, sans-serif; max-width: 1200px; margin: 0 auto; padding: 20px; background: #f5f5f5; }
         h1 { color: #333; }
-        .drop-zone { 
-            border: 3px dashed #ccc; 
-            padding: 40px; 
-            text-align: center; 
-            margin: 20px 0; 
-            cursor: pointer; 
+        .drop-zone {
+            border: 3px dashed #ccc;
+            padding: 40px;
+            text-align: center;
+            margin: 20px 0;
+            cursor: pointer;
             transition: all 0.3s;
             background: white;
             border-radius: 8px;
         }
         .drop-zone.dragover { border-color: #007bff; background: #f8f9ff; }
-        .files-list, .objekty-inputs { 
-            margin: 20px 0; 
-            background: white; 
-            padding: 15px; 
-            border-radius: 8px; 
+        .files-list, .objekty-inputs {
+            margin: 20px 0;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
         }
-        table { 
-            border-collapse: collapse; 
-            width: 100%; 
-            background: white; 
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            background: white;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
@@ -36,18 +36,18 @@
         tr:nth-child(even) { background: #f9f9f9; }
         tr.sxx { background: #e8f5e8 !important; } /* Stavebné zelené */
         tr.pxx { background: #fff3cd !important; } /* Prevádzkové žlté */
-        input[type="text"] { 
-            width: 250px; 
-            padding: 8px; 
-            margin: 5px; 
+        input[type="text"] {
+            width: 250px;
+            padding: 8px;
+            margin: 5px;
             border: 1px solid #ddd;
             border-radius: 4px;
         }
-        button { 
-            background: #28a745; 
-            color: white; 
-            padding: 12px 24px; 
-            border: none; 
+        button {
+            background: #28a745;
+            color: white;
+            padding: 12px 24px;
+            border: none;
             cursor: pointer;
             font-size: 16px;
             border-radius: 5px;
@@ -61,11 +61,11 @@
 </head>
 <body>
     <h1>📄 Triedenie PDF súborov - Sxx=Stavebný | Pxx=Prevádzkový</h1>
-    
+
     <div class="legend">
-        <strong>Sxx</strong> = Stavebný objekt xx (🟢 zelené) | 
-        <strong>Pxx</strong> = Prevádzkový súbor xx (🟡 žlté) | 
-        A00/B00/C00/E00 = Časť A/B/C/E
+        <strong>Sxx</strong> = Stavebný objekt xx (🟢 zelené) |
+        <strong>Pxx</strong> = Prevádzkový súbor xx (🟡 žlté) |
+        A00/B00/C00/E00–E99 = Časť A/B/C/E
     </div>
 
     <div id="dropZone" class="drop-zone">
@@ -83,7 +83,15 @@
     <div id="previewSection" style="display:none;">
         <h3>📊 Zoradená tabuľka (Časť > Typ objektu > Číslo > Súbor):</h3>
         <table id="previewTable">
-            <thead><tr><th>Súbor</th><th>Kód časti</th><th>Časť</th><th>Typ objektu</th><th>Projektant</th></tr></thead>
+            <thead>
+                <tr>
+                    <th>Súbor</th>
+                    <th>Kód časti</th>
+                    <th>Časť</th>
+                    <th>Typ objektu</th>
+                    <th>Projektant</th>
+                </tr>
+            </thead>
             <tbody></tbody>
         </table>
         <button onclick="exportExcel()">💾 Exportovať do Excelu</button>
@@ -91,26 +99,32 @@
 
     <script>
         const SECTION_MAP = {
-            "A00": "Časť A", "B00": "Časť B", "C00": "Časť C", "E00": "Časť E"
+            "A00": "Časť A",
+            "B00": "Časť B",
+            "C00": "Časť C"
         };
-        const PART_REGEX = /(A00|B00|C00|E[00]{2}|(S|P)(\d{2}))/i;
+
+        // Zachytí: A00/B00/C00, E00–E99, alebo Sxx/Pxx
+        const PART_REGEX = /(A00|B00|C00|E\d{2}|(S|P)(\d{2}))/i;
 
         let files = [];
         let projektanti = {};
         let currentData = [];
 
-        // Parse názvu súboru - NOVÁ LOGIKA Sxx/Pxx
+        // Parse názvu súboru - Sxx/Pxx + časti A/B/C/E (E00–E99)
         function parsePart(filename) {
             const m = PART_REGEX.exec(filename);
-            if (!m) return {code: null, part: null, typ: null, cislo: null};
+            if (!m) return {code: null, part: null, typ: null, cislo: null, typObjektu: null};
 
-            let rawCode = m[1].toUpperCase().replace("OO", "00");
-            let typ = m[2]; // S alebo P
+            let rawCode = m[1].toUpperCase().replace("OO", "00"); // nechávam tvoju pôvodnú korekciu
+            let typ = m[2]; // S alebo P (len ak sa matchlo Sxx/Pxx)
             let cislo = m[3] ? m[3].padStart(2, '0') : null;
 
             let part;
             if (rawCode in SECTION_MAP) {
                 part = SECTION_MAP[rawCode];
+            } else if (/^E\d{2}$/i.test(rawCode)) { // E00–E99 -> Časť E
+                part = "Časť E";
             } else if (typ === 'S' || typ === 'P') {
                 part = "Časť D";
             } else {
@@ -150,18 +164,21 @@
             });
 
             if (objekty.size > 0) {
-                const inputsHtml = Array.from(objekty.entries()).sort((a, b) => {
-                    const numA = parseInt(a[0].slice(1));
-                    const numB = parseInt(b[0].slice(1));
-                    return numA - numB;
-                }).map(([key, typ]) => {
-                    const cislo = key.slice(1);
-                    const label = typ === 'S' ? 'Stavebný' : 'Prevádzkový';
-                    return `<div class="objekt-row">
-                        <label>${label} ${cislo}:</label>
-                        <input type="text" id="proj_${key}" placeholder="Zadaj meno projektanta" />
-                    </div>`;
-                }).join('');
+                const inputsHtml = Array.from(objekty.entries())
+                    .sort((a, b) => {
+                        const numA = parseInt(a[0].slice(1));
+                        const numB = parseInt(b[0].slice(1));
+                        return numA - numB;
+                    })
+                    .map(([key, typ]) => {
+                        const cislo = key.slice(1);
+                        const label = typ === 'S' ? 'Stavebný' : 'Prevádzkový';
+                        return `<div class="objekt-row">
+                            <label>${label} ${cislo}:</label>
+                            <input type="text" id="proj_${key}" placeholder="Zadaj meno projektanta" />
+                        </div>`;
+                    }).join('');
+
                 document.getElementById('objektyInputs').innerHTML = inputsHtml;
                 document.getElementById('objektySection').style.display = 'block';
             }
@@ -183,7 +200,7 @@
                 const projektant = projektantKey && projektanti[projektantKey] ? projektanti[projektantKey] : '';
                 return {
                     subor: f.name,
-                    kod: parsed.code || '',
+                    kod: parsed.code || '',          // tu ostane E37, E05, ...
                     cast: parsed.part || '',
                     typObjektu: parsed.typObjektu || '',
                     projektant,
@@ -206,7 +223,7 @@
             currentData = rows;
 
             const tbody = document.querySelector('#previewTable tbody');
-            tbody.innerHTML = rows.map(r => 
+            tbody.innerHTML = rows.map(r =>
                 `<tr class="${r.typClass}">
                     <td>${r.subor}</td>
                     <td>${r.kod}</td>
@@ -237,11 +254,11 @@
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, 'Súbory');
             XLSX.writeFile(wb, 'rozdelenie_casti_Sxx_Pxx.xlsx');
-            
+
             console.log('✅ Exportovaný Excel:', excelData.length - 1, 'riadkov');
         }
 
-        // Event listeners (rovnaké ako predtým)
+        // Event listeners
         const dropZone = document.getElementById('dropZone');
         const fileInput = document.getElementById('fileInput');
 
