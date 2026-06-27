@@ -426,7 +426,7 @@
             <select id="attachmentObject">
               <option value="">-- vyber objekt --</option>
             </select>
-            <div class="help-text">Pri častiach A, B, C, E je výber objektu deaktivovaný; aktivuje sa len pre D + scope „k objektu“.</div>
+            <div class="help-text">Pri častiach A, B, C, E je výber objektu deaktivovaný; aktivuje sa len pre D + scope „k objektu".</div>
           </div>
         </div>
         <div class="fieldset-row">
@@ -672,7 +672,7 @@
         projectStatus.textContent = "Projekt vyčistený.";
         projectStatus.style.color = "var(--color-text-muted)";
         updateObjectSelectState();
-      updatePoz7Preview();
+        updatePoz7Preview();
       }
 
       function renderObjects() {
@@ -730,13 +730,49 @@
         return "";
       }
 
+      /**
+       * Prepočíta poz7 pre všetky prílohy podľa ich aktuálneho poradia v poli project.attachments.
+       * Pravidlá:
+       *  - AAA a TXT dostanú vždy "000"
+       *  - Revízie tej istej prílohy (rovnaká časť, scope, objectId, poz6, poz8) zdieľajú rovnaké číslo
+       *  - Ostatné dokumenty dostanú poradové číslo podľa poradia v rámci skupiny (časť + scope + objectId)
+       */
+      function recomputeAllPoz7() {
+        // Sledujeme "skupiny" – kľúč = časť|scope|objectId
+        // V rámci skupiny počítame poradie; rovnaká identita prílohy (poz6+poz8) zdieľa číslo
+        const groupCounters = {}; // kľúč skupiny -> aktuálny max counter
+        const identityNumbers = {}; // kľúč identity (skupina|poz6|poz8) -> pridelené číslo
+
+        project.attachments.forEach(att => {
+          if (att.poz8 === "AAA" || att.poz8 === "TXT") {
+            att.poz7 = "000";
+            return;
+          }
+
+          const groupKey = `${att.part}|${att.scope}|${att.objectId || ""}`;
+          const identityKey = `${groupKey}|${att.poz6}|${att.poz8}`;
+
+          if (identityNumbers[identityKey] !== undefined) {
+            // Revízia existujúcej prílohy – zdieľa rovnaké číslo
+            att.poz7 = identityNumbers[identityKey];
+          } else {
+            // Nová identita v tejto skupine – prideliť ďalšie poradové číslo
+            if (groupCounters[groupKey] === undefined) {
+              groupCounters[groupKey] = 0;
+            }
+            groupCounters[groupKey] += 1;
+            const newNum = String(groupCounters[groupKey]).padStart(3, "0");
+            identityNumbers[identityKey] = newNum;
+            att.poz7 = newNum;
+          }
+        });
+      }
+
       function computePozicia7(scope, part, objectId, poz6, poz8, poz9) {
         if (poz8 === "AAA" || poz8 === "TXT") {
           return "000";
         }
         const normalizedPoz9 = String(poz9 || "00").padStart(2, "0");
-        // Rovnaké číslo 7 sa smie zdieľať len medzi revíziami tej istej prílohy.
-        // Ak existuje úplne rovnaký záznam vrátane rovnakej revízie, musí dostať nové číslo.
         const revisionGroup = project.attachments.find(att => {
           return att.part === part &&
             att.scope === scope &&
@@ -1062,6 +1098,9 @@
         } else if (action === 'delete') {
           project.attachments.splice(index, 1);
         }
+
+        // Po každej zmene poradia alebo mazaní prepočítaj poz7 pre všetky prílohy
+        recomputeAllPoz7();
         renderOverview();
       }
 
