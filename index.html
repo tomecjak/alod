@@ -141,6 +141,9 @@
     .btn-revision:hover { background: #fdecd8; }
     .btn-danger    { background: #fff0f5; color: var(--color-error); border-color: #e8b4d0; font-size: 0.75rem; }
     .btn-danger:hover { background: #fce0ee; }
+    .btn-move      { background: #fff; color: var(--color-text-muted); border-color: var(--color-border); font-size: 0.72rem; padding: 0.15rem 0.35rem; line-height: 1; }
+    .btn-move:hover:not(:disabled) { background: var(--color-surface-alt); color: var(--color-text); }
+    .btn-move:disabled { opacity: 0.28; cursor: default; }
     .btn-icon { padding-inline: 0.4rem; min-width: 0; }
     .btn-group { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-3); }
 
@@ -376,7 +379,7 @@
         <h2 id="overview-heading">Úplný prehľad zoznamu dokumentácie – A00</h2>
         <span class="tag">Generovaný zo všetkých príloh</span>
       </div>
-      <p class="help-text">Prílohy sú automaticky zoradené do sekcií A → B → C → D → E. V rámci časti D sú členené najprv podľa stavebných objektov (Sxx), potom podľa prevádzkových súborov (Pxx). Pozícia 9 = 00 sa v názve súboru nezobrazuje; revízie 01+ sa zobrazia.</p>
+      <p class="help-text">Prílohy sú zoradené do sekcií A → B → C → D → E. V rámci časti D sú členené po objektoch (Sxx pred Pxx). Tlačidlami ▲ / ▼ môžeš zmeniť poradie prílohy <em>iba v rámci jej sekcie alebo objektu</em>. Pozícia 9 = 00 sa v názve súboru nezobrazuje; revízie 01+ sa zobrazia.</p>
       <table aria-label="Úplný prehľad zoznamu dokumentácie A00">
         <thead>
           <tr>
@@ -397,7 +400,15 @@
 
   <script>
   (function () {
+    /* ── Stav projektu ─────────────────────────────────────────────── */
     const project = { name: "", id: "", stupen: "", urcenie: "", identKod: "", objects: [], attachments: [] };
+
+    /* Kľúč skupiny pre radenie – prílohy so zhodným groupKey sa môžu presúvať medzi sebou */
+    function groupKey(att) {
+      return att.part === "D"
+        ? `D|${att.objectId || ""}`
+        : att.part;  // "A", "B", "C", "E"
+    }
 
     const ALL_POZ6_OPTIONS = [
       { value: "AAA", label: "AAA – zoznam dokumentácie (časť A00)" },
@@ -446,7 +457,9 @@
 
     const PART_LABELS = { A: "A – Zoznam dokumentácie", B: "B – Súhrnná správa", C: "C – Situačné výkresy", D: "D – Dokumentácia stavebných objektov a prevádzkových súborov", E: "E – Prílohy" };
     const PART_ORDER  = ["A", "B", "C", "D", "E"];
+    const OVERVIEW_COLS = 8;
 
+    /* ── DOM refs ──────────────────────────────────────────────────── */
     const projectNameInput       = document.getElementById("projectName");
     const idStavbyInput          = document.getElementById("idStavby");
     const stupenDocSelect        = document.getElementById("stupenDoc");
@@ -473,22 +486,18 @@
     const importCsvInput         = document.getElementById("importCsvInput");
     const csvStatus              = document.getElementById("csvStatus");
 
-    // Počet stĺpcov v tabeľke prehľadu (bez stĺpca Časť, ten bol odstránený)
-    const OVERVIEW_COLS = 8;
-
     let poz6Mode = "select";
 
+    /* ── Poz6 helpers ──────────────────────────────────────────────── */
     function getPoz6El()    { return document.getElementById("poz6"); }
     function getPoz6Value() {
-      const el = getPoz6El();
-      if (!el) return "";
+      const el = getPoz6El(); if (!el) return "";
       return el.tagName === "SELECT" ? el.value : el.value.trim().toUpperCase();
     }
     function setPoz6Value(val) { const el = getPoz6El(); if (el) el.value = val; }
 
     function getSelectedAttachmentObjectType() {
-      const objId = attachmentObjectSelect.value;
-      if (!objId) return null;
+      const objId = attachmentObjectSelect.value; if (!objId) return null;
       const obj = project.objects.find(o => o.id.toString() === objId);
       return obj ? obj.type : null;
     }
@@ -525,21 +534,6 @@
       updatePoz7Preview();
     }
 
-    function genUid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
-
-    function getSelectedObjectType() {
-      const sel = document.querySelector("input[name='objectType']:checked");
-      return sel ? sel.value : "S";
-    }
-
-    function getAttachmentScope() { return attachmentPartSelect.value === "D" ? "object" : "project"; }
-
-    function updateObjectSelectState() {
-      const isD = attachmentPartSelect.value === "D";
-      attachmentObjectSelect.disabled = !isD;
-      if (!isD) attachmentObjectSelect.value = "";
-    }
-
     function updatePoz6Options() {
       const el = getPoz6El();
       if (!el || el.tagName !== "SELECT") return;
@@ -566,6 +560,18 @@
       updatePoz7Preview();
     }
 
+    /* ── Utils ─────────────────────────────────────────────────────── */
+    function genUid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+    function getSelectedObjectType() {
+      const sel = document.querySelector("input[name='objectType']:checked");
+      return sel ? sel.value : "S";
+    }
+    function getAttachmentScope() { return attachmentPartSelect.value === "D" ? "object" : "project"; }
+    function updateObjectSelectState() {
+      const isD = attachmentPartSelect.value === "D";
+      attachmentObjectSelect.disabled = !isD;
+      if (!isD) attachmentObjectSelect.value = "";
+    }
     function sortObjects() {
       const typeRank = { S: 0, P: 1 };
       project.objects.sort((a, b) => {
@@ -574,39 +580,88 @@
         return parseInt(a.number, 10) - parseInt(b.number, 10);
       });
     }
-
     function derivePozicia5(scope, part, objectId) {
       if (scope === "project") return { A: "A00", B: "B00", C: "C00", E: "E00", D: "D00" }[part] || "";
       const obj = project.objects.find(o => o.id.toString() === objectId);
       return obj ? obj.code : "";
     }
 
+    /* ── sortOrder management ──────────────────────────────────────── */
+    /* Každá príloha má `sortOrder` (číslo) – v rámci skupiny sa triedi podľa neho.       */
+    /* Pri novej prílohe dostane sortOrder = max(existujúce v skupine) + 1.                */
+    function nextSortOrder(gk) {
+      let max = -1;
+      project.attachments.forEach(a => {
+        if (groupKey(a) === gk && a.sortOrder > max) max = a.sortOrder;
+      });
+      return max + 1;
+    }
+
+    /* Zoradí prílohy v rámci skupiny a vráti ich pole */
+    function groupSorted(gk) {
+      return project.attachments
+        .filter(a => groupKey(a) === gk)
+        .sort((a, b) => a.sortOrder - b.sortOrder);
+    }
+
+    /* Presunie prílohu s daným uid o dir (+1 = nadol, -1 = nahor) v rámci skupiny */
+    function moveAttachment(uid, dir) {
+      const att = project.attachments.find(a => a.uid === uid);
+      if (!att) return;
+      const gk      = groupKey(att);
+      const peers   = groupSorted(gk);
+      const idx     = peers.findIndex(a => a.uid === uid);
+      const swapIdx = idx + dir;
+      if (swapIdx < 0 || swapIdx >= peers.length) return;
+      /* Vymeň sortOrder */
+      const tmp = peers[idx].sortOrder;
+      peers[idx].sortOrder = peers[swapIdx].sortOrder;
+      peers[swapIdx].sortOrder = tmp;
+      recomputeAllPoz7();
+      renderOverview();
+    }
+
+    /* ── Poz7 ──────────────────────────────────────────────────────── */
     function recomputeAllPoz7() {
-      const groupCounters = {}, identityToPoz7 = {};
-      const sorted = [...project.attachments].sort((a, b) => (a.parentUid ? 1 : 0) - (b.parentUid ? 1 : 0));
-      sorted.forEach(att => {
-        if (att.poz8 === "AAA" || att.poz8 === "TXT") { att.poz7 = "000"; return; }
-        const groupKey = `${att.part}|${att.scope}|${att.objectId || ""}`;
-        const rootUid  = att.parentUid || att.uid;
-        if (identityToPoz7[rootUid] !== undefined) {
-          att.poz7 = identityToPoz7[rootUid];
-        } else {
-          if (groupCounters[groupKey] === undefined) groupCounters[groupKey] = 0;
-          groupCounters[groupKey] += 1;
-          const num = String(groupCounters[groupKey]).padStart(3, "0");
-          identityToPoz7[rootUid] = num;
-          att.poz7 = num;
-        }
+      /* Skupiny zoradené podľa sortOrder, rodičia pred deťmi */
+      const byGroup = {};
+      project.attachments.forEach(a => {
+        const gk = groupKey(a);
+        if (!byGroup[gk]) byGroup[gk] = [];
+        byGroup[gk].push(a);
+      });
+      Object.values(byGroup).forEach(list => {
+        list.sort((a, b) => {
+          if (a.sortOrder !== b.sortOrder) return a.sortOrder - b.sortOrder;
+          return (a.parentUid ? 1 : 0) - (b.parentUid ? 1 : 0);
+        });
+      });
+      const identityToPoz7 = {}, groupCounters = {};
+      Object.values(byGroup).forEach(list => {
+        list.forEach(att => {
+          if (att.poz8 === "AAA" || att.poz8 === "TXT") { att.poz7 = "000"; return; }
+          const gk      = groupKey(att);
+          const rootUid = att.parentUid || att.uid;
+          if (identityToPoz7[rootUid] !== undefined) {
+            att.poz7 = identityToPoz7[rootUid];
+          } else {
+            if (groupCounters[gk] === undefined) groupCounters[gk] = 0;
+            groupCounters[gk] += 1;
+            const num = String(groupCounters[gk]).padStart(3, "0");
+            identityToPoz7[rootUid] = num;
+            att.poz7 = num;
+          }
+        });
       });
     }
 
     function computeNextPoz7Preview(scope, part, objectId, poz8) {
       if (poz8 === "AAA" || poz8 === "TXT") return "000";
-      const groupKey = `${part}|${scope}|${objectId || ""}`;
+      const gk  = part === "D" ? `D|${objectId || ""}` : part;
       let max = 0;
       project.attachments.forEach(att => {
         if (att.poz7 === "000") return;
-        if (`${att.part}|${att.scope}|${att.objectId || ""}` !== groupKey) return;
+        if (groupKey(att) !== gk) return;
         const n = parseInt(att.poz7, 10);
         if (!isNaN(n) && n > max) max = n;
       });
@@ -614,7 +669,7 @@
     }
 
     function updatePoz7Preview() {
-      const scope = getAttachmentScope(), part = attachmentPartSelect.value;
+      const scope    = getAttachmentScope(), part = attachmentPartSelect.value;
       const objectId = attachmentObjectSelect.value;
       const poz6 = getPoz6Value(), poz8 = poz8Select.value;
       if (!poz6 || !poz8) { poz7Input.value = ""; return; }
@@ -622,7 +677,7 @@
       poz7Input.value = computeNextPoz7Preview(scope, part, objectId, poz8);
     }
 
-    // ─ Projekt
+    /* ── Projekt ───────────────────────────────────────────────────── */
     function saveProject() {
       project.name = projectNameInput.value.trim();
       project.id   = idStavbyInput.value.trim();
@@ -651,7 +706,7 @@
       updateObjectSelectState(); updatePoz6Mode();
     }
 
-    // ─ Objekty
+    /* ── Objekty ───────────────────────────────────────────────────── */
     function renderObjects() {
       objectsTableBody.innerHTML = "";
       const prevObjectId = attachmentObjectSelect.value;
@@ -672,8 +727,7 @@
         attachmentObjectSelect.appendChild(opt);
       });
       if (prevObjectId) attachmentObjectSelect.value = prevObjectId;
-      updateObjectSelectState();
-      updatePoz6Mode();
+      updateObjectSelectState(); updatePoz6Mode();
     }
 
     function handleObjectsClick(event) {
@@ -703,7 +757,7 @@
       renderObjects();
     }
 
-    // ─ Prílohy
+    /* ── Prílohy ───────────────────────────────────────────────────── */
     function addAttachment() {
       attachmentError.textContent = "";
       if (!project.id || !project.stupen || !project.urcenie || !project.identKod) {
@@ -724,7 +778,10 @@
       if (scope === "object" && !objectId) { attachmentError.textContent = "Pre prílohu k časti D vyber konkrétny stavebný objekt."; return; }
       const poz5 = derivePozicia5(scope, part, objectId);
       if (!poz5) { attachmentError.textContent = "Nebolo možné odvodiť pozíciu 5."; return; }
-      project.attachments.push({ uid: genUid(), parentUid: null, scope, part, objectId: scope === "object" ? objectId : null, poz5, poz6, poz7: "???", poz8, poz9: "00", title });
+      const newAtt = { uid: genUid(), parentUid: null, scope, part, objectId: scope === "object" ? objectId : null,
+        poz5, poz6, poz7: "???", poz8, poz9: "00", title, sortOrder: 0 };
+      newAtt.sortOrder = nextSortOrder(groupKey(newAtt));
+      project.attachments.push(newAtt);
       recomputeAllPoz7(); renderOverview(); clearAttachmentFormAfterAdd();
     }
 
@@ -740,7 +797,12 @@
         }
       });
       const newRev = String(maxRev + 1).padStart(2, "0");
-      project.attachments.push({ uid: genUid(), parentUid: rootUid, scope: base.scope, part: base.part, objectId: base.objectId, poz5: base.poz5, poz6: base.poz6, poz7: base.poz7, poz8: base.poz8, poz9: newRev, title: base.title });
+      /* Revízia sa pridá hneď za posledný člen skupiny (sortOrder = nextSortOrder) */
+      const gk = groupKey(base);
+      const rev = { uid: genUid(), parentUid: rootUid, scope: base.scope, part: base.part,
+        objectId: base.objectId, poz5: base.poz5, poz6: base.poz6, poz7: base.poz7,
+        poz8: base.poz8, poz9: newRev, title: base.title, sortOrder: nextSortOrder(gk) };
+      project.attachments.push(rev);
       recomputeAllPoz7(); renderOverview();
     }
 
@@ -761,11 +823,12 @@
       updateObjectSelectState(); updatePoz6Mode();
     }
 
-    // ── Render prehľadu – sekcie A→B→C→D→E, v D podzoznam po objektoch
+    /* ── Render prehľadu ───────────────────────────────────────────── */
     function buildFilename(att) {
       if (!project.id || !project.stupen || !project.urcenie || !project.identKod)
         return "(projektové pozície 1–4 nie sú kompletné)";
-      const parts = [project.id, project.stupen, project.urcenie, project.identKod, att.poz5, att.poz6, att.poz7, att.poz8];
+      const parts = [project.id, project.stupen, project.urcenie, project.identKod,
+        att.poz5, att.poz6, att.poz7, att.poz8];
       if (att.poz9 !== "00") parts.push(att.poz9);
       return parts.join("_");
     }
@@ -773,24 +836,18 @@
     function appendSectionHeader(label) {
       const tr = document.createElement("tr");
       tr.className = "section-header";
-      const td = document.createElement("td");
-      td.colSpan = OVERVIEW_COLS;
-      td.textContent = label;
-      tr.appendChild(td);
-      overviewTableBody.appendChild(tr);
+      const td = document.createElement("td"); td.colSpan = OVERVIEW_COLS; td.textContent = label;
+      tr.appendChild(td); overviewTableBody.appendChild(tr);
     }
 
     function appendSubsectionHeader(label) {
       const tr = document.createElement("tr");
       tr.className = "subsection-header";
-      const td = document.createElement("td");
-      td.colSpan = OVERVIEW_COLS;
-      td.textContent = label;
-      tr.appendChild(td);
-      overviewTableBody.appendChild(tr);
+      const td = document.createElement("td"); td.colSpan = OVERVIEW_COLS; td.textContent = label;
+      tr.appendChild(td); overviewTableBody.appendChild(tr);
     }
 
-    function appendAttachmentRow(att) {
+    function appendAttachmentRow(att, isFirst, isLast) {
       const tr = document.createElement("tr");
       if (att.parentUid) tr.classList.add("is-revision");
       const objLabel = att.scope === "object" && att.objectId
@@ -809,6 +866,8 @@
         <td><code style="font-size:0.78rem;word-break:break-all">${filename}</code></td>
         <td>${att.title || ""}</td>
         <td class="actions-cell">
+          <button type="button" class="btn-move" data-action="move-up"   data-uid="${att.uid}" title="Presunúť nahor"   ${isFirst ? "disabled" : ""}>▲</button>
+          <button type="button" class="btn-move" data-action="move-down" data-uid="${att.uid}" title="Presunúť nadol"   ${isLast  ? "disabled" : ""}>▼</button>
           <button type="button" class="btn-revision" data-action="revision" data-uid="${att.uid}" title="Vytvoriť revíziu tejto prílohy">＋ Revízia</button>
           <button type="button" class="btn-secondary btn-icon" data-action="delete" data-uid="${att.uid}" title="Vymazať">✕</button>
         </td>`;
@@ -821,35 +880,32 @@
       // Zoskupenie príloh podľa časti
       const byPart = {};
       PART_ORDER.forEach(p => { byPart[p] = []; });
-      project.attachments.forEach(att => {
-        if (byPart[att.part]) byPart[att.part].push(att);
-      });
+      project.attachments.forEach(att => { if (byPart[att.part]) byPart[att.part].push(att); });
 
       PART_ORDER.forEach(part => {
         const atts = byPart[part];
         if (!atts.length) return;
-
         appendSectionHeader(PART_LABELS[part] || part);
 
         if (part !== "D") {
-          // Pre A, B, C, E – vypsať prílohy priamo
-          atts.forEach(att => appendAttachmentRow(att));
+          // A, B, C, E – zoradiť podľa sortOrder v rámci sekcie
+          const sorted = [...atts].sort((a, b) => a.sortOrder - b.sortOrder);
+          sorted.forEach((att, i) => appendAttachmentRow(att, i === 0, i === sorted.length - 1));
         } else {
-          // Pre D – zoskupiť po objektoch (Sxx pred Pxx, v rámci nich vzostupne)
-          const objectOrder = [...project.objects]; // už zoradené sortObjects(): S pred P
-          // Prílohy bez objektu (edge case)
-          const noObj = atts.filter(a => !a.objectId);
-          // Prílohy podľa objektov
-          objectOrder.forEach(obj => {
-            const objAtts = atts.filter(a => a.objectId === obj.id.toString());
+          // D – po objektoch (Sxx pred Pxx)
+          project.objects.forEach(obj => {
+            const objAtts = atts
+              .filter(a => a.objectId === obj.id.toString())
+              .sort((a, b) => a.sortOrder - b.sortOrder);
             if (!objAtts.length) return;
             appendSubsectionHeader(`${obj.code} – ${obj.name}`);
-            objAtts.forEach(att => appendAttachmentRow(att));
+            objAtts.forEach((att, i) => appendAttachmentRow(att, i === 0, i === objAtts.length - 1));
           });
-          // Edge case: prílohy bez priradeného objektu
+          // prílohy bez objektu
+          const noObj = atts.filter(a => !a.objectId).sort((a, b) => a.sortOrder - b.sortOrder);
           if (noObj.length) {
             appendSubsectionHeader("(bez priradeného objektu)");
-            noObj.forEach(att => appendAttachmentRow(att));
+            noObj.forEach((att, i) => appendAttachmentRow(att, i === 0, i === noObj.length - 1));
           }
         }
       });
@@ -857,19 +913,20 @@
 
     function handleOverviewClick(event) {
       const btn = event.target.closest("button[data-action]");
-      if (!btn) return;
+      if (!btn || btn.disabled) return;
       const action = btn.getAttribute("data-action");
       const uid    = btn.getAttribute("data-uid");
       if (!uid) return;
-      if (action === "revision") {
-        createRevision(uid);
-      } else if (action === "delete") {
+      if      (action === "move-up")   moveAttachment(uid, -1);
+      else if (action === "move-down") moveAttachment(uid,  1);
+      else if (action === "revision")  createRevision(uid);
+      else if (action === "delete") {
         project.attachments = project.attachments.filter(a => a.uid !== uid);
         recomputeAllPoz7(); renderOverview();
       }
     }
 
-    // ─ CSV
+    /* ── CSV ───────────────────────────────────────────────────────── */
     function csvEscape(value) {
       const s = String(value ?? "");
       return /[;"\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
@@ -877,10 +934,17 @@
 
     function exportCsv() {
       const rows = [];
-      rows.push(["TYPE","projectName","idStavby","stupenDoc","urcenie","identKod","objectId","objectName","objectNumber","objectType","scope","part","poz5","poz6","poz7","poz8","poz9","title","attachmentObjectId","uid","parentUid"]);
-      rows.push(["PROJECT", project.name, project.id, project.stupen, project.urcenie, project.identKod, "","","","","","","","","","","","","","",""]);
-      project.objects.forEach(obj => rows.push(["OBJECT","","","","","",obj.id, obj.name, obj.number, obj.type, "","","","","","","","","","",""]));
-      project.attachments.forEach(att => rows.push(["ATTACHMENT","","","","","","","","","",att.scope,att.part,att.poz5,att.poz6,att.poz7,att.poz8,att.poz9,att.title||"",att.objectId||"",att.uid||"",att.parentUid||""]));
+      rows.push(["TYPE","projectName","idStavby","stupenDoc","urcenie","identKod",
+        "objectId","objectName","objectNumber","objectType",
+        "scope","part","poz5","poz6","poz7","poz8","poz9","title","attachmentObjectId","uid","parentUid","sortOrder"]);
+      rows.push(["PROJECT", project.name, project.id, project.stupen, project.urcenie, project.identKod,
+        "","","","","","","","","","","","","","","",""]);
+      project.objects.forEach(obj =>
+        rows.push(["OBJECT","","","","","",obj.id,obj.name,obj.number,obj.type,"","","","","","","","","","","",""]));
+      project.attachments.forEach(att =>
+        rows.push(["ATTACHMENT","","","","","","","","","",
+          att.scope,att.part,att.poz5,att.poz6,att.poz7,att.poz8,att.poz9,att.title||"",
+          att.objectId||"",att.uid||"",att.parentUid||"",att.sortOrder ?? 0]));
       const csv  = rows.map(r => r.map(csvEscape).join(";")).join("\n");
       const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
       const url  = URL.createObjectURL(blob);
@@ -928,13 +992,21 @@
               project.objects.push(obj); objectIdMap.set(String(oldId), String(newId));
             } else if (type === "ATTACHMENT") {
               const rawObjId = cols[18]?cols[18].trim():"", objectId = rawObjId?(objectIdMap.get(rawObjId)||null):null;
-              const csvUid = cols[19]?cols[19].trim():"", csvParent = cols[20]?cols[20].trim():"";
+              const csvUid   = cols[19]?cols[19].trim():"", csvParent = cols[20]?cols[20].trim():"";
+              const sortOrder = cols[21] !== undefined ? parseInt(cols[21], 10) : 0;
               const newUid = csvUid || genUid();
               if (csvUid) uidMap.set(csvUid, newUid);
-              project.attachments.push({ uid: newUid, parentUid: null, scope: cols[10]||"project", part: cols[11]||"A", poz5: cols[12]||"", poz6: cols[13]||"", poz7: cols[14]||"", poz8: cols[15]||"", poz9: cols[16]||"00", title: cols[17]||"", objectId, _csvParent: csvParent });
+              project.attachments.push({ uid: newUid, parentUid: null,
+                scope: cols[10]||"project", part: cols[11]||"A",
+                poz5: cols[12]||"", poz6: cols[13]||"", poz7: cols[14]||"",
+                poz8: cols[15]||"", poz9: cols[16]||"00", title: cols[17]||"",
+                objectId, sortOrder: isNaN(sortOrder) ? 0 : sortOrder, _csvParent: csvParent });
             }
           });
-          project.attachments.forEach(att => { if (att._csvParent) att.parentUid = uidMap.get(att._csvParent)||att._csvParent; delete att._csvParent; });
+          project.attachments.forEach(att => {
+            if (att._csvParent) att.parentUid = uidMap.get(att._csvParent)||att._csvParent;
+            delete att._csvParent;
+          });
           sortObjects(); recomputeAllPoz7();
           projectNameInput.value = project.name; idStavbyInput.value = project.id;
           stupenDocSelect.value = project.stupen; urcenieInput.value = project.urcenie; identKodInput.value = project.identKod;
@@ -948,7 +1020,7 @@
       reader.readAsText(file, "utf-8");
     }
 
-    // ─ Event listenery
+    /* ── Event listenery ───────────────────────────────────────────── */
     document.getElementById("saveProjectBtn").addEventListener("click", saveProject);
     document.getElementById("resetProjectBtn").addEventListener("click", resetProject);
     addObjectBtn.addEventListener("click", addObject);
