@@ -381,7 +381,6 @@
       <table aria-label="Úplný prehľad zoznamu dokumentácie A00">
         <thead>
           <tr>
-            <th>Objekt / súbor</th>
             <th>Profesia (6)</th>
             <th>Poradie (7)</th>
             <th>Typ (8)</th>
@@ -451,7 +450,7 @@
 
     const PART_LABELS = { A: "A – Zoznam dokumentácie", B: "B – Súhrnná správa", C: "C – Situačné výkresy", D: "D – Dokumentácia stavebných objektov a prevádzkových súborov", E: "E – Prílohy" };
     const PART_ORDER  = ["A", "B", "C", "D", "E"];
-    const OVERVIEW_COLS = 8;
+    const OVERVIEW_COLS = 7;
 
     const projectNameInput       = document.getElementById("projectName");
     const idStavbyInput          = document.getElementById("idStavby");
@@ -588,12 +587,6 @@
       return project.attachments.filter(a => groupKey(a) === gk).sort((a, b) => a.sortOrder - b.sortOrder);
     }
 
-    /*
-     * normalizeSortOrders – zaistí, že každá skupina má unikátne,
-     * vzostupné sortOrder hodnoty (0, 1, 2, …).
-     * Volá sa po importe CSV, aby staré súbory (bez stĺpca sortOrder)
-     * alebo súbory s kolíziami (všetky = 0) fungovali správne.
-     */
     function normalizeSortOrders() {
       const groups = {};
       project.attachments.forEach(a => {
@@ -602,8 +595,6 @@
         groups[gk].push(a);
       });
       Object.values(groups).forEach(list => {
-        /* Najprv zoradiť podľa aktuálneho sortOrder (zachová zámer exportu),
-           potom prideliť čisté indexy 0, 1, 2, … */
         list.sort((a, b) => a.sortOrder - b.sortOrder);
         list.forEach((att, idx) => { att.sortOrder = idx; });
       });
@@ -851,15 +842,11 @@
     function appendAttachmentRow(att, isFirst, isLast) {
       const tr = document.createElement("tr");
       if (att.parentUid) tr.classList.add("is-revision");
-      const objLabel = att.scope === "object" && att.objectId
-        ? (() => { const obj = project.objects.find(o => o.id.toString() === att.objectId); return obj ? `${obj.code} – ${obj.name}` : att.objectId; })()
-        : "projekt";
       const filename = buildFilename(att);
       const rev9display = att.poz9 === "00"
         ? `<span style="color:var(--color-text-muted)">–</span>`
         : `${att.poz9}<span class="rev-badge">rev. ${att.poz9}</span>`;
       tr.innerHTML = `
-        <td>${objLabel}</td>
         <td>${att.poz6}</td>
         <td>${att.poz7}</td>
         <td>${att.poz8}</td>
@@ -974,12 +961,10 @@
           const rows = lines.map(parseCsvLine), header = rows[0];
           if (!header.length || header[0] !== "TYPE") throw new Error("CSV nemá očakávanú hlavičku.");
 
-          /* Zistiť, či CSV obsahuje stĺpec sortOrder (index 21) */
           const hasSortOrderCol = header.length > 21 && header[21] === "sortOrder";
 
           Object.assign(project, { name:"", id:"", stupen:"", urcenie:"", identKod:"", objects:[], attachments:[] });
           const objectIdMap = new Map(), uidMap = new Map();
-          /* Počítadlo poradia príloh per skupina – použije sa, keď CSV nemá sortOrder */
           const groupRowCounter = {};
 
           rows.slice(1).forEach(cols => {
@@ -1000,14 +985,11 @@
               const newUid    = csvUid || genUid();
               if (csvUid) uidMap.set(csvUid, newUid);
 
-              /* sortOrder: ak CSV stĺpec existuje a je číslo, použi ho;
-                 inak prideľ poradie podľa pozície riadku v súbore (per skupina) */
               let sortOrder;
               if (hasSortOrderCol && cols[21] !== undefined && cols[21].trim() !== "") {
                 const parsed = parseInt(cols[21], 10);
                 sortOrder = isNaN(parsed) ? 0 : parsed;
               } else {
-                /* Odvodiť dočasný groupKey zo surových dát (objectId ešte neremapovaný) */
                 const rawPart = cols[11] || "A";
                 const tempGk  = rawPart === "D" ? `D|${rawObjId}` : rawPart;
                 if (groupRowCounter[tempGk] === undefined) groupRowCounter[tempGk] = 0;
@@ -1030,7 +1012,6 @@
           });
 
           sortObjects();
-          /* Normalizácia zaistí unikátne, kompaktné indexy (dôležité pre staré CSV) */
           normalizeSortOrders();
           recomputeAllPoz7();
 
