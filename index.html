@@ -460,11 +460,13 @@
           </div>
         </div>
         <div class="fieldset-row">
-          <div>
+          <div id="poz6Wrapper">
             <label for="poz6">Pozícia 6 – profesia / podrobné členenie</label>
+            <!-- select alebo input sa vkladá dynamicky funkciou updatePoz6Mode() -->
             <select id="poz6">
               <!-- možnosti sa generujú dynamicky podľa zvolenej časti -->
             </select>
+            <div class="help-text" id="poz6HelpText"></div>
           </div>
           <div>
             <label for="poz7">Pozícia 7 – poradové číslo dokumentu (generuje sa automaticky)</label>
@@ -605,10 +607,10 @@
         { value: "INE", label: "INE – iná profesia / príloha" }
       ];
 
-      // Kódy vylúčené pre časť D
+      // Kódy vylúčené pre časť D (stavebné objekty Sxx)
       const POZ6_EXCLUDED_FOR_D = new Set(["AAA", "SPR", "SIT"]);
 
-      // Kódy povolené pre každú časť dokumentácie (null = všetky okrem vylúčených)
+      // Kódy povolené pre každú časť dokumentácie
       const POZ6_ALLOWED_BY_PART = {
         A: ["AAA"],
         B: ["SPR"],
@@ -637,7 +639,8 @@
       const objectsTableBody       = document.getElementById("objectsTableBody");
       const attachmentObjectSelect = document.getElementById("attachmentObject");
       const attachmentPartSelect   = document.getElementById("attachmentPart");
-      const poz6Select             = document.getElementById("poz6");
+      const poz6Wrapper            = document.getElementById("poz6Wrapper");
+      const poz6HelpText           = document.getElementById("poz6HelpText");
       const poz8Select             = document.getElementById("poz8");
       const poz7Input              = document.getElementById("poz7");
       const poz9Input              = document.getElementById("poz9");
@@ -649,6 +652,79 @@
       const exportCsvBtn           = document.getElementById("exportCsvBtn");
       const importCsvInput         = document.getElementById("importCsvInput");
       const csvStatus              = document.getElementById("csvStatus");
+
+      // Aktuálny režim pozície 6: "select" alebo "input"
+      let poz6Mode = "select";
+
+      function getPoz6El() {
+        return document.getElementById("poz6");
+      }
+
+      function getPoz6Value() {
+        const el = getPoz6El();
+        if (!el) return "";
+        return el.tagName === "SELECT" ? el.value : el.value.trim().toUpperCase();
+      }
+
+      function setPoz6Value(val) {
+        const el = getPoz6El();
+        if (!el) return;
+        if (el.tagName === "SELECT") {
+          el.value = val;
+        } else {
+          el.value = val;
+        }
+      }
+
+      // Vráti typ vybraného objektu ("S", "P" alebo null)
+      function getSelectedAttachmentObjectType() {
+        const objId = attachmentObjectSelect.value;
+        if (!objId) return null;
+        const obj = project.objects.find(o => o.id.toString() === objId);
+        return obj ? obj.type : null;
+      }
+
+      // Prepne poz6 medzi select a input podľa typu vybraného objektu
+      function updatePoz6Mode() {
+        const part    = attachmentPartSelect.value;
+        const objType = getSelectedAttachmentObjectType();
+        const needInput = (part === "D" && objType === "P");
+
+        if (needInput && poz6Mode !== "input") {
+          // Prepnutie na input
+          const oldEl  = getPoz6El();
+          const input  = document.createElement("input");
+          input.type   = "text";
+          input.id     = "poz6";
+          input.maxLength = 3;
+          input.placeholder = "napr. 001";
+          input.pattern = "[0-9]{3}";
+          input.inputMode = "numeric";
+          // Obmedzenie na číslice a max 3 znaky
+          input.addEventListener("input", () => {
+            input.value = input.value.replace(/[^0-9]/g, "").slice(0, 3);
+            updatePoz7Preview();
+          });
+          poz6Wrapper.replaceChild(input, oldEl);
+          poz6HelpText.textContent = "Zadaj 3-ciferné číslo prevádzkového súboru (napr. 001).";
+          poz6Mode = "input";
+        } else if (!needInput && poz6Mode !== "select") {
+          // Prepnutie späť na select
+          const oldEl  = getPoz6El();
+          const select = document.createElement("select");
+          select.id    = "poz6";
+          select.addEventListener("change", updatePoz7Preview);
+          poz6Wrapper.replaceChild(select, oldEl);
+          poz6HelpText.textContent = "";
+          poz6Mode = "select";
+          updatePoz6Options();
+        } else if (!needInput && poz6Mode === "select") {
+          // Mód je správny (select), len obnov možnosti
+          updatePoz6Options();
+        }
+        // Ak needInput && poz6Mode === "input", mód je správny – nič nerob
+        updatePoz7Preview();
+      }
 
       function genUid() {
         return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
@@ -669,43 +745,42 @@
         if (!isD) attachmentObjectSelect.value = "";
       }
 
-      // Dynamicky filtruje možnosti pozície 6 podľa zvolenej časti dokumentácie
+      // Dynamicky filtruje možnosti pozície 6 (len keď je v režime select)
       function updatePoz6Options() {
+        const el = getPoz6El();
+        if (!el || el.tagName !== "SELECT") return;
+
         const part      = attachmentPartSelect.value;
         const allowed   = POZ6_ALLOWED_BY_PART[part] || null;
-        const prevValue = poz6Select.value;
+        const prevValue = el.value;
 
-        poz6Select.innerHTML = "";
+        el.innerHTML = "";
 
         const placeholder = document.createElement("option");
         placeholder.value = "";
         placeholder.textContent = "-- vyber --";
-        poz6Select.appendChild(placeholder);
+        el.appendChild(placeholder);
 
         ALL_POZ6_OPTIONS.forEach(opt => {
           if (allowed === null || allowed.includes(opt.value)) {
-            const el = document.createElement("option");
-            el.value = opt.value;
-            el.textContent = opt.label;
-            poz6Select.appendChild(el);
+            const option = document.createElement("option");
+            option.value = opt.value;
+            option.textContent = opt.label;
+            el.appendChild(option);
           }
         });
 
-        // Ak predchádzajúca hodnota je stále dostupná, ponechaj ju; inak resetuj
         if (allowed === null || (prevValue && allowed.includes(prevValue))) {
-          poz6Select.value = prevValue;
+          el.value = prevValue;
         } else {
-          poz6Select.value = "";
-          // Ak je len jedna povolená možnosť, vyber ju automaticky
-          if (allowed && allowed.length === 1) {
-            poz6Select.value = allowed[0];
-          }
+          el.value = "";
+          if (allowed && allowed.length === 1) el.value = allowed[0];
         }
 
         updatePoz7Preview();
       }
 
-      // Zoradí objekty: najprv všetky S (stavebné objekty) vzostupne, potom všetky P (prevádzkové súbory) vzostupne
+      // Zoradí objekty: najprv všetky S vzostupne, potom všetky P vzostupne
       function sortObjects() {
         const typeRank = { S: 0, P: 1 };
         project.objects.sort((a, b) => {
@@ -766,7 +841,7 @@
         const scope    = getAttachmentScope();
         const part     = attachmentPartSelect.value;
         const objectId = attachmentObjectSelect.value;
-        const poz6     = poz6Select.value;
+        const poz6     = getPoz6Value();
         const poz8     = poz8Select.value;
         if (!poz6 || !poz8) { poz7Input.value = ""; return; }
         if (scope === "object" && !objectId) { poz7Input.value = ""; return; }
@@ -802,7 +877,7 @@
         projectStatus.textContent = "Projekt vyčistený.";
         projectStatus.style.color = "var(--color-text-muted)";
         updateObjectSelectState();
-        updatePoz6Options();
+        updatePoz6Mode();
       }
 
       // ── Objekty
@@ -831,6 +906,8 @@
 
         if (prevObjectId) attachmentObjectSelect.value = prevObjectId;
         updateObjectSelectState();
+        // Prehodnoť mód poz6 po prekreslení zoznamu (typ vybraného objektu sa mohol zmeniť)
+        updatePoz6Mode();
       }
 
       function handleObjectsClick(event) {
@@ -879,11 +956,22 @@
         const scope    = getAttachmentScope();
         const part     = attachmentPartSelect.value;
         const objectId = attachmentObjectSelect.value;
-        const poz6     = poz6Select.value;
+        const poz6     = getPoz6Value();
         const poz8     = poz8Select.value;
         const title    = attachmentTitleInput.value.trim();
-        if (!poz6 || !poz8) { attachmentError.textContent = "Vyplň pozície 6 a 8 pre prílohu."; return; }
-        if (!allowedPoz6.has(poz6)) { attachmentError.textContent = "Pozícia 6 obsahuje nepovolený kód."; return; }
+
+        if (!poz6) { attachmentError.textContent = "Vyplň pozíciu 6."; return; }
+
+        // Validácia poz6 podľa aktuálneho módu
+        if (poz6Mode === "input") {
+          if (!/^[0-9]{3}$/.test(poz6)) {
+            attachmentError.textContent = "Pozícia 6 musí byť presne 3-ciferné číslo (napr. 001)."; return;
+          }
+        } else {
+          if (!allowedPoz6.has(poz6)) { attachmentError.textContent = "Pozícia 6 obsahuje nepovolený kód."; return; }
+        }
+
+        if (!poz8) { attachmentError.textContent = "Vyplň pozíciu 8."; return; }
         if (!allowedPoz8.has(poz8)) { attachmentError.textContent = "Pozícia 8 obsahuje nepovolený typ dokumentu."; return; }
         if (scope === "object" && !objectId) {
           attachmentError.textContent = "Pre prílohu k časti D vyber konkrétny stavebný objekt."; return;
@@ -926,11 +1014,13 @@
       }
 
       function clearAttachmentFormAfterAdd() {
-        poz6Select.value = "";
-        // Ak je pre aktuálnu časť len jedna možnosť, predvyber ju znova
-        const part    = attachmentPartSelect.value;
-        const allowed = POZ6_ALLOWED_BY_PART[part];
-        if (allowed && allowed.length === 1) poz6Select.value = allowed[0];
+        const el = getPoz6El();
+        if (el) el.value = "";
+        if (poz6Mode === "select") {
+          const part    = attachmentPartSelect.value;
+          const allowed = POZ6_ALLOWED_BY_PART[part];
+          if (allowed && allowed.length === 1) setPoz6Value(allowed[0]);
+        }
         poz8Select.value = "";
         poz9Input.value  = "00";
         attachmentTitleInput.value = "";
@@ -945,7 +1035,7 @@
         attachmentTitleInput.value = "";
         attachmentError.textContent = "";
         updateObjectSelectState();
-        updatePoz6Options();
+        updatePoz6Mode();
       }
 
       // ── Render tabuľky príloh
@@ -1167,18 +1257,20 @@
       clearAttachmentFormBtn.addEventListener("click", clearAttachmentForm);
       attachmentPartSelect.addEventListener("change", () => {
         updateObjectSelectState();
-        updatePoz6Options();
+        updatePoz6Mode();
+      });
+      attachmentObjectSelect.addEventListener("change", () => {
+        updatePoz6Mode();
+        updatePoz7Preview();
       });
       overviewTableBody.addEventListener("click", handleOverviewClick);
-      attachmentObjectSelect.addEventListener("change", updatePoz7Preview);
-      poz6Select.addEventListener("change", updatePoz7Preview);
       poz8Select.addEventListener("change", updatePoz7Preview);
       exportCsvBtn.addEventListener("click", exportCsv);
       importCsvInput.addEventListener("change", importCsvFile);
 
       // Inicializácia
       updateObjectSelectState();
-      updatePoz6Options();
+      updatePoz6Mode();
     })();
   </script>
 </body>
