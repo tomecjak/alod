@@ -363,7 +363,7 @@
               <option value="D">D – Dokumentácia stavebných objektov</option>
               <option value="E">E – Prílohy</option>
             </select>
-            <div class="help-text">Pre časti A, B kódovanie končí na pozícii 6. Pre časť C kódovanie končí na pozícii 7. Pre časti D, E pokračuje ďalej.</div>
+            <div class="help-text">Pre časti A, B kódovanie končí na pozícii 6. Pre časti C, E kódovanie končí na pozícii 7. Pre časť D pokračuje ďalej.</div>
           </div>
           <div>
             <label for="attachmentObject">Stavebný objekt / súbor (aktívny len pre časť D)</label>
@@ -473,7 +473,7 @@
     // Časti kde kódovanie končí na pozícii 6 (poz7 a poz8 sa nepoužívajú)
     const PARTS_END_AT_POZ6 = new Set(["A", "B"]);
     // Časti kde kódovanie končí na pozícii 7 (poz8 sa nepoužíva)
-    const PARTS_END_AT_POZ7 = new Set(["C"]);
+    const PARTS_END_AT_POZ7 = new Set(["C", "E"]);
 
     function groupKey(att) {
       return att.part === "D" ? `D|${att.objectId || ""}` : att.part;
@@ -571,7 +571,7 @@
     }
 
     // Aktualizuje stav pozície 8 – pre časti A, B je neaktívna (koniec na poz6)
-    // Pre časť C je tiež neaktívna (koniec na poz7)
+    // Pre časti C, E je tiež neaktívna (koniec na poz7)
     function updatePoz8State() {
       const part = attachmentPartSelect.value;
       const isDisabledAt6 = PARTS_END_AT_POZ6.has(part);
@@ -732,7 +732,7 @@
         list.forEach(att => {
           if (PARTS_END_AT_POZ6.has(att.part)) { att.poz7 = ""; return; }
           if (att.poz8 === "AAA" || att.poz8 === "TXT") { att.poz7 = "000"; return; }
-          // Pre časť C (koniec na poz7): automatické číslovanie, ale poz8 sa nepoužíva
+          // Pre časti C a E (koniec na poz7): automatické číslovanie, poz8 sa nepoužíva
           if (PARTS_END_AT_POZ7.has(att.part)) {
             const gk = groupKey(att);
             const rootUid = att.parentUid || att.uid;
@@ -764,7 +764,7 @@
 
     function computeNextPoz7Preview(scope, part, objectId, poz8) {
       if (PARTS_END_AT_POZ6.has(part)) return "";
-      // Pre časť C poz7 sa generuje automaticky (poz8 ignorujeme)
+      // Pre časti C a E poz7 sa generuje automaticky (poz8 ignorujeme)
       if (PARTS_END_AT_POZ7.has(part)) {
         const gk  = part === "D" ? `D|${objectId || ""}` : part;
         let max = 0;
@@ -793,7 +793,7 @@
       const poz6 = getPoz6Value(), poz8 = poz8Select.value;
       if (PARTS_END_AT_POZ6.has(part)) { poz7Input.value = ""; return; }
       if (!poz6) { poz7Input.value = ""; return; }
-      // Pre časť C nevyžadujeme poz8
+      // Pre časti C a E nevyžadujeme poz8
       if (!PARTS_END_AT_POZ7.has(part) && !poz8) { poz7Input.value = ""; return; }
       if (scope === "object" && !objectId) { poz7Input.value = ""; return; }
       poz7Input.value = computeNextPoz7Preview(scope, part, objectId, poz8);
@@ -898,7 +898,7 @@
       }
 
       // Pre časti A a B pozícia 8 nie je povinná ani aktívna
-      // Pre časť C tiež nie (koniec na poz7)
+      // Pre časti C a E tiež nie (koniec na poz7)
       const poz8 = (PARTS_END_AT_POZ6.has(part) || PARTS_END_AT_POZ7.has(part)) ? "" : poz8Select.value;
       if (!PARTS_END_AT_POZ6.has(part) && !PARTS_END_AT_POZ7.has(part)) {
         if (!poz8) { attachmentError.textContent = "Vyplň pozíciu 8."; return; }
@@ -961,13 +961,13 @@
       if (PARTS_END_AT_POZ6.has(att.part)) {
         return parts.join("_");
       }
-      // Pre časť C kódovanie končí na pozícii 7
+      // Pre časti C a E kódovanie končí na pozícii 7
       if (PARTS_END_AT_POZ7.has(att.part)) {
         parts.push(att.poz7);
         if (att.poz9 !== "00") parts.push(att.poz9);
         return parts.join("_");
       }
-      // Pre ostatné časti (D, E) pokračuje poz8
+      // Pre časť D pokračuje poz8
       parts.push(att.poz7, att.poz8);
       if (att.poz9 !== "00") parts.push(att.poz9);
       return parts.join("_");
