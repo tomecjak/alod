@@ -425,19 +425,6 @@
         <h2 id="attachments-heading">Prílohy dokumentácie – generovanie názvu súboru</h2>
         <span class="tag">Pozície 5 – 9</span>
       </div>
-      <fieldset>
-        <legend class="help-text" style="margin-bottom: var(--space-3);">Scope prílohy</legend>
-        <div class="inline-radio">
-          <label>
-            <input type="radio" name="attachmentScope" value="project" checked />
-            <span>Príloha k projektu (časti A, B, C, E – A00/B00/C00/E00)</span>
-          </label>
-          <label>
-            <input type="radio" name="attachmentScope" value="object" />
-            <span>Príloha k stavebnému objektu / prevádzkovému súboru (časť D – Sxx/Pxx)</span>
-          </label>
-        </div>
-      </fieldset>
 
       <fieldset>
         <div class="fieldset-row">
@@ -450,14 +437,14 @@
               <option value="E">E – Prílohy</option>
               <option value="D">D – Dokumentácia stavebných objektov</option>
             </select>
-            <div class="help-text">Pre projekt sa typicky používajú časti A, B, C, E; časť D je viazaná na objekt.</div>
+            <div class="help-text">Pre časti A, B, C, E je pozícia 5 automaticky Xxx00. Pre časť D vyber konkrétny objekt.</div>
           </div>
           <div>
-            <label for="attachmentObject">Stavebný objekt / súbor (pre časť D)</label>
-            <select id="attachmentObject">
+            <label for="attachmentObject">Stavebný objekt / súbor (aktívny len pre časť D)</label>
+            <select id="attachmentObject" disabled>
               <option value="">-- vyber objekt --</option>
             </select>
-            <div class="help-text">Pri častiach A, B, C, E je výber objektu deaktivovaný; aktivuje sa len pre D + scope „k objektu".</div>
+            <div class="help-text">Aktivuje sa automaticky po vybraní časti D.</div>
           </div>
         </div>
         <div class="fieldset-row">
@@ -483,7 +470,7 @@
               <option value="SHZ">SHZ – stabilné hasiace zariadenia</option>
               <option value="ODT">ODT – odvod dymu a tepla</option>
               <option value="USV">USV – umelé osvetlenie</option>
-              <option value="KRA">KRA – krajinné úpravy</option>
+              <option value="KRA">KRA – krajinné úpraavy</option>
               <option value="DOP">DOP – dopravné riešenie</option>
               <option value="POD">POD – projekt organizácie dopravy</option>
               <option value="TDZ">TDZ – trvalé dopravné značenie</option>
@@ -573,7 +560,7 @@
         <span class="tag">Generovaný zo všetkých príloh</span>
       </div>
       <p class="help-text">
-        Každý riadok odpovedá jednej prílohe. Revízie sú podfarbené a previazané s pôvodnou prílohou.
+        Každý riadok odpovedá jednej prílohe. Revízie sú podfarbené a previazáné s pôvodnou prílohou.
         Pozícia 9 = 00 sa v názve súboru nezobrazuje; revízie 01+ sa zobrazia.
       </p>
       <table aria-label="Úplný prehľad zoznamu dokumentácie A00">
@@ -626,7 +613,6 @@
       const addObjectBtn           = document.getElementById("addObjectBtn");
       const objectsTableBody       = document.getElementById("objectsTableBody");
       const attachmentObjectSelect = document.getElementById("attachmentObject");
-      const attachmentScopeRadio   = document.querySelectorAll("input[name='attachmentScope']");
       const attachmentPartSelect   = document.getElementById("attachmentPart");
       const poz6Select             = document.getElementById("poz6");
       const poz8Select             = document.getElementById("poz8");
@@ -650,17 +636,15 @@
         return sel ? sel.value : "S";
       }
 
+      // Scope je odvodený priamo z výberu časti: D = object, ostatné = project
       function getAttachmentScope() {
-        const sel = document.querySelector("input[name='attachmentScope']:checked");
-        return sel ? sel.value : "project";
+        return attachmentPartSelect.value === "D" ? "object" : "project";
       }
 
       function updateObjectSelectState() {
-        const scope = getAttachmentScope();
-        const part  = attachmentPartSelect.value;
-        const shouldEnable = scope === "object" && part === "D";
-        attachmentObjectSelect.disabled = !shouldEnable;
-        if (!shouldEnable) attachmentObjectSelect.value = "";
+        const isD = attachmentPartSelect.value === "D";
+        attachmentObjectSelect.disabled = !isD;
+        if (!isD) attachmentObjectSelect.value = "";
       }
 
       function derivePozicia5(scope, part, objectId) {
@@ -673,17 +657,17 @@
         }
       }
 
-      // ── Prepočet poz7 ────────────────────────────────────────────────────────
+      // ── Prepočet poz7
       function recomputeAllPoz7() {
         const groupCounters  = {};
         const identityToPoz7 = {};
-        const sorted = [...project.attachments].sort((a, b) => {
-          return (a.parentUid ? 1 : 0) - (b.parentUid ? 1 : 0);
-        });
+        const sorted = [...project.attachments].sort((a, b) =>
+          (a.parentUid ? 1 : 0) - (b.parentUid ? 1 : 0)
+        );
         sorted.forEach(att => {
           if (att.poz8 === "AAA" || att.poz8 === "TXT") { att.poz7 = "000"; return; }
-          const groupKey   = `${att.part}|${att.scope}|${att.objectId || ""}`;
-          const rootUid    = att.parentUid || att.uid;
+          const groupKey = `${att.part}|${att.scope}|${att.objectId || ""}`;
+          const rootUid  = att.parentUid || att.uid;
           if (identityToPoz7[rootUid] !== undefined) {
             att.poz7 = identityToPoz7[rootUid];
           } else {
@@ -716,11 +700,11 @@
         const poz6     = poz6Select.value;
         const poz8     = poz8Select.value;
         if (!poz6 || !poz8) { poz7Input.value = ""; return; }
-        if (scope === "object" && part === "D" && !objectId) { poz7Input.value = ""; return; }
+        if (scope === "object" && !objectId) { poz7Input.value = ""; return; }
         poz7Input.value = computeNextPoz7Preview(scope, part, objectId, poz8);
       }
 
-      // ── Projekt ────────────────────────────────────────────────────────────────
+      // ── Projekt
       function saveProject() {
         project.name     = projectNameInput.value.trim();
         project.id       = idStavbyInput.value.trim();
@@ -752,7 +736,7 @@
         updatePoz7Preview();
       }
 
-      // ── Objekty ────────────────────────────────────────────────────────────────
+      // ── Objekty
       function renderObjects() {
         objectsTableBody.innerHTML = "";
         attachmentObjectSelect.innerHTML = '<option value="">-- vyber objekt --</option>';
@@ -781,7 +765,7 @@
         renderObjects();
       }
 
-      // ── Prílohy ────────────────────────────────────────────────────────────────
+      // ── Prílohy
       function addAttachment() {
         attachmentError.textContent = "";
         if (!project.id || !project.stupen || !project.urcenie || !project.identKod) {
@@ -796,7 +780,7 @@
         if (!poz6 || !poz8) { attachmentError.textContent = "Vyplň pozície 6 a 8 pre prílohu."; return; }
         if (!allowedPoz6.has(poz6)) { attachmentError.textContent = "Pozícia 6 obsahuje nepovolený kód."; return; }
         if (!allowedPoz8.has(poz8)) { attachmentError.textContent = "Pozícia 8 obsahuje nepovolený typ dokumentu."; return; }
-        if (scope === "object" && part === "D" && !objectId) {
+        if (scope === "object" && !objectId) {
           attachmentError.textContent = "Pre prílohu k časti D vyber konkrétny stavebný objekt."; return;
         }
         const poz5 = derivePozicia5(scope, part, objectId);
@@ -814,7 +798,7 @@
         clearAttachmentForm();
       }
 
-      // ── Vytvoriť revíziu ───────────────────────────────────────────────────────
+      // ── Revízia
       function createRevision(index) {
         const base    = project.attachments[index];
         const rootUid = base.parentUid || base.uid;
@@ -841,18 +825,16 @@
         poz6Select.value = ""; poz8Select.value = "";
         poz9Input.value = "00";
         attachmentTitleInput.value = "";
-        attachmentScopeRadio.forEach(r => { if (r.value === "project") r.checked = true; });
         updateObjectSelectState();
         attachmentError.textContent = "";
         poz7Input.value = "";
       }
 
-      // ── Render tabuľky ─────────────────────────────────────────────────────────
+      // ── Render tabuľky
       function buildFilename(att) {
         if (!project.id || !project.stupen || !project.urcenie || !project.identKod) {
           return "(projektové pozície 1–4 nie sú kompletné)";
         }
-        // poz9 = 00 sa vynechá z názvu súboru
         const parts = [
           project.id, project.stupen, project.urcenie, project.identKod,
           att.poz5, att.poz6, att.poz7, att.poz8
@@ -865,8 +847,7 @@
         overviewTableBody.innerHTML = "";
         project.attachments.forEach((att, index) => {
           const tr = document.createElement("tr");
-          const isRevision = !!att.parentUid;
-          if (isRevision) tr.classList.add("is-revision");
+          if (att.parentUid) tr.classList.add("is-revision");
 
           const objLabel = (() => {
             if (att.scope === "object" && att.objectId) {
@@ -877,8 +858,6 @@
           })();
 
           const filename = buildFilename(att);
-
-          // Stlpec Revízia (9): pri 00 zobraz pomlčku, pri vyšších zobraz číslo + badge
           const rev9display = att.poz9 === "00"
             ? `<span style="color:var(--color-text-muted)">–</span>`
             : `${att.poz9}<span class="rev-badge">rev. ${att.poz9}</span>`;
@@ -926,7 +905,7 @@
         renderOverview();
       }
 
-      // ── CSV ────────────────────────────────────────────────────────────────────
+      // ── CSV
       function csvEscape(value) {
         const s = String(value ?? "");
         return /[;"\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
@@ -1060,14 +1039,13 @@
         reader.readAsText(file, "utf-8");
       }
 
-      // ── Event listenery ────────────────────────────────────────────────────────
+      // ── Event listenery
       document.getElementById("saveProjectBtn").addEventListener("click", saveProject);
       document.getElementById("resetProjectBtn").addEventListener("click", resetProject);
       addObjectBtn.addEventListener("click", addObject);
       addAttachmentBtn.addEventListener("click", addAttachment);
       clearAttachmentFormBtn.addEventListener("click", clearAttachmentForm);
       attachmentPartSelect.addEventListener("change", () => { updateObjectSelectState(); updatePoz7Preview(); });
-      attachmentScopeRadio.forEach(r => r.addEventListener("change", () => { updateObjectSelectState(); updatePoz7Preview(); }));
       overviewTableBody.addEventListener("click", handleOverviewClick);
       attachmentObjectSelect.addEventListener("change", updatePoz7Preview);
       poz6Select.addEventListener("change", updatePoz7Preview);
