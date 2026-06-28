@@ -463,40 +463,7 @@
           <div>
             <label for="poz6">Pozícia 6 – profesia / podrobné členenie</label>
             <select id="poz6">
-              <option value="">-- vyber --</option>
-              <option value="AAA">AAA – zoznam dokumentácie (časť A00)</option>
-              <option value="SPR">SPR – súhrnná správa (časť B00)</option>
-              <option value="SIT">SIT – situácia (časť C00)</option>
-              <option value="ASR">ASR – architektonicko–stavebné riešenie</option>
-              <option value="STA">STA – statika</option>
-              <option value="ZTI">ZTI – zdravotechnická inštalácia</option>
-              <option value="VYK">VYK – vykurovanie</option>
-              <option value="PLY">PLY – plyn</option>
-              <option value="VZT">VZT – vzduchotechnika a chladenie</option>
-              <option value="MAR">MAR – meranie a regulácia</option>
-              <option value="ELI">ELI – elektroinštalácia</option>
-              <option value="BLZ">BLZ – bleskozvod a uzemnenie</option>
-              <option value="SLP">SLP – slaboprúdové rozvody</option>
-              <option value="HSP">HSP – hlasová signalizácia požiaru</option>
-              <option value="EPS">EPS – elektrická požiarna signalizácia</option>
-              <option value="SHZ">SHZ – stabilné hasiace zariadenia</option>
-              <option value="ODT">ODT – odvod dymu a tepla</option>
-              <option value="USV">USV – umelé osvetlenie</option>
-              <option value="KRA">KRA – krajinné úpraavy</option>
-              <option value="DOP">DOP – dopravné riešenie</option>
-              <option value="POD">POD – projekt organizácie dopravy</option>
-              <option value="TDZ">TDZ – trvalé dopravné značenie</option>
-              <option value="DDZ">DDZ – dočasné dopravné značenie</option>
-              <option value="SZS">SZS – správa o prerokovaní stavebného zámeru</option>
-              <option value="STD">STD – stavebný denník</option>
-              <option value="ZSS">ZSS – záverečné stanovisko stavbyvedúceho</option>
-              <option value="PBS">PBS – posúdenie protipožiarnej bezpečnosti</option>
-              <option value="POV">POV – plán organizácie výstavby</option>
-              <option value="GDP">GDP – geodetické podklady</option>
-              <option value="PAM">PAM – pamiatkový výskum</option>
-              <option value="EIA">EIA – posúdenie vplyvov na životné prostredie</option>
-              <option value="ECB">ECB – energetický certifikát budovy</option>
-              <option value="INE">INE – iná profesia / príloha</option>
+              <!-- možnosti sa generujú dynamicky podľa zvolenej časti -->
             </select>
           </div>
           <div>
@@ -601,12 +568,53 @@
         objects: [], attachments: []
       };
 
-      const allowedPoz6 = new Set([
-        "AAA","SPR","SIT",
-        "ASR","STA","ZTI","VYK","PLY","VZT","MAR","ELI","BLZ","SLP","HSP","EPS","SHZ","ODT","USV","KRA",
-        "DOP","POD","TDZ","DDZ",
-        "SZS","STD","ZSS","PBS","POV","GDP","PAM","EIA","ECB","INE"
-      ]);
+      // Všetky možnosti pre pozíciu 6
+      const ALL_POZ6_OPTIONS = [
+        { value: "AAA", label: "AAA – zoznam dokumentácie (časť A00)" },
+        { value: "SPR", label: "SPR – súhrnná správa (časť B00)" },
+        { value: "SIT", label: "SIT – situácia (časť C00)" },
+        { value: "ASR", label: "ASR – architektonicko–stavebné riešenie" },
+        { value: "STA", label: "STA – statika" },
+        { value: "ZTI", label: "ZTI – zdravotechnická inštalácia" },
+        { value: "VYK", label: "VYK – vykurovanie" },
+        { value: "PLY", label: "PLY – plyn" },
+        { value: "VZT", label: "VZT – vzduchotechnika a chladenie" },
+        { value: "MAR", label: "MAR – meranie a regulácia" },
+        { value: "ELI", label: "ELI – elektroinštalácia" },
+        { value: "BLZ", label: "BLZ – bleskozvod a uzemnenie" },
+        { value: "SLP", label: "SLP – slaboprúdové rozvody" },
+        { value: "HSP", label: "HSP – hlasová signalizácia požiaru" },
+        { value: "EPS", label: "EPS – elektrická požiarna signalizácia" },
+        { value: "SHZ", label: "SHZ – stabilné hasiace zariadenia" },
+        { value: "ODT", label: "ODT – odvod dymu a tepla" },
+        { value: "USV", label: "USV – umelé osvetlenie" },
+        { value: "KRA", label: "KRA – krajinné úpravy" },
+        { value: "DOP", label: "DOP – dopravné riešenie" },
+        { value: "POD", label: "POD – projekt organizácie dopravy" },
+        { value: "TDZ", label: "TDZ – trvalé dopravné značenie" },
+        { value: "DDZ", label: "DDZ – dočasné dopravné značenie" },
+        { value: "SZS", label: "SZS – správa o prerokovaní stavebného zámeru" },
+        { value: "STD", label: "STD – stavebný denník" },
+        { value: "ZSS", label: "ZSS – záverečné stanovisko stavbyvedúceho" },
+        { value: "PBS", label: "PBS – posúdenie protipožiarnej bezpečnosti" },
+        { value: "POV", label: "POV – plán organizácie výstavby" },
+        { value: "GDP", label: "GDP – geodetické podklady" },
+        { value: "PAM", label: "PAM – pamiatkový výskum" },
+        { value: "EIA", label: "EIA – posúdenie vplyvov na životné prostredie" },
+        { value: "ECB", label: "ECB – energetický certifikát budovy" },
+        { value: "INE", label: "INE – iná profesia / príloha" }
+      ];
+
+      // Kódy povolené pre každú časť dokumentácie (null = všetky)
+      const POZ6_ALLOWED_BY_PART = {
+        A: ["AAA"],
+        B: ["SPR"],
+        C: ["SIT"],
+        D: null,
+        E: null
+      };
+
+      const allowedPoz6 = new Set(ALL_POZ6_OPTIONS.map(o => o.value));
 
       const allowedPoz8 = new Set([
         "AAA","TXT","SIT","VYT","VYZ","VYS","STV",
@@ -656,6 +664,42 @@
         const isD = attachmentPartSelect.value === "D";
         attachmentObjectSelect.disabled = !isD;
         if (!isD) attachmentObjectSelect.value = "";
+      }
+
+      // Dynamicky filtruje možnosti pozície 6 podľa zvolenej časti dokumentácie
+      function updatePoz6Options() {
+        const part       = attachmentPartSelect.value;
+        const allowed    = POZ6_ALLOWED_BY_PART[part] || null;
+        const prevValue  = poz6Select.value;
+
+        poz6Select.innerHTML = "";
+
+        const placeholder = document.createElement("option");
+        placeholder.value = "";
+        placeholder.textContent = "-- vyber --";
+        poz6Select.appendChild(placeholder);
+
+        ALL_POZ6_OPTIONS.forEach(opt => {
+          if (allowed === null || allowed.includes(opt.value)) {
+            const el = document.createElement("option");
+            el.value = opt.value;
+            el.textContent = opt.label;
+            poz6Select.appendChild(el);
+          }
+        });
+
+        // Ak predchádzajúca hodnota je stále dostupná, ponechaj ju; inak resetuj
+        if (allowed === null || (prevValue && allowed.includes(prevValue))) {
+          poz6Select.value = prevValue;
+        } else {
+          poz6Select.value = "";
+          // Ak je len jedna povolená možnosť, vyber ju automaticky
+          if (allowed && allowed.length === 1) {
+            poz6Select.value = allowed[0];
+          }
+        }
+
+        updatePoz7Preview();
       }
 
       // Zoradí objekty: najprv všetky S (stavebné objekty) vzostupne, potom všetky P (prevádzkové súbory) vzostupne
@@ -755,7 +799,7 @@
         projectStatus.textContent = "Projekt vyčistený.";
         projectStatus.style.color = "var(--color-text-muted)";
         updateObjectSelectState();
-        updatePoz7Preview();
+        updatePoz6Options();
       }
 
       // ── Objekty
@@ -880,6 +924,10 @@
 
       function clearAttachmentFormAfterAdd() {
         poz6Select.value = "";
+        // Ak je pre aktuálnu časť len jedna možnosť, predvyber ju znova
+        const part    = attachmentPartSelect.value;
+        const allowed = POZ6_ALLOWED_BY_PART[part];
+        if (allowed && allowed.length === 1) poz6Select.value = allowed[0];
         poz8Select.value = "";
         poz9Input.value  = "00";
         attachmentTitleInput.value = "";
@@ -889,13 +937,12 @@
 
       function clearAttachmentForm() {
         attachmentPartSelect.value = "A";
-        poz6Select.value = "";
         poz8Select.value = "";
         poz9Input.value  = "00";
         attachmentTitleInput.value = "";
         attachmentError.textContent = "";
         updateObjectSelectState();
-        updatePoz7Preview();
+        updatePoz6Options();
       }
 
       // ── Render tabuľky príloh
@@ -1115,7 +1162,10 @@
       objectsTableBody.addEventListener("click", handleObjectsClick);
       addAttachmentBtn.addEventListener("click", addAttachment);
       clearAttachmentFormBtn.addEventListener("click", clearAttachmentForm);
-      attachmentPartSelect.addEventListener("change", () => { updateObjectSelectState(); updatePoz7Preview(); });
+      attachmentPartSelect.addEventListener("change", () => {
+        updateObjectSelectState();
+        updatePoz6Options();
+      });
       overviewTableBody.addEventListener("click", handleOverviewClick);
       attachmentObjectSelect.addEventListener("change", updatePoz7Preview);
       poz6Select.addEventListener("change", updatePoz7Preview);
@@ -1123,7 +1173,9 @@
       exportCsvBtn.addEventListener("click", exportCsv);
       importCsvInput.addEventListener("change", importCsvFile);
 
+      // Inicializácia
       updateObjectSelectState();
+      updatePoz6Options();
     })();
   </script>
 </body>
