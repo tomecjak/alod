@@ -232,8 +232,78 @@
           <div class="fieldset-row">
             <div>
               <label for="identKod">Pozícia 4 – identifikačný kód stavby</label>
-              <input type="text" id="identKod" placeholder="napr. 1111" />
-              <div class="help-text">Štvormiestny kód podľa vyhlášky o členení stavieb.</div>
+              <select id="identKod">
+                <option value="">-- vyber kód --</option>
+                <optgroup label="1 – Budovy">
+                  <optgroup label="11 – Bytové budovy">
+                    <option value="1110">1110 – Jednobytové a dvojbytové budovy</option>
+                    <option value="1111">1111 – Jednobytové budovy</option>
+                    <option value="1112">1112 – Dvojbytové budovy</option>
+                    <option value="1120">1120 – Ostatné bytové budovy</option>
+                    <option value="1121">1121 – Trojbytové a viacbytové budovy</option>
+                    <option value="1122">1122 – Obytné budovy pre spoločenstvá</option>
+                    <option value="1130">1130 – Bytové budovy inde neuvedené</option>
+                  </optgroup>
+                  <optgroup label="12 – Nebytové budovy">
+                    <option value="1211">1211 – Hotelové budovy</option>
+                    <option value="1212">1212 – Ostatné ubytovacie budovy</option>
+                    <option value="1220">1220 – Administratívne budovy</option>
+                    <option value="1230">1230 – Budovy pre obchod</option>
+                    <option value="1241">1241 – Budovy pre dopravu a telekomunikácie</option>
+                    <option value="1242">1242 – Garáže</option>
+                    <option value="1251">1251 – Priemyselné budovy</option>
+                    <option value="1252">1252 – Nádrže, sila a sklady</option>
+                    <option value="1261">1261 – Budovy pre verejnú zábavu, vzdelávanie, nemocnice</option>
+                    <option value="1262">1262 – Múzeá a knižnice</option>
+                    <option value="1263">1263 – Školy a vzdelávacie zariadenia</option>
+                    <option value="1264">1264 – Nemocnice a zdravotnícke zariadenia</option>
+                    <option value="1265">1265 – Športové haly a zariadenia</option>
+                    <option value="1271">1271 – Poľnohospodárske budovy</option>
+                    <option value="1272">1272 – Budovy pre lesné hospodárstvo</option>
+                    <option value="1273">1273 – Akvakulturné a poľnohospodárske budovy inde neuvedené</option>
+                    <option value="1274">1274 – Budovy pre náboženské a pohrebné služby</option>
+                    <option value="1275">1275 – Historické a chránené budovy</option>
+                    <option value="1276">1276 – Ostatné nebytové budovy inde neuvedené</option>
+                  </optgroup>
+                </optgroup>
+                <optgroup label="2 – Inžinierske stavby">
+                  <optgroup label="21 – Dopravná infraštruktúra">
+                    <option value="2111">2111 – Diaľnice a rýchlostné cesty</option>
+                    <option value="2112">2112 – Ostatné cesty</option>
+                    <option value="2121">2121 – Železničné trate</option>
+                    <option value="2122">2122 – Mestské dráhy</option>
+                    <option value="2130">2130 – Letiská</option>
+                    <option value="2141">2141 – Mosty a nadjazdy</option>
+                    <option value="2142">2142 – Tunely a podchody</option>
+                    <option value="2211">2211 – Prístavné stavby</option>
+                    <option value="2212">2212 – Vodné cesty</option>
+                    <option value="2213">2213 – Plavebné komory a prístavy</option>
+                  </optgroup>
+                  <optgroup label="22 – Siete a rozvody">
+                    <option value="2221">2221 – Diaľkové potrubia na ropu a plyn</option>
+                    <option value="2222">2222 – Miestne plynovodné siete</option>
+                    <option value="2223">2223 – Rozvod tepla a teplej vody</option>
+                    <option value="2224">2224 – Vodovody a vodovodné siete</option>
+                    <option value="2225">2225 – Kanalizačné siete</option>
+                    <option value="2226">2226 – Elektrické vedenia a káble</option>
+                    <option value="2227">2227 – Telekomunikačné vedenia a siete</option>
+                  </optgroup>
+                  <optgroup label="23 – Priemyselné stavby">
+                    <option value="2301">2301 – Priemyselné stavby pre energetiku</option>
+                    <option value="2302">2302 – Priemyselné stavby pre ťažbu</option>
+                    <option value="2303">2303 – Priemyselné stavby pre spracovanie</option>
+                    <option value="2304">2304 – Priemyselné stavby pre chemický priemysel</option>
+                  </optgroup>
+                  <optgroup label="24 – Ostatné inžinierske stavby">
+                    <option value="2411">2411 – Vodohospodárske stavby</option>
+                    <option value="2412">2412 – Protipovodňové stavby</option>
+                    <option value="2420">2420 – Športové a rekreačné stavby vonkajšie</option>
+                    <option value="2430">2430 – Ostatné inžinierske stavby inde neuvedené</option>
+                    <option value="2611">2611 – Čistenie odpadových vôd</option>
+                  </optgroup>
+                </optgroup>
+              </select>
+              <div class="help-text">Kód podľa vyhlášky ÚUPVSR o členení stavieb.</div>
             </div>
           </div>
         </fieldset>
@@ -456,7 +526,7 @@
     const idStavbyInput          = document.getElementById("idStavby");
     const stupenDocSelect        = document.getElementById("stupenDoc");
     const urcenieInput           = document.getElementById("urcenie");
-    const identKodInput          = document.getElementById("identKod");
+    const identKodSelect         = document.getElementById("identKod");
     const projectStatus          = document.getElementById("projectStatus");
     const objectNameInput        = document.getElementById("objectName");
     const objectNumberInput      = document.getElementById("objectNumber");
@@ -676,7 +746,7 @@
       project.id   = idStavbyInput.value.trim();
       project.stupen   = stupenDocSelect.value;
       project.urcenie  = urcenieInput.value.trim();
-      project.identKod = identKodInput.value.trim();
+      project.identKod = identKodSelect.value;
       if (!project.id || !project.stupen || !project.urcenie || !project.identKod) {
         projectStatus.textContent = "Vyplň všetky povinné projektové pozície 1 – 4.";
         projectStatus.style.color = "var(--color-error)"; return;
@@ -690,7 +760,7 @@
     function resetProject() {
       Object.assign(project, { name:"", id:"", stupen:"", urcenie:"", identKod:"", objects:[], attachments:[] });
       projectNameInput.value = ""; idStavbyInput.value = ""; stupenDocSelect.value = "";
-      urcenieInput.value = ""; identKodInput.value = "";
+      urcenieInput.value = ""; identKodSelect.value = "";
       objectsTableBody.innerHTML = "";
       attachmentObjectSelect.innerHTML = '<option value="">-- vyber objekt --</option>';
       overviewTableBody.innerHTML = "";
@@ -1016,7 +1086,8 @@
           recomputeAllPoz7();
 
           projectNameInput.value = project.name; idStavbyInput.value = project.id;
-          stupenDocSelect.value = project.stupen; urcenieInput.value = project.urcenie; identKodInput.value = project.identKod;
+          stupenDocSelect.value = project.stupen; urcenieInput.value = project.urcenie;
+          identKodSelect.value = project.identKod;
           renderObjects(); renderOverview();
           projectStatus.textContent = "Projektové údaje načítané z CSV."; projectStatus.style.color = "var(--color-text-muted)";
           csvStatus.textContent = "CSV bolo úspešne importované.";
