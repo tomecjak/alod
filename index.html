@@ -605,12 +605,15 @@
         { value: "INE", label: "INE – iná profesia / príloha" }
       ];
 
-      // Kódy povolené pre každú časť dokumentácie (null = všetky)
+      // Kódy vylúčené pre časť D
+      const POZ6_EXCLUDED_FOR_D = new Set(["AAA", "SPR", "SIT"]);
+
+      // Kódy povolené pre každú časť dokumentácie (null = všetky okrem vylúčených)
       const POZ6_ALLOWED_BY_PART = {
         A: ["AAA"],
         B: ["SPR"],
         C: ["SIT"],
-        D: null,
+        D: ALL_POZ6_OPTIONS.map(o => o.value).filter(v => !POZ6_EXCLUDED_FOR_D.has(v)),
         E: ["SZS", "STD"]
       };
 
@@ -668,9 +671,9 @@
 
       // Dynamicky filtruje možnosti pozície 6 podľa zvolenej časti dokumentácie
       function updatePoz6Options() {
-        const part       = attachmentPartSelect.value;
-        const allowed    = POZ6_ALLOWED_BY_PART[part] || null;
-        const prevValue  = poz6Select.value;
+        const part      = attachmentPartSelect.value;
+        const allowed   = POZ6_ALLOWED_BY_PART[part] || null;
+        const prevValue = poz6Select.value;
 
         poz6Select.innerHTML = "";
 
