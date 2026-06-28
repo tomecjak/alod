@@ -183,16 +183,16 @@
     <header class="panel" style="margin-bottom: var(--space-6);">
       <div class="panel-header">
         <h1>Zoznam príloh dokumentácie stavby (A00)</h1>
-        <span class="badge">Pozície 1–2 z projektu, 3–4 z objektu, 5–9 z príloh</span>
+        <span class="badge">Pozície 1–4 z projektu, 5–9 z príloh</span>
       </div>
       <p>Táto jednoduchá webová aplikácia vychádza zo schémy tvorby názvov súborov dokumentácie stavieb (pozície 1 až 9) podľa metodického materiálu.</p>
-      <p>Najprv nastav projektové údaje (ID stavby a stupeň dokumentácie – pozície 1 a 2). Pozície 3 (určenie stavby) a 4 (identifikačný kód) sa nastavujú samostatne pre každý stavebný objekt / prevádzkový súbor. Objekty priradené do rôznej pozície 3 môžu mať rovnaké číslo objektu (pozícia 5).</p>
+      <p>Najprv nastav projektové údaje (ID stavby, stupeň dokumentácie, určenie stavby a identifikačný kód stavby). Následne môžeš vytvárať prílohy pre časti A, B, C a E projektu a pre jednotlivé stavebné objekty / prevádzkové súbory (časť D). Úplný prehľad A00 sa generuje automaticky zo všetkých príloh.</p>
     </header>
 
     <section class="grid">
       <section class="panel" aria-labelledby="project-settings-heading">
         <div class="panel-header">
-          <h2 id="project-settings-heading">Projekt – základné pozície 1 – 2</h2>
+          <h2 id="project-settings-heading">Projekt – základné pozície 1 – 4</h2>
           <span class="tag">Projektové údaje</span>
         </div>
         <fieldset>
@@ -223,45 +223,16 @@
                 <option value="ZDS">ZDS – zjednodušená dokumentácia / pasport</option>
               </select>
             </div>
-          </div>
-        </fieldset>
-        <div class="btn-group">
-          <button class="btn-primary" id="saveProjectBtn" type="button">Uložiť projektové údaje</button>
-          <button class="btn-secondary" id="resetProjectBtn" type="button">Vyčistiť projekt</button>
-        </div>
-        <div id="projectStatus" class="help-text" style="margin-top: var(--space-3);"></div>
-      </section>
-
-      <section class="panel" aria-labelledby="objects-heading">
-        <div class="panel-header">
-          <h2 id="objects-heading">Stavebné objekty / prevádzkové súbory (časť D)</h2>
-          <span class="tag">Pozícia 5 – Sxx / Pxx</span>
-        </div>
-        <p class="help-text">Každý objekt má vlastnú pozíciu 3 (určenie) a pozíciu 4 (identifikačný kód). Objekty s rôznou pozíciou 3 môžu mať rovnaké číslo objektu. Zoradenie: najprv Sxx, potom Pxx.</p>
-        <fieldset>
-          <div class="fieldset-row">
             <div>
-              <label for="objectName">Názov stavebného objektu / súboru</label>
-              <input type="text" id="objectName" placeholder="napr. SO 201 – Most cez rieku" />
-            </div>
-            <div>
-              <label for="objectNumber">Číslo objektu / súboru (01, 02, …)</label>
-              <input type="text" id="objectNumber" placeholder="01" />
-            </div>
-          </div>
-          <div class="inline-radio">
-            <label><input type="radio" name="objectType" value="S" checked /><span>Stavebný objekt (Sxx)</span></label>
-            <label><input type="radio" name="objectType" value="P" /><span>Prevádzkový súbor (Pxx)</span></label>
-          </div>
-          <div class="fieldset-row">
-            <div>
-              <label for="objectUrcenie">Pozícia 3 – určenie stavby (pre tento objekt)</label>
-              <input type="text" id="objectUrcenie" placeholder="napr. 01" />
+              <label for="urcenie">Pozícia 3 – určenie stavby / súboru stavieb</label>
+              <input type="text" id="urcenie" placeholder="napr. 01" />
               <div class="help-text">Dvojciferný kód určenia stavby alebo súboru stavieb (01, 02, 03…).</div>
             </div>
+          </div>
+          <div class="fieldset-row">
             <div>
-              <label for="objectIdentKod">Pozícia 4 – identifikačný kód stavby (pre tento objekt)</label>
-              <select id="objectIdentKod">
+              <label for="identKod">Pozícia 4 – identifikačný kód stavby</label>
+              <select id="identKod">
                 <option value="">-- vyber kód --</option>
                 <optgroup label="1 – Budovy">
                   <optgroup label="11 – Bytové budovy">
@@ -337,11 +308,40 @@
           </div>
         </fieldset>
         <div class="btn-group">
+          <button class="btn-primary" id="saveProjectBtn" type="button">Uložiť projektové údaje</button>
+          <button class="btn-secondary" id="resetProjectBtn" type="button">Vyčistiť projekt</button>
+        </div>
+        <div id="projectStatus" class="help-text" style="margin-top: var(--space-3);"></div>
+      </section>
+
+      <section class="panel" aria-labelledby="objects-heading">
+        <div class="panel-header">
+          <h2 id="objects-heading">Stavebné objekty / prevádzkové súbory (časť D)</h2>
+          <span class="tag">Pozícia 5 – Sxx / Pxx</span>
+        </div>
+        <p class="help-text">Podľa schémy sa pri členení časti D používa pozícia 5 ako číslo stavebného objektu (S01, S02…) alebo číslo prevádzkového súboru (P01, P02…). Objekty sú zoradené: najprv Sxx, potom Pxx.</p>
+        <fieldset>
+          <div class="fieldset-row">
+            <div>
+              <label for="objectName">Názov stavebného objektu / súboru</label>
+              <input type="text" id="objectName" placeholder="napr. SO 201 – Most cez rieku" />
+            </div>
+            <div>
+              <label for="objectNumber">Číslo objektu / súboru (01, 02, …)</label>
+              <input type="text" id="objectNumber" placeholder="01" />
+            </div>
+          </div>
+          <div class="inline-radio">
+            <label><input type="radio" name="objectType" value="S" checked /><span>Stavebný objekt (Sxx)</span></label>
+            <label><input type="radio" name="objectType" value="P" /><span>Prevádzkový súbor (Pxx)</span></label>
+          </div>
+        </fieldset>
+        <div class="btn-group">
           <button class="btn-primary" id="addObjectBtn" type="button">Pridať objekt / súbor</button>
         </div>
         <h3 class="section-title" style="font-size: 1rem;">Definované stavebné objekty a súbory</h3>
         <table aria-label="Zoznam stavebných objektov">
-          <thead><tr><th>Kód (Poz. 5)</th><th>Poz. 3</th><th>Poz. 4</th><th>Názov</th><th>Typ</th><th>Akcie</th></tr></thead>
+          <thead><tr><th>Kód (Pozícia 5)</th><th>Názov</th><th>Typ</th><th>Akcie</th></tr></thead>
           <tbody id="objectsTableBody"></tbody>
         </table>
       </section>
@@ -468,9 +468,7 @@
 
   <script>
   (function () {
-    // project now only stores id and stupen (pozície 1 a 2)
-    // urcenie (poz3) and identKod (poz4) are stored per-object
-    const project = { name: "", id: "", stupen: "", objects: [], attachments: [] };
+    const project = { name: "", id: "", stupen: "", urcenie: "", identKod: "", objects: [], attachments: [] };
 
     // Časti kde kódovanie končí na pozícii 6 (poz7 a poz8 sa nepoužívajú)
     const PARTS_END_AT_POZ6 = new Set(["A", "B"]);
@@ -533,11 +531,11 @@
     const projectNameInput       = document.getElementById("projectName");
     const idStavbyInput          = document.getElementById("idStavby");
     const stupenDocSelect        = document.getElementById("stupenDoc");
+    const urcenieInput           = document.getElementById("urcenie");
+    const identKodSelect         = document.getElementById("identKod");
     const projectStatus          = document.getElementById("projectStatus");
     const objectNameInput        = document.getElementById("objectName");
     const objectNumberInput      = document.getElementById("objectNumber");
-    const objectUrcenieInput     = document.getElementById("objectUrcenie");
-    const objectIdentKodSelect   = document.getElementById("objectIdentKod");
       const addObjectBtn         = document.getElementById("addObjectBtn");
     const objectsTableBody       = document.getElementById("objectsTableBody");
     const attachmentObjectSelect = document.getElementById("attachmentObject");
@@ -667,8 +665,6 @@
       project.objects.sort((a, b) => {
         const ra = typeRank[a.type] ?? 99, rb = typeRank[b.type] ?? 99;
         if (ra !== rb) return ra - rb;
-        // Sort by urcenie first, then by number
-        if (a.urcenie !== b.urcenie) return (a.urcenie || "").localeCompare(b.urcenie || "");
         return parseInt(a.number, 10) - parseInt(b.number, 10);
       });
     }
@@ -676,13 +672,6 @@
       if (scope === "project") return { A: "A00", B: "B00", C: "C00", E: "E00", D: "D00" }[part] || "";
       const obj = project.objects.find(o => o.id.toString() === objectId);
       return obj ? obj.code : "";
-    }
-
-    // Returns the full filename prefix for a given object (pozície 1–4)
-    function getObjectPrefix(obj) {
-      if (!project.id || !project.stupen) return null;
-      if (!obj || !obj.urcenie || !obj.identKod) return null;
-      return [project.id, project.stupen, obj.urcenie, obj.identKod].join("_");
     }
 
     /* ── sortOrder ─────────────────────────────────────────────────── */
@@ -812,22 +801,25 @@
 
     /* ── Projekt ───────────────────────────────────────────────────── */
     function saveProject() {
-      project.name   = projectNameInput.value.trim();
-      project.id     = idStavbyInput.value.trim();
-      project.stupen = stupenDocSelect.value;
-      if (!project.id || !project.stupen) {
-        projectStatus.textContent = "Vyplň povinné projektové pozície 1 a 2.";
+      project.name = projectNameInput.value.trim();
+      project.id   = idStavbyInput.value.trim();
+      project.stupen   = stupenDocSelect.value;
+      project.urcenie  = urcenieInput.value.trim();
+      project.identKod = identKodSelect.value;
+      if (!project.id || !project.stupen || !project.urcenie || !project.identKod) {
+        projectStatus.textContent = "Vyplň všetky povinné projektové pozície 1 – 4.";
         projectStatus.style.color = "var(--color-error)"; return;
       }
       projectStatus.textContent = "Projektové údaje uložené. Prefix: " +
-        [project.id, project.stupen].join("_") + "_[poz3]_[poz4] (určuje sa pre každý objekt).";
+        [project.id, project.stupen, project.urcenie, project.identKod].join("_") + ".";
       projectStatus.style.color = "var(--color-text-muted)";
       renderOverview();
     }
 
     function resetProject() {
-      Object.assign(project, { name:"", id:"", stupen:"", objects:[], attachments:[] });
+      Object.assign(project, { name:"", id:"", stupen:"", urcenie:"", identKod:"", objects:[], attachments:[] });
       projectNameInput.value = ""; idStavbyInput.value = ""; stupenDocSelect.value = "";
+      urcenieInput.value = ""; identKodSelect.value = "";
       objectsTableBody.innerHTML = "";
       attachmentObjectSelect.innerHTML = '<option value="">-- vyber objekt --</option>';
       overviewTableBody.innerHTML = "";
@@ -845,8 +837,6 @@
         const tr = document.createElement("tr");
         tr.innerHTML = `
           <td>${obj.code}</td>
-          <td>${obj.urcenie || '<span style="color:var(--color-error)">chýba</span>'}</td>
-          <td>${obj.identKod || '<span style="color:var(--color-error)">chýba</span>'}</td>
           <td>${obj.name}</td>
           <td>${obj.type === "S" ? "Stavebný objekt" : "Prevádzkový súbor"}</td>
           <td class="actions-cell">
@@ -855,7 +845,7 @@
         objectsTableBody.appendChild(tr);
         const opt = document.createElement("option");
         opt.value = obj.id.toString();
-        opt.textContent = `${obj.code} (poz3:${obj.urcenie||"?"}) – ${obj.name}`;
+        opt.textContent = `${obj.code} – ${obj.name}`;
         attachmentObjectSelect.appendChild(opt);
       });
       if (prevObjectId) attachmentObjectSelect.value = prevObjectId;
@@ -877,38 +867,23 @@
     }
 
     function addObject() {
-      const name     = objectNameInput.value.trim();
-      const number   = objectNumberInput.value.trim();
-      const type     = getSelectedObjectType();
-      const urcenie  = objectUrcenieInput.value.trim();
-      const identKod = objectIdentKodSelect.value;
-
+      const name = objectNameInput.value.trim(), number = objectNumberInput.value.trim();
+      const type = getSelectedObjectType();
       if (!name || !number) { alert("Vyplň názov aj číslo objektu / súboru."); return; }
-      if (!urcenie)  { alert("Vyplň pozíciu 3 (určenie stavby) pre tento objekt."); return; }
-      if (!identKod) { alert("Vyber pozíciu 4 (identifikačný kód) pre tento objekt."); return; }
-
       const normalizedNumber = number.padStart(2, "0");
       const code = type + normalizedNumber;
-
-      // Duplicate check: code must be unique within the same urcenie (poz3).
-      // Different urcenie (poz3) groups may share the same object number/code.
-      if (project.objects.some(o => o.code === code && o.urcenie === urcenie)) {
-        alert(`Objekt s kódom "${code}" a určením (poz3) "${urcenie}" už existuje. Pre inú pozíciu 3 môžeš použiť rovnaké číslo.`);
-        return;
-      }
-
-      project.objects.push({ id: genUid(), name, number: normalizedNumber, type, code, urcenie, identKod });
+      if (project.objects.some(o => o.code === code)) { alert(`Objekt s kódom "${code}" už existuje.`); return; }
+      project.objects.push({ id: genUid(), name, number: normalizedNumber, type, code });
       sortObjects();
       objectNameInput.value = ""; objectNumberInput.value = "";
-      objectUrcenieInput.value = ""; objectIdentKodSelect.value = "";
       renderObjects();
     }
 
     /* ── Prílohy ───────────────────────────────────────────────────── */
     function addAttachment() {
       attachmentError.textContent = "";
-      if (!project.id || !project.stupen) {
-        attachmentError.textContent = "Najprv ulož projektové údaje (pozície 1 – 2)."; return;
+      if (!project.id || !project.stupen || !project.urcenie || !project.identKod) {
+        attachmentError.textContent = "Najprv ulož projektové údaje (pozície 1 – 4)."; return;
       }
       const scope = getAttachmentScope(), part = attachmentPartSelect.value;
       const objectId = attachmentObjectSelect.value;
@@ -931,15 +906,6 @@
       }
 
       if (scope === "object" && !objectId) { attachmentError.textContent = "Pre prílohu k časti D vyber konkrétny stavebný objekt."; return; }
-
-      // Validate that the selected object has poz3 and poz4 defined
-      if (scope === "object") {
-        const obj = project.objects.find(o => o.id.toString() === objectId);
-        if (!obj || !obj.urcenie || !obj.identKod) {
-          attachmentError.textContent = "Vybraný objekt nemá definovanú pozíciu 3 alebo 4."; return;
-        }
-      }
-
       const poz5 = derivePozicia5(scope, part, objectId);
       if (!poz5) { attachmentError.textContent = "Nebolo možné odvodiť pozíciu 5."; return; }
       const newAtt = { uid: genUid(), parentUid: null, scope, part, objectId: scope === "object" ? objectId : null,
@@ -988,24 +954,9 @@
 
     /* ── Render prehľadu ───────────────────────────────────────────── */
     function buildFilename(att) {
-      if (!project.id || !project.stupen)
-        return "(projektové pozície 1–2 nie sú kompletné)";
-
-      // For part D, get poz3 and poz4 from the object
-      let urcenie, identKod;
-      if (att.part === "D" && att.objectId) {
-        const obj = project.objects.find(o => o.id.toString() === att.objectId);
-        if (!obj || !obj.urcenie || !obj.identKod) return "(objekt nemá poz3/poz4)";
-        urcenie  = obj.urcenie;
-        identKod = obj.identKod;
-      } else {
-        // For non-D parts, poz3/poz4 are not object-specific — use stored values if any
-        // (legacy: fall back to att.urcenie/att.identKod stored at attachment creation time)
-        urcenie  = att.urcenie  || "(poz3?)";
-        identKod = att.identKod || "(poz4?)";
-      }
-
-      const parts = [project.id, project.stupen, urcenie, identKod, att.poz5, att.poz6];
+      if (!project.id || !project.stupen || !project.urcenie || !project.identKod)
+        return "(projektové pozície 1–4 nie sú kompletné)";
+      const parts = [project.id, project.stupen, project.urcenie, project.identKod, att.poz5, att.poz6];
       // Pre časti A a B kódovanie končí na pozícii 6
       if (PARTS_END_AT_POZ6.has(att.part)) {
         return parts.join("_");
@@ -1082,7 +1033,7 @@
               .filter(a => a.objectId === obj.id.toString())
               .sort((a, b) => a.sortOrder - b.sortOrder);
             if (!objAtts.length) return;
-            appendSubsectionHeader(`${obj.code} (poz3:${obj.urcenie||"?"}, poz4:${obj.identKod||"?"}) – ${obj.name}`);
+            appendSubsectionHeader(`${obj.code} – ${obj.name}`);
             objAtts.forEach((att, i) => appendAttachmentRow(att, i === 0, i === objAtts.length - 1));
           });
           const noObj = atts.filter(a => !a.objectId).sort((a, b) => a.sortOrder - b.sortOrder);
@@ -1117,16 +1068,15 @@
 
     function exportCsv() {
       const rows = [];
-      // Added objectUrcenie and objectIdentKod columns for per-object poz3/poz4
       rows.push(["TYPE","projectName","idStavby","stupenDoc","urcenie","identKod",
-        "objectId","objectName","objectNumber","objectType","objectUrcenie","objectIdentKod",
+        "objectId","objectName","objectNumber","objectType",
         "scope","part","poz5","poz6","poz7","poz8","poz9","title","attachmentObjectId","uid","parentUid","sortOrder"]);
-      rows.push(["PROJECT", project.name, project.id, project.stupen, "", "",
-        "","","","","","","","","","","","","","","","","",""]);
+      rows.push(["PROJECT", project.name, project.id, project.stupen, project.urcenie, project.identKod,
+        "","","","","","","","","","","","","","","",""]);
       project.objects.forEach(obj =>
-        rows.push(["OBJECT","","","","","",obj.id,obj.name,obj.number,obj.type,obj.urcenie||"",obj.identKod||"","","","","","","","","","","","",""]));
+        rows.push(["OBJECT","","","","","",obj.id,obj.name,obj.number,obj.type,"","","","","","","","","","","",""]));
       project.attachments.forEach(att =>
-        rows.push(["ATTACHMENT","","","","","","","","","","","",
+        rows.push(["ATTACHMENT","","","","","","","","","",
           att.scope,att.part,att.poz5,att.poz6,att.poz7,att.poz8,att.poz9,att.title||"",
           att.objectId||"",att.uid||"",att.parentUid||"",att.sortOrder ?? 0]));
       const csv  = rows.map(r => r.map(csvEscape).join(";")).join("\n");
@@ -1162,51 +1112,36 @@
           const rows = lines.map(parseCsvLine), header = rows[0];
           if (!header.length || header[0] !== "TYPE") throw new Error("CSV nemá očakávanú hlavičku.");
 
-          // Detect new format (with objectUrcenie/objectIdentKod at cols 10,11)
-          const hasObjectPoz3Poz4 = header.length > 11 && header[10] === "objectUrcenie";
-          const hasSortOrderCol   = hasObjectPoz3Poz4
-            ? (header.length > 23 && header[23] === "sortOrder")
-            : (header.length > 21 && header[21] === "sortOrder");
+          const hasSortOrderCol = header.length > 21 && header[21] === "sortOrder";
 
-          Object.assign(project, { name:"", id:"", stupen:"", objects:[], attachments:[] });
+          Object.assign(project, { name:"", id:"", stupen:"", urcenie:"", identKod:"", objects:[], attachments:[] });
           const objectIdMap = new Map(), uidMap = new Map();
           const groupRowCounter = {};
 
           rows.slice(1).forEach(cols => {
             const type = cols[0] || "";
             if (type === "PROJECT") {
-              project.name   = cols[1]||"";
-              project.id     = cols[2]||"";
-              project.stupen = cols[3]||"";
-              // legacy: cols[4]=urcenie, cols[5]=identKod — ignored at project level now
+              project.name = cols[1]||""; project.id = cols[2]||""; project.stupen = cols[3]||"";
+              project.urcenie = cols[4]||""; project.identKod = cols[5]||"";
             } else if (type === "OBJECT") {
               const oldId = cols[6]||"", newId = genUid();
-              const obj = {
-                id: newId,
-                name:     cols[7]||"",
-                number:   (cols[8]||"").padStart(2,"0"),
-                type:     cols[9]||"S",
-                urcenie:  hasObjectPoz3Poz4 ? (cols[10]||"") : "",
-                identKod: hasObjectPoz3Poz4 ? (cols[11]||"") : ""
-              };
+              const obj = { id: newId, name: cols[7]||"", number: (cols[8]||"").padStart(2,"0"), type: cols[9]||"S" };
               obj.code = obj.type + obj.number;
               project.objects.push(obj); objectIdMap.set(String(oldId), String(newId));
             } else if (type === "ATTACHMENT") {
-              // Column offsets shift by 2 when new format (cols 10,11 added)
-              const offset = hasObjectPoz3Poz4 ? 2 : 0;
-              const rawObjId  = cols[20 + offset] ? cols[20 + offset].trim() : "";
+              const rawObjId  = cols[18] ? cols[18].trim() : "";
               const objectId  = rawObjId ? (objectIdMap.get(rawObjId) || null) : null;
-              const csvUid    = cols[21 + offset] ? cols[21 + offset].trim() : "";
-              const csvParent = cols[22 + offset] ? cols[22 + offset].trim() : "";
+              const csvUid    = cols[19] ? cols[19].trim() : "";
+              const csvParent = cols[20] ? cols[20].trim() : "";
               const newUid    = csvUid || genUid();
               if (csvUid) uidMap.set(csvUid, newUid);
 
               let sortOrder;
-              if (hasSortOrderCol && cols[23 + offset] !== undefined && cols[23 + offset].trim() !== "") {
-                const parsed = parseInt(cols[23 + offset], 10);
+              if (hasSortOrderCol && cols[21] !== undefined && cols[21].trim() !== "") {
+                const parsed = parseInt(cols[21], 10);
                 sortOrder = isNaN(parsed) ? 0 : parsed;
               } else {
-                const rawPart = cols[13 + offset] || "A";
+                const rawPart = cols[11] || "A";
                 const tempGk  = rawPart === "D" ? `D|${rawObjId}` : rawPart;
                 if (groupRowCounter[tempGk] === undefined) groupRowCounter[tempGk] = 0;
                 sortOrder = groupRowCounter[tempGk]++;
@@ -1214,14 +1149,9 @@
 
               project.attachments.push({
                 uid: newUid, parentUid: null,
-                scope:    cols[12 + offset]||"project",
-                part:     cols[13 + offset]||"A",
-                poz5:     cols[14 + offset]||"",
-                poz6:     cols[15 + offset]||"",
-                poz7:     cols[16 + offset]||"",
-                poz8:     cols[17 + offset]||"",
-                poz9:     cols[18 + offset]||"00",
-                title:    cols[19 + offset]||"",
+                scope: cols[10]||"project", part: cols[11]||"A",
+                poz5: cols[12]||"", poz6: cols[13]||"", poz7: cols[14]||"",
+                poz8: cols[15]||"", poz9: cols[16]||"00", title: cols[17]||"",
                 objectId, sortOrder, _csvParent: csvParent
               });
             }
@@ -1236,9 +1166,9 @@
           normalizeSortOrders();
           recomputeAllPoz7();
 
-          projectNameInput.value = project.name;
-          idStavbyInput.value    = project.id;
-          stupenDocSelect.value  = project.stupen;
+          projectNameInput.value = project.name; idStavbyInput.value = project.id;
+          stupenDocSelect.value = project.stupen; urcenieInput.value = project.urcenie;
+          identKodSelect.value = project.identKod;
           renderObjects(); renderOverview();
           projectStatus.textContent = "Projektové údaje načítané z CSV."; projectStatus.style.color = "var(--color-text-muted)";
           csvStatus.textContent = "CSV bolo úspešne importované.";
