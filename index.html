@@ -30,6 +30,7 @@
       --color-primary: #01696f;
       --color-primary-hover: #0c4e54;
       --color-error: #a12c7b;
+      --color-revision: #7c4f1a;
     }
 
     *, *::before, *::after {
@@ -209,6 +210,17 @@
       background: var(--color-surface-alt);
     }
 
+    .btn-revision {
+      background: #fff8f2;
+      color: var(--color-revision);
+      border-color: #e0c4a0;
+      font-size: 0.75rem;
+    }
+
+    .btn-revision:hover {
+      background: #fdecd8;
+    }
+
     .btn-icon {
       padding-inline: 0.4rem;
       min-width: 0;
@@ -243,6 +255,14 @@
 
     tbody tr:nth-child(even) { background: #f9f8f5; }
 
+    tbody tr.is-revision {
+      background: #fef9f4;
+    }
+
+    tbody tr.is-revision td:first-child {
+      border-left: 3px solid #e0c4a0;
+    }
+
     .section-title {
       margin-top: var(--space-8);
       margin-bottom: var(--space-3);
@@ -266,6 +286,17 @@
     .actions-cell {
       white-space: nowrap;
     }
+
+    .rev-badge {
+      display: inline-block;
+      padding: 0.05rem 0.35rem;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      background: #f0e4d0;
+      color: var(--color-revision);
+      margin-left: 0.3rem;
+      vertical-align: middle;
+    }
   </style>
 </head>
 <body>
@@ -277,7 +308,7 @@
       </div>
       <p>
         Táto jednoduchá webová aplikácia vychádza zo schémy tvorby názvov súborov dokumentácie stavieb
-        (pozície 1 až 9) podľa metodického materiálu.[file:1]
+        (pozície 1 až 9) podľa metodického materiálu.
       </p>
       <p>
         Najprv nastav projektové údaje (ID stavby, stupeň dokumentácie, určenie stavby a identifikačný kód stavby).
@@ -301,7 +332,7 @@
             <div>
               <label for="idStavby">Pozícia 1 – ID stavby</label>
               <input type="text" id="idStavby" placeholder="napr. 25AB123" />
-              <div class="help-text">ID pridelené informačným systémom.[file:1]</div>
+              <div class="help-text">ID pridelené informačným systémom.</div>
             </div>
           </div>
           <div class="fieldset-row">
@@ -323,14 +354,14 @@
             <div>
               <label for="urcenie">Pozícia 3 – určenie stavby / súboru stavieb</label>
               <input type="text" id="urcenie" placeholder="napr. 01" />
-              <div class="help-text">Dvojciferný kód určenia stavby alebo súboru stavieb (01, 02, 03…).[file:1]</div>
+              <div class="help-text">Dvojciferný kód určenia stavby alebo súboru stavieb (01, 02, 03…).</div>
             </div>
           </div>
           <div class="fieldset-row">
             <div>
               <label for="identKod">Pozícia 4 – identifikačný kód stavby</label>
               <input type="text" id="identKod" placeholder="napr. 1111" />
-              <div class="help-text">Štvormiestny kód podľa vyhlášky o členení stavieb.[file:1]</div>
+              <div class="help-text">Štvormiestny kód podľa vyhlášky o členení stavieb.</div>
             </div>
           </div>
         </fieldset>
@@ -348,7 +379,7 @@
         </div>
         <p class="help-text">
           Podľa schémy sa pri členení časti D používa pozícia 5 ako číslo stavebného objektu (S01, S02…)
-          alebo číslo prevádzkového súboru (P01, P02…).[file:1]
+          alebo číslo prevádzkového súboru (P01, P02…).
         </p>
         <fieldset>
           <div class="fieldset-row">
@@ -419,7 +450,7 @@
               <option value="E">E – Prílohy</option>
               <option value="D">D – Dokumentácia stavebných objektov</option>
             </select>
-            <div class="help-text">Pre projekt sa typicky používajú časti A, B, C, E; časť D je viazaná na objekt.[file:1]</div>
+            <div class="help-text">Pre projekt sa typicky používajú časti A, B, C, E; časť D je viazaná na objekt.</div>
           </div>
           <div>
             <label for="attachmentObject">Stavebný objekt / súbor (pre časť D)</label>
@@ -434,9 +465,9 @@
             <label for="poz6">Pozícia 6 – profesia / podrobné členenie</label>
             <select id="poz6">
               <option value="">-- vyber --</option>
-              <option value="AAA">AAA – zoznam dokumentácie (časť A00)[file:1]</option>
-              <option value="SPR">SPR – súhrnná správa (časť B00)[file:1]</option>
-              <option value="SIT">SIT – situácia (časť C00)[file:1]</option>
+              <option value="AAA">AAA – zoznam dokumentácie (časť A00)</option>
+              <option value="SPR">SPR – súhrnná správa (časť B00)</option>
+              <option value="SIT">SIT – situácia (časť C00)</option>
               <option value="ASR">ASR – architektonicko–stavebné riešenie</option>
               <option value="STA">STA – statika</option>
               <option value="ZTI">ZTI – zdravotechnická inštalácia</option>
@@ -460,7 +491,7 @@
               <option value="SZS">SZS – správa o prerokovaní stavebného zámeru</option>
               <option value="STD">STD – stavebný denník</option>
               <option value="ZSS">ZSS – záverečné stanovisko stavbyvedúceho</option>
-              <option value="PBS">PBS – posúdenie protip požiarnej bezpečnosti</option>
+              <option value="PBS">PBS – posúdenie protipožiarnej bezpečnosti</option>
               <option value="POV">POV – plán organizácie výstavby</option>
               <option value="GDP">GDP – geodetické podklady</option>
               <option value="PAM">PAM – pamiatkový výskum</option>
@@ -472,7 +503,7 @@
           <div>
             <label for="poz7">Pozícia 7 – poradové číslo dokumentu (generuje sa automaticky)</label>
             <input type="text" id="poz7" placeholder="generuje aplikácia" disabled />
-            <div class="help-text">Pri technickej správe (TXT) a zozname výkresov (AAA) je číslo 000; pri ostatných dokumentoch sa generuje podľa poradia v časti/objekte. Rovnaké číslo môžu mať len revízie tej istej prílohy, ktoré sú pod sebou.[file:1]</div>
+            <div class="help-text">Pri TXT a AAA je vždy 000. Revízie tej istej prílohy zdieľajú rovnaké číslo.</div>
           </div>
         </div>
         <div class="fieldset-row">
@@ -502,8 +533,8 @@
           </div>
           <div>
             <label for="poz9">Pozícia 9 – revízia dokumentu</label>
-            <input type="text" id="poz9" placeholder="00" value="00" />
-            <div class="help-text">Dve cifry – 00 prvé vydanie, 01 revízia 1, 02 revízia 2…[file:1]</div>
+            <input type="text" id="poz9" placeholder="00" value="00" disabled />
+            <div class="help-text">Nová príloha vždy dostane 00. Revízie sa vytvárajú tlačidlom v tabuľke.</div>
           </div>
         </div>
         <div class="fieldset-row">
@@ -526,7 +557,7 @@
         <span class="tag">Prenos dát projektu</span>
       </div>
       <p class="help-text">
-        Môžeš exportovať celý projekt aj všetky prílohy do CSV a následne ich znovu importovať späť do aplikácie. CSV obsahuje projektové údaje, stavebné objekty aj prehľad príloh.[file:1]
+        Môžeš exportovať celý projekt aj všetky prílohy (vrátane revízií a previazaní) do CSV a znovu ich importovať späť.
       </p>
       <div class="btn-group">
         <button class="btn-primary" id="exportCsvBtn" type="button">Exportovať CSV</button>
@@ -542,9 +573,8 @@
         <span class="tag">Generovaný zo všetkých príloh</span>
       </div>
       <p class="help-text">
-        Tabuľka nižšie reprezentuje dokument A00 – zoznam dokumentácie stavby. Každý riadok
-        odpovedá jednej vytvorenej prílohe a uvádza plný názov súboru podľa pozícií 1 – 9
-        (jednotlivé pozície sú oddelené podčiarkovníkom). Radenie je možné upraviť ručne pomocou tlačidiel hore/dole.[file:1]
+        Každý riadok odpovedá jednej prílohe. Revízie sú podfarbené a previazané s pôvodnou prílohou (rovnaká pozícia 7).
+        Radenie je možné upraviť ručne pomocou tlačidiel ▲ ▼.
       </p>
       <table aria-label="Úplný prehľad zoznamu dokumentácie A00">
         <thead>
@@ -567,6 +597,7 @@
 
   <script>
     (function() {
+      // ── Stav projektu ──────────────────────────────────────────────────────────
       const project = {
         name: "",
         id: "",
@@ -575,6 +606,10 @@
         identKod: "",
         objects: [],
         attachments: []
+        // Každá príloha má tvar:
+        // { uid, parentUid, scope, part, objectId, poz5, poz6, poz7, poz8, poz9, title }
+        // uid       – unikátny identifikátor prílohy (generovaný)
+        // parentUid – uid pôvodnej prílohy (null pre prvé vydanie 00)
       };
 
       const allowedPoz6 = new Set([
@@ -590,54 +625,139 @@
         "POH","REZ","DET","SCH","VVZ","VYV","ROZ"
       ]);
 
-      const projectNameInput = document.getElementById("projectName");
-      const idStavbyInput = document.getElementById("idStavby");
-      const stupenDocSelect = document.getElementById("stupenDoc");
-      const urcenieInput = document.getElementById("urcenie");
-      const identKodInput = document.getElementById("identKod");
-      const projectStatus = document.getElementById("projectStatus");
+      // ── DOM refs ───────────────────────────────────────────────────────────────
+      const projectNameInput    = document.getElementById("projectName");
+      const idStavbyInput       = document.getElementById("idStavby");
+      const stupenDocSelect     = document.getElementById("stupenDoc");
+      const urcenieInput        = document.getElementById("urcenie");
+      const identKodInput       = document.getElementById("identKod");
+      const projectStatus       = document.getElementById("projectStatus");
 
-      const objectNameInput = document.getElementById("objectName");
-      const objectNumberInput = document.getElementById("objectNumber");
-      const addObjectBtn = document.getElementById("addObjectBtn");
-      const objectsTableBody = document.getElementById("objectsTableBody");
+      const objectNameInput     = document.getElementById("objectName");
+      const objectNumberInput   = document.getElementById("objectNumber");
+      const addObjectBtn        = document.getElementById("addObjectBtn");
+      const objectsTableBody    = document.getElementById("objectsTableBody");
       const attachmentObjectSelect = document.getElementById("attachmentObject");
 
       const attachmentScopeRadio = document.querySelectorAll("input[name='attachmentScope']");
       const attachmentPartSelect = document.getElementById("attachmentPart");
-      const poz6Select = document.getElementById("poz6");
-      const poz8Select = document.getElementById("poz8");
-      const poz7Input = document.getElementById("poz7");
-      const poz9Input = document.getElementById("poz9");
+      const poz6Select          = document.getElementById("poz6");
+      const poz8Select          = document.getElementById("poz8");
+      const poz7Input           = document.getElementById("poz7");
+      const poz9Input           = document.getElementById("poz9");
       const attachmentTitleInput = document.getElementById("attachmentTitle");
-      const addAttachmentBtn = document.getElementById("addAttachmentBtn");
+      const addAttachmentBtn    = document.getElementById("addAttachmentBtn");
       const clearAttachmentFormBtn = document.getElementById("clearAttachmentFormBtn");
-      const attachmentError = document.getElementById("attachmentError");
-      const overviewTableBody = document.getElementById("overviewTableBody");
-      const exportCsvBtn = document.getElementById("exportCsvBtn");
-      const importCsvInput = document.getElementById("importCsvInput");
-      const csvStatus = document.getElementById("csvStatus");
+      const attachmentError     = document.getElementById("attachmentError");
+      const overviewTableBody   = document.getElementById("overviewTableBody");
+      const exportCsvBtn        = document.getElementById("exportCsvBtn");
+      const importCsvInput      = document.getElementById("importCsvInput");
+      const csvStatus           = document.getElementById("csvStatus");
+
+      // ── Pomocné funkcie ────────────────────────────────────────────────────────
+      function genUid() {
+        return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+      }
 
       function getSelectedObjectType() {
-        const selected = document.querySelector("input[name='objectType']:checked");
-        return selected ? selected.value : "S";
+        const sel = document.querySelector("input[name='objectType']:checked");
+        return sel ? sel.value : "S";
+      }
+
+      function getAttachmentScope() {
+        const sel = document.querySelector("input[name='attachmentScope']:checked");
+        return sel ? sel.value : "project";
       }
 
       function updateObjectSelectState() {
         const scope = getAttachmentScope();
-        const part = attachmentPartSelect.value;
+        const part  = attachmentPartSelect.value;
         const shouldEnable = scope === "object" && part === "D";
         attachmentObjectSelect.disabled = !shouldEnable;
-        if (!shouldEnable) {
-          attachmentObjectSelect.value = "";
+        if (!shouldEnable) attachmentObjectSelect.value = "";
+      }
+
+      function derivePozicia5(scope, part, objectId) {
+        if (scope === "project") {
+          const map = { A: "A00", B: "B00", C: "C00", E: "E00", D: "D00" };
+          return map[part] || "";
+        } else {
+          const obj = project.objects.find(o => o.id.toString() === objectId);
+          return obj ? obj.code : "";
         }
       }
 
+      // ── Prepočet poz7 ─────────────────────────────────────────────────────────
+      // Pravidlá:
+      //  - poz8 AAA alebo TXT → vždy "000"
+      //  - Revízie (parentUid != null) zdieľajú poz7 s pôvodnou prílohou
+      //  - Ostatné dostanú poradové číslo v rámci skupiny (part|scope|objectId)
+      function recomputeAllPoz7() {
+        const groupCounters  = {}; // groupKey → counter
+        const identityToPoz7 = {}; // identityKey → poz7
+
+        // Najprv spracuj prílohy bez rodiča (prvé vydania, poz9=00)
+        // potom revízie – aby zdedili správne číslo od rodiča
+        const sorted = [...project.attachments].sort((a, b) => {
+          const aIsRev = a.parentUid ? 1 : 0;
+          const bIsRev = b.parentUid ? 1 : 0;
+          return aIsRev - bIsRev;
+        });
+
+        sorted.forEach(att => {
+          if (att.poz8 === "AAA" || att.poz8 === "TXT") {
+            att.poz7 = "000";
+            return;
+          }
+
+          const groupKey    = `${att.part}|${att.scope}|${att.objectId || ""}`;
+          // Identita = všetko okrem revízie (poz9) – revízie zdieľajú tú istú identitu
+          const rootUid     = att.parentUid || att.uid;
+          const identityKey = rootUid; // každá rodina príloh má rovnaké rootUid
+
+          if (identityToPoz7[identityKey] !== undefined) {
+            att.poz7 = identityToPoz7[identityKey];
+          } else {
+            if (groupCounters[groupKey] === undefined) groupCounters[groupKey] = 0;
+            groupCounters[groupKey] += 1;
+            const num = String(groupCounters[groupKey]).padStart(3, "0");
+            identityToPoz7[identityKey] = num;
+            att.poz7 = num;
+          }
+        });
+      }
+
+      function computeNextPoz7Preview(scope, part, objectId, poz6, poz8) {
+        if (poz8 === "AAA" || poz8 === "TXT") return "000";
+        const groupKey = `${part}|${scope}|${objectId || ""}`;
+        let max = 0;
+        project.attachments.forEach(att => {
+          if (att.poz7 === "000") return;
+          const k = `${att.part}|${att.scope}|${att.objectId || ""}`;
+          if (k !== groupKey) return;
+          const n = parseInt(att.poz7, 10);
+          if (!isNaN(n) && n > max) max = n;
+        });
+        return String(max + 1).padStart(3, "0");
+      }
+
+      function updatePoz7Preview() {
+        const scope    = getAttachmentScope();
+        const part     = attachmentPartSelect.value;
+        const objectId = attachmentObjectSelect.value;
+        const poz6     = poz6Select.value;
+        const poz8     = poz8Select.value;
+        if (!poz6 || !poz8) { poz7Input.value = ""; return; }
+        if (scope === "object" && part === "D" && !objectId) { poz7Input.value = ""; return; }
+        poz7Input.value = computeNextPoz7Preview(scope, part, objectId, poz6, poz8);
+      }
+
+      // ── Projekt ────────────────────────────────────────────────────────────────
       function saveProject() {
-        project.name = projectNameInput.value.trim();
-        project.id = idStavbyInput.value.trim();
-        project.stupen = stupenDocSelect.value;
-        project.urcenie = urcenieInput.value.trim();
+        project.name     = projectNameInput.value.trim();
+        project.id       = idStavbyInput.value.trim();
+        project.stupen   = stupenDocSelect.value;
+        project.urcenie  = urcenieInput.value.trim();
         project.identKod = identKodInput.value.trim();
 
         if (!project.id || !project.stupen || !project.urcenie || !project.identKod) {
@@ -645,27 +765,17 @@
           projectStatus.style.color = "var(--color-error)";
           return;
         }
-
-        projectStatus.textContent = "Projektové údaje uložené. Názvy príloh budú vychádzať z " +
+        projectStatus.textContent = "Projektové údaje uložené. Prefix: " +
           [project.id, project.stupen, project.urcenie, project.identKod].join("_") + ".";
         projectStatus.style.color = "var(--color-text-muted)";
-
         renderOverview();
       }
 
       function resetProject() {
-        project.name = "";
-        project.id = "";
-        project.stupen = "";
-        project.urcenie = "";
-        project.identKod = "";
-        project.objects = [];
-        project.attachments = [];
-        projectNameInput.value = "";
-        idStavbyInput.value = "";
-        stupenDocSelect.value = "";
-        urcenieInput.value = "";
-        identKodInput.value = "";
+        project.name = ""; project.id = ""; project.stupen = ""; project.urcenie = ""; project.identKod = "";
+        project.objects = []; project.attachments = [];
+        projectNameInput.value = ""; idStavbyInput.value = ""; stupenDocSelect.value = "";
+        urcenieInput.value = ""; identKodInput.value = "";
         objectsTableBody.innerHTML = "";
         attachmentObjectSelect.innerHTML = '<option value="">-- vyber objekt --</option>';
         overviewTableBody.innerHTML = "";
@@ -675,6 +785,7 @@
         updatePoz7Preview();
       }
 
+      // ── Objekty ────────────────────────────────────────────────────────────────
       function renderObjects() {
         objectsTableBody.innerHTML = "";
         attachmentObjectSelect.innerHTML = '<option value="">-- vyber objekt --</option>';
@@ -682,7 +793,6 @@
           const tr = document.createElement("tr");
           tr.innerHTML = `<td>${obj.code}</td><td>${obj.name}</td><td>${obj.type === "S" ? "Stavebný objekt" : "Prevádzkový súbor"}</td>`;
           objectsTableBody.appendChild(tr);
-
           const opt = document.createElement("option");
           opt.value = obj.id.toString();
           opt.textContent = `${obj.code} – ${obj.name}`;
@@ -692,201 +802,104 @@
       }
 
       function addObject() {
-        const name = objectNameInput.value.trim();
+        const name   = objectNameInput.value.trim();
         const number = objectNumberInput.value.trim();
-        const type = getSelectedObjectType();
-
-        if (!name || !number) {
-          alert("Vyplň názov aj číslo objektu / súboru.");
-          return;
-        }
-
+        const type   = getSelectedObjectType();
+        if (!name || !number) { alert("Vyplň názov aj číslo objektu / súboru."); return; }
         const normalizedNumber = number.padStart(2, "0");
         const code = type + normalizedNumber;
-        const id = project.objects.length + 1;
+        const id   = project.objects.length + 1;
         project.objects.push({ id, name, number: normalizedNumber, type, code });
-        objectNameInput.value = "";
-        objectNumberInput.value = "";
+        objectNameInput.value = ""; objectNumberInput.value = "";
         renderObjects();
       }
 
-      function getAttachmentScope() {
-        const selected = document.querySelector("input[name='attachmentScope']:checked");
-        return selected ? selected.value : "project";
-      }
-
-      function derivePozicia5(scope, part) {
-        if (scope === "project") {
-          if (part === "A") return "A00";
-          if (part === "B") return "B00";
-          if (part === "C") return "C00";
-          if (part === "E") return "E00";
-          if (part === "D") return "D00";
-        } else {
-          const selectedObjectId = attachmentObjectSelect.value;
-          const obj = project.objects.find(o => o.id.toString() === selectedObjectId);
-          return obj ? obj.code : "";
-        }
-        return "";
-      }
-
-      /**
-       * Prepočíta poz7 pre všetky prílohy podľa ich aktuálneho poradia v poli project.attachments.
-       * Pravidlá:
-       *  - AAA a TXT dostanú vždy "000"
-       *  - Revízie tej istej prílohy (rovnaká časť, scope, objectId, poz6, poz8) zdieľajú rovnaké číslo
-       *  - Ostatné dokumenty dostanú poradové číslo podľa poradia v rámci skupiny (časť + scope + objectId)
-       */
-      function recomputeAllPoz7() {
-        // Sledujeme "skupiny" – kľúč = časť|scope|objectId
-        // V rámci skupiny počítame poradie; rovnaká identita prílohy (poz6+poz8) zdieľa číslo
-        const groupCounters = {}; // kľúč skupiny -> aktuálny max counter
-        const identityNumbers = {}; // kľúč identity (skupina|poz6|poz8) -> pridelené číslo
-
-        project.attachments.forEach(att => {
-          if (att.poz8 === "AAA" || att.poz8 === "TXT") {
-            att.poz7 = "000";
-            return;
-          }
-
-          const groupKey = `${att.part}|${att.scope}|${att.objectId || ""}`;
-          const identityKey = `${groupKey}|${att.poz6}|${att.poz8}`;
-
-          if (identityNumbers[identityKey] !== undefined) {
-            // Revízia existujúcej prílohy – zdieľa rovnaké číslo
-            att.poz7 = identityNumbers[identityKey];
-          } else {
-            // Nová identita v tejto skupine – prideliť ďalšie poradové číslo
-            if (groupCounters[groupKey] === undefined) {
-              groupCounters[groupKey] = 0;
-            }
-            groupCounters[groupKey] += 1;
-            const newNum = String(groupCounters[groupKey]).padStart(3, "0");
-            identityNumbers[identityKey] = newNum;
-            att.poz7 = newNum;
-          }
-        });
-      }
-
-      function computePozicia7(scope, part, objectId, poz6, poz8, poz9) {
-        if (poz8 === "AAA" || poz8 === "TXT") {
-          return "000";
-        }
-        const normalizedPoz9 = String(poz9 || "00").padStart(2, "0");
-        const revisionGroup = project.attachments.find(att => {
-          return att.part === part &&
-            att.scope === scope &&
-            (scope !== "object" || att.objectId === objectId) &&
-            att.poz6 === poz6 &&
-            att.poz8 === poz8 &&
-            att.poz9 !== normalizedPoz9;
-        });
-        if (revisionGroup) {
-          return revisionGroup.poz7;
-        }
-        let maxNum = 0;
-        project.attachments.forEach(att => {
-          if (att.part !== part) return;
-          if (part === "D") {
-            const sameObj = (scope === "object" && att.scope === "object" && att.objectId === objectId);
-            if (!sameObj) return;
-          }
-          if (att.scope !== scope) return;
-          if (att.poz7 !== "000") {
-            const n = parseInt(att.poz7, 10);
-            if (!Number.isNaN(n) && n > maxNum) maxNum = n;
-          }
-        });
-        const nextNum = maxNum + 1;
-        return String(nextNum).padStart(3, "0");
-      }
-
-
-      function updatePoz7Preview() {
-        const scope = getAttachmentScope();
-        const part = attachmentPartSelect.value;
-        const selectedObjectId = attachmentObjectSelect.value;
-        const poz6 = poz6Select.value;
-        const poz8 = poz8Select.value;
-        const poz9 = poz9Input.value.trim() || '00';
-
-        if (!poz6 || !poz8) {
-          poz7Input.value = '';
-          return;
-        }
-        if (scope === 'object' && part === 'D' && !selectedObjectId) {
-          poz7Input.value = '';
-          return;
-        }
-        const preview = computePozicia7(scope, part, selectedObjectId, poz6, poz8, poz9);
-        poz7Input.value = preview;
-      }
-
+      // ── Prílohy ────────────────────────────────────────────────────────────────
       function addAttachment() {
         attachmentError.textContent = "";
-
         if (!project.id || !project.stupen || !project.urcenie || !project.identKod) {
-          attachmentError.textContent = "Najprv ulož projektové údaje (pozície 1 – 4).";
-          return;
+          attachmentError.textContent = "Najprv ulož projektové údaje (pozície 1 – 4)."; return;
         }
+        const scope    = getAttachmentScope();
+        const part     = attachmentPartSelect.value;
+        const objectId = attachmentObjectSelect.value;
+        const poz6     = poz6Select.value;
+        const poz8     = poz8Select.value;
+        const title    = attachmentTitleInput.value.trim();
 
-        const scope = getAttachmentScope();
-        const part = attachmentPartSelect.value;
-        const selectedObjectId = attachmentObjectSelect.value;
-        const poz6 = poz6Select.value;
-        const poz8 = poz8Select.value;
-        const poz9 = poz9Input.value.trim();
-        const title = attachmentTitleInput.value.trim();
-
-        if (!poz6 || !poz8 || !poz9) {
-          attachmentError.textContent = "Vyplň pozície 6, 8, 9 pre prílohu.";
-          return;
+        if (!poz6 || !poz8) {
+          attachmentError.textContent = "Vyplň pozície 6 a 8 pre prílohu."; return;
         }
-
         if (!allowedPoz6.has(poz6)) {
-          attachmentError.textContent = "Pozícia 6 obsahuje kód, ktorý nie je povolený podľa schémy (PDF).";
-          return;
+          attachmentError.textContent = "Pozícia 6 obsahuje nepovolený kód."; return;
         }
         if (!allowedPoz8.has(poz8)) {
-          attachmentError.textContent = "Pozícia 8 obsahuje typ dokumentu, ktorý nie je povolený podľa schémy (PDF).";
-          return;
+          attachmentError.textContent = "Pozícia 8 obsahuje nepovolený typ dokumentu."; return;
         }
-        if (scope === "object" && part === "D" && !selectedObjectId) {
-          attachmentError.textContent = "Pre prílohu k časti D vyber konkrétny stavebný objekt alebo prevádzkový súbor.";
-          return;
+        if (scope === "object" && part === "D" && !objectId) {
+          attachmentError.textContent = "Pre prílohu k časti D vyber konkrétny stavebný objekt."; return;
         }
-
-        const poz5 = derivePozicia5(scope, part);
+        const poz5 = derivePozicia5(scope, part, objectId);
         if (!poz5) {
-          attachmentError.textContent = "Nebolo možné odvodiť pozíciu 5. Skontroluj scope, časť dokumentácie alebo definuj objekt.";
-          return;
+          attachmentError.textContent = "Nebolo možné odvodiť pozíciu 5."; return;
         }
 
-        const poz7Norm = computePozicia7(scope, part, selectedObjectId, poz6, poz8, poz9);
-        poz7Input.value = poz7Norm;
-        const poz9Norm = poz9.padStart(2, "0");
-
+        const uid = genUid();
+        // poz9 je vždy 00 pri novej prílohe
         const attachment = {
-          scope,
-          part,
-          objectId: scope === "object" ? selectedObjectId : null,
-          poz5,
-          poz6,
-          poz7: poz7Norm,
-          poz8,
-          poz9: poz9Norm,
+          uid,
+          parentUid: null,
+          scope, part,
+          objectId: scope === "object" ? objectId : null,
+          poz5, poz6, poz7: "???", poz8,
+          poz9: "00",
           title
         };
-
         project.attachments.push(attachment);
+        recomputeAllPoz7();
         renderOverview();
         clearAttachmentForm();
       }
 
+      // ── Vytvoriť revíziu ───────────────────────────────────────────────────────
+      // Nájde všetky prílohy z rovnakej rodiny (parentUid alebo uid == rootUid)
+      // a vypočíta nasledujúce číslo revízie.
+      function createRevision(index) {
+        const base    = project.attachments[index];
+        const rootUid = base.parentUid || base.uid;
+
+        // Nájdi maximálnu poz9 v tejto rodine
+        let maxRev = -1;
+        project.attachments.forEach(att => {
+          const r = att.parentUid || att.uid;
+          if (r === rootUid) {
+            const n = parseInt(att.poz9, 10);
+            if (!isNaN(n) && n > maxRev) maxRev = n;
+          }
+        });
+
+        const newRev = String(maxRev + 1).padStart(2, "0");
+        const copy = {
+          uid: genUid(),
+          parentUid: rootUid,   // vždy odkazuje na pôvodnú prílohu (revízia 00)
+          scope:    base.scope,
+          part:     base.part,
+          objectId: base.objectId,
+          poz5:     base.poz5,
+          poz6:     base.poz6,
+          poz7:     base.poz7,  // zdieľa rovnaké číslo
+          poz8:     base.poz8,
+          poz9:     newRev,
+          title:    base.title
+        };
+        project.attachments.push(copy);
+        recomputeAllPoz7();
+        renderOverview();
+      }
+
       function clearAttachmentForm() {
         attachmentPartSelect.value = "A";
-        poz6Select.value = "";
-        poz8Select.value = "";
+        poz6Select.value = ""; poz8Select.value = "";
         poz9Input.value = "00";
         attachmentTitleInput.value = "";
         attachmentScopeRadio.forEach(r => { if (r.value === "project") r.checked = true; });
@@ -895,56 +908,131 @@
         poz7Input.value = "";
       }
 
+      // ── Render tabuľky ─────────────────────────────────────────────────────────
+      function renderOverview() {
+        overviewTableBody.innerHTML = "";
+        project.attachments.forEach((att, index) => {
+          const tr = document.createElement("tr");
+          const isRevision = !!att.parentUid;
+          if (isRevision) tr.classList.add("is-revision");
 
-      function csvEscape(value) {
-        const stringValue = String(value ?? "");
-        if (/[";,\n]/.test(stringValue)) {
-          return '"' + stringValue.replace(/"/g, '""') + '"';
+          const objLabel = (() => {
+            if (att.scope === "object" && att.objectId) {
+              const obj = project.objects.find(o => o.id.toString() === att.objectId);
+              return obj ? `${obj.code} – ${obj.name}` : att.objectId;
+            }
+            return "projekt";
+          })();
+
+          let filenameCore = "(projektové pozície 1–4 nie sú kompletné)";
+          if (project.id && project.stupen && project.urcenie && project.identKod) {
+            filenameCore = [
+              project.id, project.stupen, project.urcenie, project.identKod,
+              att.poz5, att.poz6, att.poz7, att.poz8, att.poz9
+            ].join("_");
+          }
+
+          const revLabel = isRevision
+            ? `<span class="rev-badge">rev. ${att.poz9}</span>`
+            : "";
+
+          tr.innerHTML = `
+            <td>${att.part}</td>
+            <td>${objLabel}</td>
+            <td>${att.poz6}</td>
+            <td>${att.poz7}</td>
+            <td>${att.poz8}</td>
+            <td>${att.poz9}${revLabel}</td>
+            <td><code style="font-size:0.78rem;word-break:break-all">${filenameCore}</code></td>
+            <td>${att.title || ""}</td>
+            <td class="actions-cell">
+              <button type="button" class="btn-secondary btn-icon" data-action="up"       data-index="${index}" title="Posunúť hore">▲</button>
+              <button type="button" class="btn-secondary btn-icon" data-action="down"     data-index="${index}" title="Posunúť dole">▼</button>
+              <button type="button" class="btn-revision"          data-action="revision" data-index="${index}" title="Vytvoriť revíziu tejto prílohy">＋ Revízia</button>
+              <button type="button" class="btn-secondary btn-icon" data-action="delete"   data-index="${index}" title="Vymazať">✕</button>
+            </td>
+          `;
+          overviewTableBody.appendChild(tr);
+        });
+      }
+
+      function handleOverviewClick(event) {
+        const btn = event.target.closest("button[data-action]");
+        if (!btn) return;
+        const action = btn.getAttribute("data-action");
+        const index  = parseInt(btn.getAttribute("data-index"), 10);
+        if (isNaN(index)) return;
+
+        if (action === "up") {
+          if (index === 0) return;
+          [project.attachments[index - 1], project.attachments[index]] =
+            [project.attachments[index], project.attachments[index - 1]];
+        } else if (action === "down") {
+          if (index === project.attachments.length - 1) return;
+          [project.attachments[index + 1], project.attachments[index]] =
+            [project.attachments[index], project.attachments[index + 1]];
+        } else if (action === "revision") {
+          createRevision(index);
+          return;
+        } else if (action === "delete") {
+          project.attachments.splice(index, 1);
         }
-        return stringValue;
+        recomputeAllPoz7();
+        renderOverview();
+      }
+
+      // ── CSV ────────────────────────────────────────────────────────────────────
+      function csvEscape(value) {
+        const s = String(value ?? "");
+        return /[;"\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
       }
 
       function exportCsv() {
         const rows = [];
-        rows.push(["TYPE","projectName","idStavby","stupenDoc","urcenie","identKod","objectId","objectName","objectNumber","objectType","scope","part","poz5","poz6","poz7","poz8","poz9","title","attachmentObjectId"]);
-        rows.push(["PROJECT", project.name, project.id, project.stupen, project.urcenie, project.identKod, "", "", "", "", "", "", "", "", "", "", "", "", ""]);
+        // Hlavička – 21 stĺpcov
+        rows.push(["TYPE","projectName","idStavby","stupenDoc","urcenie","identKod",
+                   "objectId","objectName","objectNumber","objectType",
+                   "scope","part","poz5","poz6","poz7","poz8","poz9","title",
+                   "attachmentObjectId","uid","parentUid"]);
+        rows.push(["PROJECT", project.name, project.id, project.stupen,
+                   project.urcenie, project.identKod,
+                   "","","","","","","","","","","","","","",""]);
         project.objects.forEach(obj => {
-          rows.push(["OBJECT", "", "", "", "", "", obj.id, obj.name, obj.number, obj.type, "", "", "", "", "", "", "", "", ""]);
+          rows.push(["OBJECT","","","","","",
+                     obj.id, obj.name, obj.number, obj.type,
+                     "","","","","","","","","","",""]);
         });
         project.attachments.forEach(att => {
-          rows.push(["ATTACHMENT", "", "", "", "", "", "", "", "", "", att.scope, att.part, att.poz5, att.poz6, att.poz7, att.poz8, att.poz9, att.title || "", att.objectId || ""]);
+          rows.push(["ATTACHMENT","","","","","","","","","",
+                     att.scope, att.part, att.poz5, att.poz6, att.poz7,
+                     att.poz8, att.poz9, att.title || "",
+                     att.objectId || "",
+                     att.uid || "",
+                     att.parentUid || ""]);
         });
-        const csv = rows.map(row => row.map(csvEscape).join(';')).join('\n');
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = (project.name ? project.name.replace(/\s+/g, '_') : 'zoznam_priloh') + '.csv';
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
+        const csv  = rows.map(r => r.map(csvEscape).join(";")).join("\n");
+        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+        const url  = URL.createObjectURL(blob);
+        const a    = document.createElement("a");
+        a.href     = url;
+        a.download = (project.name ? project.name.replace(/\s+/g, "_") : "zoznam_priloh") + ".csv";
+        document.body.appendChild(a); a.click(); a.remove();
         URL.revokeObjectURL(url);
-        csvStatus.textContent = 'CSV bolo exportované.';
+        csvStatus.textContent = "CSV bolo exportované.";
       }
 
       function parseCsvLine(line) {
         const result = [];
-        let current = '';
-        let inQuotes = false;
+        let current = "", inQuotes = false;
         for (let i = 0; i < line.length; i++) {
-          const char = line[i];
-          if (char === '"') {
-            if (inQuotes && line[i + 1] === '"') {
-              current += '"';
-              i++;
-            } else {
-              inQuotes = !inQuotes;
-            }
-          } else if (char === ';' && !inQuotes) {
-            result.push(current);
-            current = '';
+          const c = line[i];
+          if (c === '"') {
+            if (inQuotes && line[i + 1] === '"') { current += '"'; i++; }
+            else inQuotes = !inQuotes;
+          } else if (c === ";" && !inQuotes) {
+            result.push(current); current = "";
           } else {
-            current += char;
+            current += c;
           }
         }
         result.push(current);
@@ -957,165 +1045,109 @@
         const reader = new FileReader();
         reader.onload = function(e) {
           try {
-            const importedText = String(e.target.result || '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
-            const lines = importedText.split('\n').filter(line => line.trim() !== '');
-            if (lines.length < 2) throw new Error('CSV je prázdne alebo neplatné.');
-            const rows = lines.map(parseCsvLine);
+            const text  = String(e.target.result || "").replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+            const lines = text.split("\n").filter(l => l.trim() !== "");
+            if (lines.length < 2) throw new Error("CSV je prázdne alebo neplatné.");
+            const rows   = lines.map(parseCsvLine);
             const header = rows[0];
-            if (!header.length || header[0] !== 'TYPE') throw new Error('CSV nemá očakávanú hlavičku.');
+            if (!header.length || header[0] !== "TYPE") throw new Error("CSV nemá očakávanú hlavičku.");
 
-            project.name = '';
-            project.id = '';
-            project.stupen = '';
-            project.urcenie = '';
-            project.identKod = '';
-            project.objects = [];
-            project.attachments = [];
+            // Reset
+            Object.assign(project, { name:"", id:"", stupen:"", urcenie:"", identKod:"", objects:[], attachments:[] });
 
-            const objectIdMap = new Map();
-            let nextObjectId = 1;
+            const objectIdMap = new Map(); // starý id → nový id
+            let nextObjectId  = 1;
+            // Mapa uid → nový uid (aby parentUid odkazoval správne)
+            const uidMap      = new Map();
 
             rows.slice(1).forEach(cols => {
-              const type = cols[0] || '';
-              if (type === 'PROJECT') {
-                project.name = cols[1] || '';
-                project.id = cols[2] || '';
-                project.stupen = cols[3] || '';
-                project.urcenie = cols[4] || '';
-                project.identKod = cols[5] || '';
-              } else if (type === 'OBJECT') {
-                const oldId = cols[6] || '';
-                const obj = {
+              const type = cols[0] || "";
+              if (type === "PROJECT") {
+                project.name     = cols[1] || "";
+                project.id       = cols[2] || "";
+                project.stupen   = cols[3] || "";
+                project.urcenie  = cols[4] || "";
+                project.identKod = cols[5] || "";
+              } else if (type === "OBJECT") {
+                const oldId = cols[6] || "";
+                const obj   = {
                   id: nextObjectId,
-                  name: cols[7] || '',
-                  number: (cols[8] || '').padStart(2, '0'),
-                  type: cols[9] || 'S'
+                  name:   cols[7] || "",
+                  number: (cols[8] || "").padStart(2, "0"),
+                  type:   cols[9] || "S"
                 };
                 obj.code = obj.type + obj.number;
                 project.objects.push(obj);
                 objectIdMap.set(String(oldId), String(nextObjectId));
-                nextObjectId += 1;
-              } else if (type === 'ATTACHMENT') {
-                const objectId = cols[18] ? (objectIdMap.get(String(cols[18])) || null) : null;
-                project.attachments.push({
-                  scope: cols[10] || 'project',
-                  part: cols[11] || 'A',
-                  poz5: cols[12] || '',
-                  poz6: cols[13] || '',
-                  poz7: cols[14] || '',
-                  poz8: cols[15] || '',
-                  poz9: cols[16] || '00',
-                  title: cols[17] || '',
-                  objectId
-                });
+                nextObjectId++;
+              } else if (type === "ATTACHMENT") {
+                const objectId  = cols[18] ? (objectIdMap.get(String(cols[18])) || null) : null;
+                // uid a parentUid – ak v CSV chýbajú, vygeneruj nové
+                const csvUid    = cols[19] ? cols[19].trim() : "";
+                const csvParent = cols[20] ? cols[20].trim() : "";
+                const newUid    = csvUid || genUid();
+                if (csvUid) uidMap.set(csvUid, newUid);
+                const att = {
+                  uid:       newUid,
+                  parentUid: null, // doplníme nižšie
+                  scope:     cols[10] || "project",
+                  part:      cols[11] || "A",
+                  poz5:      cols[12] || "",
+                  poz6:      cols[13] || "",
+                  poz7:      cols[14] || "",
+                  poz8:      cols[15] || "",
+                  poz9:      cols[16] || "00",
+                  title:     cols[17] || "",
+                  objectId,
+                  _csvParent: csvParent
+                };
+                project.attachments.push(att);
               }
             });
 
-            projectNameInput.value = project.name;
-            idStavbyInput.value = project.id;
-            stupenDocSelect.value = project.stupen;
-            urcenieInput.value = project.urcenie;
-            identKodInput.value = project.identKod;
+            // Doplň parentUid podľa mapy
+            project.attachments.forEach(att => {
+              if (att._csvParent) {
+                att.parentUid = uidMap.get(att._csvParent) || att._csvParent;
+              }
+              delete att._csvParent;
+            });
+
+            // Prepočítaj poz7 podľa previazaní
+            recomputeAllPoz7();
+
+            // Obnov UI
+            projectNameInput.value  = project.name;
+            idStavbyInput.value     = project.id;
+            stupenDocSelect.value   = project.stupen;
+            urcenieInput.value      = project.urcenie;
+            identKodInput.value     = project.identKod;
             renderObjects();
             renderOverview();
-            projectStatus.textContent = 'Projektové údaje načítané z CSV.';
-            projectStatus.style.color = 'var(--color-text-muted)';
-            csvStatus.textContent = 'CSV bolo úspešne importované.';
+            projectStatus.textContent = "Projektové údaje načítané z CSV.";
+            projectStatus.style.color = "var(--color-text-muted)";
+            csvStatus.textContent     = "CSV bolo úspešne importované.";
           } catch (err) {
-            csvStatus.textContent = 'Chyba importu CSV: ' + err.message;
+            csvStatus.textContent = "Chyba importu CSV: " + err.message;
           } finally {
-            importCsvInput.value = '';
+            importCsvInput.value = "";
           }
         };
-        reader.readAsText(file, 'utf-8');
+        reader.readAsText(file, "utf-8");
       }
 
-      function renderOverview() {
-        overviewTableBody.innerHTML = "";
-        project.attachments.forEach((att, index) => {
-          const tr = document.createElement("tr");
-
-          const objLabel = (() => {
-            if (att.scope === "object" && att.objectId) {
-              const obj = project.objects.find(o => o.id.toString() === att.objectId);
-              return obj ? `${obj.code} – ${obj.name}` : "";
-            }
-            return "projekt";
-          })();
-
-          let filenameCore = "(projektové pozície 1–4 nie sú kompletné)";
-          if (project.id && project.stupen && project.urcenie && project.identKod) {
-            filenameCore = [
-              project.id,
-              project.stupen,
-              project.urcenie,
-              project.identKod,
-              att.poz5,
-              att.poz6,
-              att.poz7,
-              att.poz8,
-              att.poz9
-            ].join("_");
-          }
-
-          tr.innerHTML = `
-            <td>${att.part}</td>
-            <td>${objLabel}</td>
-            <td>${att.poz6}</td>
-            <td>${att.poz7}</td>
-            <td>${att.poz8}</td>
-            <td>${att.poz9}</td>
-            <td>${filenameCore}</td>
-            <td>${att.title || ""}</td>
-            <td class="actions-cell">
-              <button type="button" class="btn-secondary btn-icon" data-action="up" data-index="${index}">▲</button>
-              <button type="button" class="btn-secondary btn-icon" data-action="down" data-index="${index}">▼</button>
-              <button type="button" class="btn-secondary btn-icon" data-action="delete" data-index="${index}">✕</button>
-            </td>
-          `;
-
-          overviewTableBody.appendChild(tr);
-        });
-      }
-
-      function handleOverviewClick(event) {
-        const btn = event.target.closest('button[data-action]');
-        if (!btn) return;
-        const action = btn.getAttribute('data-action');
-        const index = parseInt(btn.getAttribute('data-index'), 10);
-        if (Number.isNaN(index)) return;
-
-        if (action === 'up') {
-          if (index === 0) return;
-          const tmp = project.attachments[index - 1];
-          project.attachments[index - 1] = project.attachments[index];
-          project.attachments[index] = tmp;
-        } else if (action === 'down') {
-          if (index === project.attachments.length - 1) return;
-          const tmp = project.attachments[index + 1];
-          project.attachments[index + 1] = project.attachments[index];
-          project.attachments[index] = tmp;
-        } else if (action === 'delete') {
-          project.attachments.splice(index, 1);
-        }
-
-        // Po každej zmene poradia alebo mazaní prepočítaj poz7 pre všetky prílohy
-        recomputeAllPoz7();
-        renderOverview();
-      }
-
+      // ── Event listenery ────────────────────────────────────────────────────────
       document.getElementById("saveProjectBtn").addEventListener("click", saveProject);
       document.getElementById("resetProjectBtn").addEventListener("click", resetProject);
       addObjectBtn.addEventListener("click", addObject);
       addAttachmentBtn.addEventListener("click", addAttachment);
       clearAttachmentFormBtn.addEventListener("click", clearAttachmentForm);
-      attachmentPartSelect.addEventListener("change", function() { updateObjectSelectState(); updatePoz7Preview(); });
-      attachmentScopeRadio.forEach(radio => radio.addEventListener("change", function() { updateObjectSelectState(); updatePoz7Preview(); }));
+      attachmentPartSelect.addEventListener("change", () => { updateObjectSelectState(); updatePoz7Preview(); });
+      attachmentScopeRadio.forEach(r => r.addEventListener("change", () => { updateObjectSelectState(); updatePoz7Preview(); }));
       overviewTableBody.addEventListener("click", handleOverviewClick);
       attachmentObjectSelect.addEventListener("change", updatePoz7Preview);
       poz6Select.addEventListener("change", updatePoz7Preview);
       poz8Select.addEventListener("change", updatePoz7Preview);
-      poz9Input.addEventListener("input", updatePoz7Preview);
       exportCsvBtn.addEventListener("click", exportCsv);
       importCsvInput.addEventListener("change", importCsvFile);
 
