@@ -739,6 +739,8 @@
       // ── Objekty
       function renderObjects() {
         objectsTableBody.innerHTML = "";
+        // Zachováme aktuálne vybraný objekt
+        const prevObjectId = attachmentObjectSelect.value;
         attachmentObjectSelect.innerHTML = '<option value="">-- vyber objekt --</option>';
         project.objects.forEach(obj => {
           const tr = document.createElement("tr");
@@ -749,6 +751,8 @@
           opt.textContent = `${obj.code} – ${obj.name}`;
           attachmentObjectSelect.appendChild(opt);
         });
+        // Obnovíme predchádzajúci výber ak existuje
+        if (prevObjectId) attachmentObjectSelect.value = prevObjectId;
         updateObjectSelectState();
       }
 
@@ -795,7 +799,8 @@
         });
         recomputeAllPoz7();
         renderOverview();
-        clearAttachmentForm();
+        // Po pridaní vymažeme len polia profesie, typu a názvu – časť a objekt zachováme
+        clearAttachmentFormAfterAdd();
       }
 
       // ── Revízia
@@ -820,14 +825,26 @@
         renderOverview();
       }
 
+      // Používa sa po pridaní prílohy: zachová časť a objekt
+      function clearAttachmentFormAfterAdd() {
+        poz6Select.value = "";
+        poz8Select.value = "";
+        poz9Input.value  = "00";
+        attachmentTitleInput.value = "";
+        attachmentError.textContent = "";
+        updatePoz7Preview();
+      }
+
+      // Používa sa tlačidlom "Vyčistiť formulár": resetuje všetko vrátane časti a objektu
       function clearAttachmentForm() {
         attachmentPartSelect.value = "A";
-        poz6Select.value = ""; poz8Select.value = "";
-        poz9Input.value = "00";
+        poz6Select.value = "";
+        poz8Select.value = "";
+        poz9Input.value  = "00";
         attachmentTitleInput.value = "";
-        updateObjectSelectState();
         attachmentError.textContent = "";
-        poz7Input.value = "";
+        updateObjectSelectState();
+        updatePoz7Preview();
       }
 
       // ── Render tabuľky
