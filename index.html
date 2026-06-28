@@ -363,7 +363,7 @@
               <option value="D">D – Dokumentácia stavebných objektov</option>
               <option value="E">E – Prílohy</option>
             </select>
-            <div class="help-text">Pre časti A, B, C, E je pozícia 5 automaticky Xxx00. Pre časť D vyber konkrétny objekt.</div>
+            <div class="help-text">Pre časti A, B kódovanie končí na pozícii 6. Pre časti C, D, E pokračuje ďalej.</div>
           </div>
           <div>
             <label for="attachmentObject">Stavebný objekt / súbor (aktívny len pre časť D)</label>
@@ -407,6 +407,7 @@
               <option value="VYV">VYV – výkaz výmer</option>
               <option value="ROZ">ROZ – rozpočet</option>
             </select>
+            <div class="help-text" id="poz8HelpText"></div>
           </div>
           <div>
             <label for="poz9">Pozícia 9 – revízia dokumentu</label>
@@ -468,6 +469,9 @@
   <script>
   (function () {
     const project = { name: "", id: "", stupen: "", urcenie: "", identKod: "", objects: [], attachments: [] };
+
+    // Časti kde kódovanie končí na pozícii 6 (poz7 a poz8 sa nepoužívajú)
+    const PARTS_END_AT_POZ6 = new Set(["A", "B"]);
 
     function groupKey(att) {
       return att.part === "D" ? `D|${att.objectId || ""}` : att.part;
@@ -537,6 +541,7 @@
     const poz6Wrapper            = document.getElementById("poz6Wrapper");
     const poz6HelpText           = document.getElementById("poz6HelpText");
     const poz8Select             = document.getElementById("poz8");
+    const poz8HelpText           = document.getElementById("poz8HelpText");
     const poz7Input              = document.getElementById("poz7");
     const poz9Input              = document.getElementById("poz9");
     const attachmentTitleInput   = document.getElementById("attachmentTitle");
@@ -561,6 +566,19 @@
       const objId = attachmentObjectSelect.value; if (!objId) return null;
       const obj = project.objects.find(o => o.id.toString() === objId);
       return obj ? obj.type : null;
+    }
+
+    // Aktualizuje stav pozície 8 – pre časti A a B je neaktívna
+    function updatePoz8State() {
+      const part = attachmentPartSelect.value;
+      const isDisabled = PARTS_END_AT_POZ6.has(part);
+      poz8Select.disabled = isDisabled;
+      if (isDisabled) {
+        poz8Select.value = "";
+        poz8HelpText.textContent = "Pre časť " + part + " kódovanie končí na pozícii 6 – pozícia 8 sa nepoužíva.";
+      } else {
+        poz8HelpText.textContent = "";
+      }
     }
 
     function updatePoz6Mode() {
@@ -592,6 +610,7 @@
       } else if (!needInput && poz6Mode === "select") {
         updatePoz6Options();
       }
+      updatePoz8State();
       updatePoz7Preview();
     }
 
@@ -702,6 +721,7 @@
       const identityToPoz7 = {}, groupCounters = {};
       Object.values(byGroup).forEach(list => {
         list.forEach(att => {
+          if (PARTS_END_AT_POZ6.has(att.part)) { att.poz7 = ""; return; }
           if (att.poz8 === "AAA" || att.poz8 === "TXT") { att.poz7 = "000"; return; }
           const gk      = groupKey(att);
           const rootUid = att.parentUid || att.uid;
@@ -719,6 +739,7 @@
     }
 
     function computeNextPoz7Preview(scope, part, objectId, poz8) {
+      if (PARTS_END_AT_POZ6.has(part)) return "";
       if (poz8 === "AAA" || poz8 === "TXT") return "000";
       const gk  = part === "D" ? `D|${objectId || ""}` : part;
       let max = 0;
@@ -735,6 +756,7 @@
       const scope = getAttachmentScope(), part = attachmentPartSelect.value;
       const objectId = attachmentObjectSelect.value;
       const poz6 = getPoz6Value(), poz8 = poz8Select.value;
+      if (PARTS_END_AT_POZ6.has(part)) { poz7Input.value = ""; return; }
       if (!poz6 || !poz8) { poz7Input.value = ""; return; }
       if (scope === "object" && !objectId) { poz7Input.value = ""; return; }
       poz7Input.value = computeNextPoz7Preview(scope, part, objectId, poz8);
@@ -828,21 +850,28 @@
       }
       const scope = getAttachmentScope(), part = attachmentPartSelect.value;
       const objectId = attachmentObjectSelect.value;
-      const poz6 = getPoz6Value(), poz8 = poz8Select.value;
+      const poz6 = getPoz6Value();
       const title = attachmentTitleInput.value.trim();
+
       if (!poz6) { attachmentError.textContent = "Vyplň pozíciu 6."; return; }
       if (poz6Mode === "input") {
         if (!/^[0-9]{3}$/.test(poz6)) { attachmentError.textContent = "Pozícia 6 musí byť presne 3-ciferné číslo (napr. 001)."; return; }
       } else {
         if (!allowedPoz6.has(poz6)) { attachmentError.textContent = "Pozícia 6 obsahuje nepovolený kód."; return; }
       }
-      if (!poz8) { attachmentError.textContent = "Vyplň pozíciu 8."; return; }
-      if (!allowedPoz8.has(poz8)) { attachmentError.textContent = "Pozícia 8 obsahuje nepovolený typ dokumentu."; return; }
+
+      // Pre časti A a B pozícia 8 nie je povinná ani aktívna
+      const poz8 = PARTS_END_AT_POZ6.has(part) ? "" : poz8Select.value;
+      if (!PARTS_END_AT_POZ6.has(part)) {
+        if (!poz8) { attachmentError.textContent = "Vyplň pozíciu 8."; return; }
+        if (!allowedPoz8.has(poz8)) { attachmentError.textContent = "Pozícia 8 obsahuje nepovolený typ dokumentu."; return; }
+      }
+
       if (scope === "object" && !objectId) { attachmentError.textContent = "Pre prílohu k časti D vyber konkrétny stavebný objekt."; return; }
       const poz5 = derivePozicia5(scope, part, objectId);
       if (!poz5) { attachmentError.textContent = "Nebolo možné odvodiť pozíciu 5."; return; }
       const newAtt = { uid: genUid(), parentUid: null, scope, part, objectId: scope === "object" ? objectId : null,
-        poz5, poz6, poz7: "???", poz8, poz9: "00", title, sortOrder: 0 };
+        poz5, poz6, poz7: PARTS_END_AT_POZ6.has(part) ? "" : "???", poz8, poz9: "00", title, sortOrder: 0 };
       newAtt.sortOrder = nextSortOrder(groupKey(newAtt));
       project.attachments.push(newAtt);
       recomputeAllPoz7(); renderOverview(); clearAttachmentFormAfterAdd();
@@ -889,9 +918,12 @@
     function buildFilename(att) {
       if (!project.id || !project.stupen || !project.urcenie || !project.identKod)
         return "(projektové pozície 1–4 nie sú kompletné)";
-      const parts = [project.id, project.stupen, project.urcenie, project.identKod,
-        att.poz5, att.poz6, att.poz7, att.poz8];
-      if (att.poz9 !== "00") parts.push(att.poz9);
+      const parts = [project.id, project.stupen, project.urcenie, project.identKod, att.poz5, att.poz6];
+      // Pre časti A a B kódovanie končí na pozícii 6
+      if (!PARTS_END_AT_POZ6.has(att.part)) {
+        parts.push(att.poz7, att.poz8);
+        if (att.poz9 !== "00") parts.push(att.poz9);
+      }
       return parts.join("_");
     }
 
@@ -916,10 +948,12 @@
       const rev9display = att.poz9 === "00"
         ? `<span style="color:var(--color-text-muted)">–</span>`
         : `${att.poz9}<span class="rev-badge">rev. ${att.poz9}</span>`;
+      const poz7display = PARTS_END_AT_POZ6.has(att.part) ? `<span style="color:var(--color-text-muted)">–</span>` : att.poz7;
+      const poz8display = PARTS_END_AT_POZ6.has(att.part) ? `<span style="color:var(--color-text-muted)">–</span>` : att.poz8;
       tr.innerHTML = `
         <td>${att.poz6}</td>
-        <td>${att.poz7}</td>
-        <td>${att.poz8}</td>
+        <td>${poz7display}</td>
+        <td>${poz8display}</td>
         <td>${rev9display}</td>
         <td><code style="font-size:0.78rem;word-break:break-all">${filename}</code></td>
         <td>${att.title || ""}</td>
