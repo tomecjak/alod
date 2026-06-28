@@ -390,7 +390,7 @@
         </div>
         <p class="help-text">
           Podľa schémy sa pri členení časti D používa pozícia 5 ako číslo stavebného objektu (S01, S02…)
-          alebo číslo prevádzkového súboru (P01, P02…).
+          alebo číslo prevádzkového súboru (P01, P02…). Objekty sú automaticky zoradené podľa kódu.
         </p>
         <fieldset>
           <div class="fieldset-row">
@@ -658,6 +658,14 @@
         if (!isD) attachmentObjectSelect.value = "";
       }
 
+      // Zoradí pole project.objects podľa kódu: najprv podľa typu (S < P), potom podľa čísla
+      function sortObjects() {
+        project.objects.sort((a, b) => {
+          if (a.type !== b.type) return a.type < b.type ? -1 : 1;
+          return parseInt(a.number, 10) - parseInt(b.number, 10);
+        });
+      }
+
       function derivePozicia5(scope, part, objectId) {
         if (scope === "project") {
           const map = { A: "A00", B: "B00", C: "C00", E: "E00", D: "D00" };
@@ -753,16 +761,14 @@
         const prevObjectId = attachmentObjectSelect.value;
         attachmentObjectSelect.innerHTML = '<option value="">-- vyber objekt --</option>';
 
-        project.objects.forEach((obj, index) => {
+        project.objects.forEach(obj => {
           const tr = document.createElement("tr");
           tr.innerHTML = `
             <td>${obj.code}</td>
             <td>${obj.name}</td>
             <td>${obj.type === "S" ? "Stavebný objekt" : "Prevádzkový súbor"}</td>
             <td class="actions-cell">
-              <button type="button" class="btn-secondary btn-icon" data-obj-action="up"     data-obj-index="${index}" title="Posunúť hore" ${index === 0 ? "disabled" : ""}>▲</button>
-              <button type="button" class="btn-secondary btn-icon" data-obj-action="down"   data-obj-index="${index}" title="Posunúť dole" ${index === project.objects.length - 1 ? "disabled" : ""}>▼</button>
-              <button type="button" class="btn-danger btn-icon"    data-obj-action="delete" data-obj-index="${index}" title="Vymazať objekt">✕</button>
+              <button type="button" class="btn-danger btn-icon" data-obj-action="delete" data-obj-id="${obj.id}" title="Vymazať objekt">✕</button>
             </td>
           `;
           objectsTableBody.appendChild(tr);
@@ -779,41 +785,22 @@
 
       function handleObjectsClick(event) {
         const btn = event.target.closest("button[data-obj-action]");
-        if (!btn) return;
-        const action = btn.getAttribute("data-obj-action");
-        const index  = parseInt(btn.getAttribute("data-obj-index"), 10);
-        if (isNaN(index)) return;
+        if (!btn || btn.getAttribute("data-obj-action") !== "delete") return;
+        const objId = btn.getAttribute("data-obj-id");
+        const obj   = project.objects.find(o => o.id.toString() === objId);
+        if (!obj) return;
 
-        if (action === "up") {
-          if (index === 0) return;
-          [project.objects[index - 1], project.objects[index]] =
-            [project.objects[index], project.objects[index - 1]];
-          renderObjects();
-          renderOverview();
-        } else if (action === "down") {
-          if (index === project.objects.length - 1) return;
-          [project.objects[index + 1], project.objects[index]] =
-            [project.objects[index], project.objects[index + 1]];
-          renderObjects();
-          renderOverview();
-        } else if (action === "delete") {
-          const obj = project.objects[index];
-          // Skontrolujeme či má objekt priradené prílohy
-          const hasAttachments = project.attachments.some(a => a.objectId === obj.id.toString());
-          if (hasAttachments) {
-            if (!confirm(`Objekt "${obj.code} – ${obj.name}" má priradené prílohy. Vymazaním objektu sa tieto prílohy tiež vymažú. Pokračovať?`)) return;
-            project.attachments = project.attachments.filter(a => a.objectId !== obj.id.toString());
-          }
-          project.objects.splice(index, 1);
-          // Ak bol vymazaný objekt aktuálne vybraný vo formulári, zrušíme výber
-          if (attachmentObjectSelect.value === obj.id.toString()) {
-            attachmentObjectSelect.value = "";
-          }
-          recomputeAllPoz7();
-          renderObjects();
-          renderOverview();
-          updatePoz7Preview();
+        const hasAttachments = project.attachments.some(a => a.objectId === objId);
+        if (hasAttachments) {
+          if (!confirm(`Objekt "${obj.code} – ${obj.name}" má priradené prílohy. Vymazaním objektu sa tieto prílohy tiež vymažú. Pokračovať?`)) return;
+          project.attachments = project.attachments.filter(a => a.objectId !== objId);
         }
+        project.objects = project.objects.filter(o => o.id.toString() !== objId);
+        if (attachmentObjectSelect.value === objId) attachmentObjectSelect.value = "";
+        recomputeAllPoz7();
+        renderObjects();
+        renderOverview();
+        updatePoz7Preview();
       }
 
       function addObject() {
@@ -823,9 +810,13 @@
         if (!name || !number) { alert("Vyplň názov aj číslo objektu / súboru."); return; }
         const normalizedNumber = number.padStart(2, "0");
         const code = type + normalizedNumber;
-        // Unikátne ID – použijeme genUid aby nehrozila kolízia po mazaní
+        // Kontrola duplicity kódu
+        if (project.objects.some(o => o.code === code)) {
+          alert(`Objekt s kódom "${code}" už existuje.`); return;
+        }
         const id = genUid();
         project.objects.push({ id, name, number: normalizedNumber, type, code });
+        sortObjects();
         objectNameInput.value = ""; objectNumberInput.value = "";
         renderObjects();
       }
@@ -1094,6 +1085,7 @@
               delete att._csvParent;
             });
 
+            sortObjects();
             recomputeAllPoz7();
             projectNameInput.value = project.name;
             idStavbyInput.value    = project.id;
