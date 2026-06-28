@@ -390,7 +390,7 @@
         </div>
         <p class="help-text">
           Podľa schémy sa pri členení časti D používa pozícia 5 ako číslo stavebného objektu (S01, S02…)
-          alebo číslo prevádzkového súboru (P01, P02…). Objekty sú automaticky zoradené podľa kódu.
+          alebo číslo prevádzkového súboru (P01, P02…). Objekty sú zoradené: najprv Sxx, potom Pxx.
         </p>
         <fieldset>
           <div class="fieldset-row">
@@ -658,10 +658,13 @@
         if (!isD) attachmentObjectSelect.value = "";
       }
 
-      // Zoradí pole project.objects podľa kódu: najprv podľa typu (S < P), potom podľa čísla
+      // Zoradí objekty: najprv všetky S (stavebné objekty) vzostupne, potom všetky P (prevádzkové súbory) vzostupne
       function sortObjects() {
+        const typeRank = { S: 0, P: 1 };
         project.objects.sort((a, b) => {
-          if (a.type !== b.type) return a.type < b.type ? -1 : 1;
+          const ra = typeRank[a.type] ?? 99;
+          const rb = typeRank[b.type] ?? 99;
+          if (ra !== rb) return ra - rb;
           return parseInt(a.number, 10) - parseInt(b.number, 10);
         });
       }
@@ -810,7 +813,6 @@
         if (!name || !number) { alert("Vyplň názov aj číslo objektu / súboru."); return; }
         const normalizedNumber = number.padStart(2, "0");
         const code = type + normalizedNumber;
-        // Kontrola duplicity kódu
         if (project.objects.some(o => o.code === code)) {
           alert(`Objekt s kódom "${code}" už existuje.`); return;
         }
