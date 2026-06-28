@@ -221,6 +221,17 @@
       background: #fdecd8;
     }
 
+    .btn-danger {
+      background: #fff0f5;
+      color: var(--color-error);
+      border-color: #e8b4d0;
+      font-size: 0.75rem;
+    }
+
+    .btn-danger:hover {
+      background: #fce0ee;
+    }
+
     .btn-icon {
       padding-inline: 0.4rem;
       min-width: 0;
@@ -413,6 +424,7 @@
               <th>Kód (Pozícia 5)</th>
               <th>Názov</th>
               <th>Typ</th>
+              <th>Akcie</th>
             </tr>
           </thead>
           <tbody id="objectsTableBody"></tbody>
@@ -636,7 +648,6 @@
         return sel ? sel.value : "S";
       }
 
-      // Scope je odvodený priamo z výberu časti: D = object, ostatné = project
       function getAttachmentScope() {
         return attachmentPartSelect.value === "D" ? "object" : "project";
       }
@@ -739,21 +750,70 @@
       // ── Objekty
       function renderObjects() {
         objectsTableBody.innerHTML = "";
-        // Zachováme aktuálne vybraný objekt
         const prevObjectId = attachmentObjectSelect.value;
         attachmentObjectSelect.innerHTML = '<option value="">-- vyber objekt --</option>';
-        project.objects.forEach(obj => {
+
+        project.objects.forEach((obj, index) => {
           const tr = document.createElement("tr");
-          tr.innerHTML = `<td>${obj.code}</td><td>${obj.name}</td><td>${obj.type === "S" ? "Stavebný objekt" : "Prevádzkový súbor"}</td>`;
+          tr.innerHTML = `
+            <td>${obj.code}</td>
+            <td>${obj.name}</td>
+            <td>${obj.type === "S" ? "Stavebný objekt" : "Prevádzkový súbor"}</td>
+            <td class="actions-cell">
+              <button type="button" class="btn-secondary btn-icon" data-obj-action="up"     data-obj-index="${index}" title="Posunúť hore" ${index === 0 ? "disabled" : ""}>▲</button>
+              <button type="button" class="btn-secondary btn-icon" data-obj-action="down"   data-obj-index="${index}" title="Posunúť dole" ${index === project.objects.length - 1 ? "disabled" : ""}>▼</button>
+              <button type="button" class="btn-danger btn-icon"    data-obj-action="delete" data-obj-index="${index}" title="Vymazať objekt">✕</button>
+            </td>
+          `;
           objectsTableBody.appendChild(tr);
+
           const opt = document.createElement("option");
           opt.value = obj.id.toString();
           opt.textContent = `${obj.code} – ${obj.name}`;
           attachmentObjectSelect.appendChild(opt);
         });
-        // Obnovíme predchádzajúci výber ak existuje
+
         if (prevObjectId) attachmentObjectSelect.value = prevObjectId;
         updateObjectSelectState();
+      }
+
+      function handleObjectsClick(event) {
+        const btn = event.target.closest("button[data-obj-action]");
+        if (!btn) return;
+        const action = btn.getAttribute("data-obj-action");
+        const index  = parseInt(btn.getAttribute("data-obj-index"), 10);
+        if (isNaN(index)) return;
+
+        if (action === "up") {
+          if (index === 0) return;
+          [project.objects[index - 1], project.objects[index]] =
+            [project.objects[index], project.objects[index - 1]];
+          renderObjects();
+          renderOverview();
+        } else if (action === "down") {
+          if (index === project.objects.length - 1) return;
+          [project.objects[index + 1], project.objects[index]] =
+            [project.objects[index], project.objects[index + 1]];
+          renderObjects();
+          renderOverview();
+        } else if (action === "delete") {
+          const obj = project.objects[index];
+          // Skontrolujeme či má objekt priradené prílohy
+          const hasAttachments = project.attachments.some(a => a.objectId === obj.id.toString());
+          if (hasAttachments) {
+            if (!confirm(`Objekt "${obj.code} – ${obj.name}" má priradené prílohy. Vymazaním objektu sa tieto prílohy tiež vymažú. Pokračovať?`)) return;
+            project.attachments = project.attachments.filter(a => a.objectId !== obj.id.toString());
+          }
+          project.objects.splice(index, 1);
+          // Ak bol vymazaný objekt aktuálne vybraný vo formulári, zrušíme výber
+          if (attachmentObjectSelect.value === obj.id.toString()) {
+            attachmentObjectSelect.value = "";
+          }
+          recomputeAllPoz7();
+          renderObjects();
+          renderOverview();
+          updatePoz7Preview();
+        }
       }
 
       function addObject() {
@@ -763,7 +823,8 @@
         if (!name || !number) { alert("Vyplň názov aj číslo objektu / súboru."); return; }
         const normalizedNumber = number.padStart(2, "0");
         const code = type + normalizedNumber;
-        const id   = project.objects.length + 1;
+        // Unikátne ID – použijeme genUid aby nehrozila kolízia po mazaní
+        const id = genUid();
         project.objects.push({ id, name, number: normalizedNumber, type, code });
         objectNameInput.value = ""; objectNumberInput.value = "";
         renderObjects();
@@ -799,7 +860,6 @@
         });
         recomputeAllPoz7();
         renderOverview();
-        // Po pridaní vymažeme len polia profesie, typu a názvu – časť a objekt zachováme
         clearAttachmentFormAfterAdd();
       }
 
@@ -825,7 +885,6 @@
         renderOverview();
       }
 
-      // Používa sa po pridaní prílohy: zachová časť a objekt
       function clearAttachmentFormAfterAdd() {
         poz6Select.value = "";
         poz8Select.value = "";
@@ -835,7 +894,6 @@
         updatePoz7Preview();
       }
 
-      // Používa sa tlačidlom "Vyčistiť formulár": resetuje všetko vrátane časti a objektu
       function clearAttachmentForm() {
         attachmentPartSelect.value = "A";
         poz6Select.value = "";
@@ -847,7 +905,7 @@
         updatePoz7Preview();
       }
 
-      // ── Render tabuľky
+      // ── Render tabuľky príloh
       function buildFilename(att) {
         if (!project.id || !project.stupen || !project.urcenie || !project.identKod) {
           return "(projektové pozície 1–4 nie sú kompletné)";
@@ -988,7 +1046,6 @@
 
             Object.assign(project, { name:"", id:"", stupen:"", urcenie:"", identKod:"", objects:[], attachments:[] });
             const objectIdMap = new Map();
-            let nextObjectId  = 1;
             const uidMap      = new Map();
 
             rows.slice(1).forEach(cols => {
@@ -999,18 +1056,19 @@
                 project.identKod = cols[5] || "";
               } else if (type === "OBJECT") {
                 const oldId = cols[6] || "";
+                const newId = genUid();
                 const obj = {
-                  id: nextObjectId,
+                  id: newId,
                   name:   cols[7] || "",
                   number: (cols[8] || "").padStart(2, "0"),
                   type:   cols[9] || "S"
                 };
                 obj.code = obj.type + obj.number;
                 project.objects.push(obj);
-                objectIdMap.set(String(oldId), String(nextObjectId));
-                nextObjectId++;
+                objectIdMap.set(String(oldId), String(newId));
               } else if (type === "ATTACHMENT") {
-                const objectId  = cols[18] ? (objectIdMap.get(String(cols[18])) || null) : null;
+                const rawObjId  = cols[18] ? cols[18].trim() : "";
+                const objectId  = rawObjId ? (objectIdMap.get(rawObjId) || null) : null;
                 const csvUid    = cols[19] ? cols[19].trim() : "";
                 const csvParent = cols[20] ? cols[20].trim() : "";
                 const newUid    = csvUid || genUid();
@@ -1060,6 +1118,7 @@
       document.getElementById("saveProjectBtn").addEventListener("click", saveProject);
       document.getElementById("resetProjectBtn").addEventListener("click", resetProject);
       addObjectBtn.addEventListener("click", addObject);
+      objectsTableBody.addEventListener("click", handleObjectsClick);
       addAttachmentBtn.addEventListener("click", addAttachment);
       clearAttachmentFormBtn.addEventListener("click", clearAttachmentForm);
       attachmentPartSelect.addEventListener("change", () => { updateObjectSelectState(); updatePoz7Preview(); });
