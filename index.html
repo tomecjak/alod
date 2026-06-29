@@ -1,248 +1,208 @@
 <!DOCTYPE html>
 <html lang="sk">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Zoznam príloh dokumentácie stavby</title>
-  <style>
-    :root {
-      --space-1: 0.25rem;
-      --space-2: 0.5rem;
-      --space-3: 0.75rem;
-      --space-4: 1rem;
-      --space-5: 1.25rem;
-      --space-6: 1.5rem;
-      --space-8: 2rem;
-      --space-10: 2.5rem;
-      --space-12: 3rem;
-      --space-16: 4rem;
-      --radius-sm: 0.25rem;
-      --radius-md: 0.5rem;
-      --radius-lg: 0.75rem;
-      --transition-interactive: 180ms cubic-bezier(0.16, 1, 0.3, 1);
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zoznam príloh dokumentácie stavby</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  html, body { margin:0; padding:0; }
+  .alod, .alod *, .alod *::before, .alod *::after { box-sizing:border-box; }
+  .alod {
+    --space-1:.25rem; --space-2:.5rem; --space-3:.75rem; --space-4:1rem; --space-5:1.25rem;
+    --space-6:1.5rem; --space-8:2rem; --space-10:2.5rem; --space-12:3rem; --space-16:4rem;
+    --radius-sm:.5rem; --radius-md:.75rem; --radius-lg:1.1rem;
+    --color-bg:#0e1220; --color-surface:#171c2e; --color-surface-alt:#1f2640;
+    --color-border:#2a3149; --color-text:#e8eaf4; --color-text-muted:#969bb6;
+    --color-primary:#7d84ff; --color-primary-hover:#9aa0ff;
+    --color-error:#ef6f9c; --color-revision:#e2b063;
+    color-scheme:dark;
+    font-family:'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    color:var(--color-text); line-height:1.55; font-size:15px;
+    background:radial-gradient(1100px 520px at 82% -8%, #1a2142 0, #0e1220 58%), var(--color-bg);
+    min-height:100vh; -webkit-font-smoothing:antialiased;
+  }
+  .alod .appbar { position:sticky; top:0; z-index:20; backdrop-filter:saturate(160%) blur(14px);
+    background:rgba(14,18,32,.72); border-bottom:1px solid var(--color-border); }
+  .alod .appbar-inner { max-width:1080px; margin:0 auto; padding:.8rem 1.5rem; display:flex; align-items:center;
+    justify-content:space-between; gap:1rem; flex-wrap:wrap; }
+  .alod .brand { display:flex; align-items:center; gap:.7rem; }
+  .alod .brand-mark { display:inline-grid; place-items:center; width:38px; height:38px; border-radius:11px;
+    background:linear-gradient(135deg,#8d93ff,#6f68f0); color:#fff; font-weight:700; font-size:.82rem;
+    font-family:'IBM Plex Mono',monospace; box-shadow:0 6px 18px rgba(125,132,255,.4); }
+  .alod .brand-text { font-weight:700; font-size:.96rem; letter-spacing:-.01em; }
+  .alod .appbar-tools { display:flex; align-items:center; gap:.55rem; }
+  .alod .btn-ghost { display:inline-flex; align-items:center; gap:.4rem; font-family:'IBM Plex Mono',monospace;
+    font-size:.76rem; font-weight:500; color:#cdd0e6; background:rgba(255,255,255,.04);
+    border:1px solid var(--color-border); border-radius:9px; padding:.5rem .8rem; cursor:pointer;
+    transition:background .15s, border-color .15s, color .15s; }
+  .alod .btn-ghost:hover { background:rgba(125,132,255,.12); color:#fff; border-color:#454d75; }
 
-      --color-bg: #f7f6f2;
-      --color-surface: #fbfbf9;
-      --color-surface-alt: #f3f0ec;
-      --color-border: #d4d1ca;
-      --color-text: #28251d;
-      --color-text-muted: #7a7974;
-      --color-primary: #01696f;
-      --color-primary-hover: #0c4e54;
-      --color-error: #a12c7b;
-      --color-revision: #7c4f1a;
-    }
+  .alod main { max-width:1080px; margin:0 auto; padding:var(--space-8) var(--space-6) var(--space-16); }
+  .alod .hero { margin-bottom:var(--space-8); }
+  .alod .hero h1 { font-size:1.85rem; font-weight:800; letter-spacing:-.02em; margin:0 0 var(--space-3);
+    display:flex; align-items:center; gap:.6rem; flex-wrap:wrap; }
+  .alod .hero-tag { font-family:'IBM Plex Mono',monospace; font-size:.8rem; font-weight:600; color:var(--color-primary);
+    background:rgba(125,132,255,.14); border:1px solid rgba(125,132,255,.3); padding:.2rem .55rem; border-radius:8px; }
+  .alod .hero p { max-width:80ch; margin:0; color:var(--color-text-muted); }
+  .alod .csv-status { font-size:.8rem; color:var(--color-text-muted); margin-top:.7rem; min-height:1em; font-family:'IBM Plex Mono',monospace; }
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  .alod .panel { background:var(--color-surface); border-radius:var(--radius-lg); border:1px solid var(--color-border);
+    box-shadow:0 1px 2px rgba(0,0,0,.3), 0 24px 50px -28px rgba(0,0,0,.7);
+    padding:var(--space-6) var(--space-6) var(--space-6); margin-bottom:var(--space-5); }
+  .alod .step-output { background:linear-gradient(180deg,#1b2138,#171c2e); }
 
-    body {
-      min-height: 100vh;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      font-size: 16px;
-      line-height: 1.6;
-      color: var(--color-text);
-      background: radial-gradient(circle at top left, #ffffff 0, #f7f6f2 45%, #edeae5 100%);
-    }
+  .alod .step-head { display:flex; align-items:flex-start; gap:.9rem; margin-bottom:var(--space-5);
+    padding-bottom:var(--space-4); border-bottom:1px solid var(--color-border); }
+  .alod .step-num { flex:none; width:34px; height:34px; border-radius:50%; display:grid; place-items:center;
+    background:linear-gradient(135deg,#8d93ff,#6f68f0); color:#fff; font-weight:700; font-size:.95rem;
+    font-family:'IBM Plex Mono',monospace; box-shadow:0 6px 16px -4px rgba(125,132,255,.5); }
+  .alod .step-meta { display:flex; flex-direction:column; }
+  .alod .step-meta h2 { font-size:1.12rem; font-weight:700; letter-spacing:-.01em; margin:.2rem 0 0; }
+  .alod .step-sub { font-size:.82rem; color:var(--color-text-muted); margin:.2rem 0 0; }
 
-    main { max-width: 1120px; margin: 0 auto; padding: var(--space-8) var(--space-4) var(--space-12); }
+  .alod h3 { font-size:1rem; font-weight:700; }
+  .alod p { max-width:78ch; margin:0 0 var(--space-3); color:var(--color-text-muted); }
 
-    h1 { font-size: 1.8rem; margin-bottom: var(--space-4); }
-    h2 { font-size: 1.2rem; margin-bottom: var(--space-3); }
-    p  { max-width: 72ch; margin-bottom: var(--space-3); }
+  .alod fieldset { border:none; margin:0 0 var(--space-4); padding:0; }
+  .alod .fieldset-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:var(--space-4); margin-bottom:var(--space-4); }
+  .alod .fieldset-row.cols-3 { grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); }
+  .alod label { display:block; font-size:.8rem; font-weight:600; margin-bottom:.4rem; color:var(--color-text); }
 
-    .grid {
-      display: grid;
-      grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
-      gap: var(--space-6);
-      align-items: flex-start;
-    }
-    @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+  .alod input[type=text], .alod select { width:100%; min-height:46px; height:46px; padding:.6rem .85rem; border-radius:var(--radius-md);
+    border:1px solid var(--color-border); background-color:#11162a; font-size:.95rem; font-family:inherit; color:var(--color-text);
+    line-height:1.3; transition:border-color .16s, box-shadow .16s, background-color .16s; }
+  .alod select { -webkit-appearance:none; -moz-appearance:none; appearance:none; padding-right:2.4rem;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23969bb6' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat:no-repeat; background-position:right .9rem center; background-size:12px 8px; }
+  .alod input[type=text]::placeholder { color:#5c627e; }
+  .alod input[type=text]:focus, .alod select:focus { outline:none; border-color:var(--color-primary);
+    box-shadow:0 0 0 3px rgba(125,132,255,.22); background-color:#141a30; }
+  .alod input:disabled, .alod select:disabled { background-color:#10142270; color:var(--color-text-muted); cursor:not-allowed; }
 
-    .panel {
-      background: var(--color-surface);
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--color-border);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.04);
-      padding: var(--space-5);
-      margin-bottom: var(--space-5);
-    }
+  .alod .inline-radio { display:flex; gap:.6rem; flex-wrap:wrap; margin-bottom:var(--space-3); }
+  .alod .inline-radio label { display:inline-flex; align-items:center; gap:.5rem; margin:0; cursor:pointer;
+    padding:.6rem 1rem; border:1px solid var(--color-border); border-radius:var(--radius-md); background:#11162a; font-weight:500;
+    transition:border-color .16s, background .16s; }
+  .alod .inline-radio label:hover { border-color:#454d75; }
+  .alod .inline-radio label:has(input:checked) { border-color:var(--color-primary); background:rgba(125,132,255,.12); }
+  .alod .inline-radio input[type=radio] { accent-color:var(--color-primary); width:17px; height:17px; }
+  .alod .inline-radio span { font-size:.9rem; }
 
-    .panel-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: var(--space-4);
-    }
-    .panel-header h2 { margin-bottom: 0; }
+  .alod .help-text { font-size:.78rem; line-height:1.45; color:var(--color-text-muted); margin-top:.35rem; }
+  .alod .error { color:var(--color-error); font-size:.85rem; font-weight:500; margin-top:.6rem; }
 
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.3rem;
-      padding: 0.1rem 0.6rem;
-      border-radius: 999px;
-      font-size: 0.75rem;
-      background: rgba(1,105,111,0.08);
-      color: var(--color-primary);
-    }
+  .alod button { display:inline-flex; align-items:center; justify-content:center; gap:.4rem; font-family:inherit;
+    padding:.62rem 1.1rem; border-radius:var(--radius-md); border:1px solid transparent; font-size:.86rem; font-weight:600;
+    cursor:pointer; transition:background .16s, box-shadow .16s, transform .16s, border-color .16s, color .16s; }
+  .alod .btn-primary { background:var(--color-primary); color:#0e1220; box-shadow:0 6px 18px -4px rgba(125,132,255,.55); }
+  .alod .btn-primary:hover { background:var(--color-primary-hover); transform:translateY(-1px); }
+  .alod .btn-secondary { background:transparent; color:var(--color-text); border-color:var(--color-border); }
+  .alod .btn-secondary:hover { background:var(--color-surface-alt); border-color:#454d75; }
+  .alod .btn-revision { background:rgba(226,176,99,.12); color:var(--color-revision); border-color:rgba(226,176,99,.32); font-size:.76rem; padding:.42rem .7rem; }
+  .alod .btn-revision:hover { background:rgba(226,176,99,.2); }
+  .alod .btn-danger { background:rgba(239,111,156,.12); color:var(--color-error); border-color:rgba(239,111,156,.32); font-size:.76rem; padding:.42rem .7rem; }
+  .alod .btn-danger:hover { background:rgba(239,111,156,.2); }
+  .alod .btn-move { background:#11162a; color:var(--color-text-muted); border-color:var(--color-border); font-size:.78rem;
+    padding:.32rem .5rem; line-height:1; min-width:30px; }
+  .alod .btn-move:hover:not(:disabled){ background:var(--color-surface-alt); color:var(--color-text); }
+  .alod .btn-move:disabled { opacity:.28; cursor:default; }
+  .alod .btn-icon { padding:.42rem .55rem; min-width:0; }
+  .alod .btn-group { display:flex; flex-wrap:wrap; gap:var(--space-3); margin-top:var(--space-4); }
 
-    fieldset { border: none; margin-bottom: var(--space-4); }
+  .alod .section-title { margin:var(--space-6) 0 var(--space-3); }
+  .alod table { width:100%; border-collapse:separate; border-spacing:0; font-size:.86rem; margin-top:var(--space-2); }
+  .alod th, .alod td { padding:.62rem .65rem; text-align:left; vertical-align:middle; border-bottom:1px solid #232a44; }
+  .alod th { font-weight:600; font-size:.72rem; text-transform:uppercase; letter-spacing:.04em; color:var(--color-text-muted);
+    background:var(--color-surface-alt); }
+  .alod th:first-child { border-top-left-radius:10px; } .alod th:last-child { border-top-right-radius:10px; }
+  .alod tbody tr:hover td { background:#1b2138; }
+  .alod tbody tr.is-revision td { background:#241f33; }
+  .alod tbody tr.is-revision td:first-child { box-shadow:inset 3px 0 0 #b58a3f; }
 
-    .fieldset-row {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: var(--space-3);
-      margin-bottom: var(--space-3);
-    }
+  .alod tr.section-header td { background:linear-gradient(90deg,#6f68f0,#8d93ff); color:#0e1220; font-weight:700;
+    font-size:.8rem; padding:.55rem .8rem; letter-spacing:.02em; text-transform:uppercase; }
+  .alod tr.section-header td:first-child { border-radius:8px 0 0 8px; } .alod tr.section-header td:last-child { border-radius:0 8px 8px 0; }
+  .alod tr.subsection-header td { background:#262c4e; color:#b9bdff; font-weight:700; font-size:.8rem;
+    padding:.45rem .9rem; box-shadow:inset 3px 0 0 var(--color-primary); }
+  .alod tr.urcenie-header td { background:#2b3158; color:#c7caff; font-weight:700; font-size:.82rem;
+    padding:.5rem .8rem; box-shadow:inset 5px 0 0 var(--color-primary); }
 
-    label { display: block; font-size: 0.85rem; margin-bottom: 0.25rem; color: var(--color-text-muted); }
-
-    input[type="text"], select {
-      width: 100%;
-      padding: 0.4rem 0.55rem;
-      border-radius: var(--radius-md);
-      border: 1px solid var(--color-border);
-      background: #fff;
-      font-size: 0.9rem;
-      transition: border-color var(--transition-interactive), box-shadow var(--transition-interactive);
-    }
-    input[type="text"]:focus, select:focus {
-      outline: none;
-      border-color: var(--color-primary);
-      box-shadow: 0 0 0 1px rgba(1,105,111,0.15);
-    }
-    select:disabled { background: #f0eeea; color: var(--color-text-muted); cursor: not-allowed; }
-
-    .inline-radio { display: flex; gap: var(--space-3); margin-bottom: var(--space-3); flex-wrap: wrap; }
-    .inline-radio label { display: inline-flex; align-items: center; gap: 0.35rem; margin-bottom: 0; cursor: pointer; }
-    .inline-radio input[type="radio"] { accent-color: var(--color-primary); }
-    .inline-radio span { font-size: 0.9rem; }
-
-    .help-text { font-size: 0.8rem; color: var(--color-text-muted); margin-top: 0.2rem; }
-
-    button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.4rem;
-      padding: 0.3rem 0.7rem;
-      border-radius: var(--radius-md);
-      border: 1px solid transparent;
-      font-size: 0.8rem;
-      cursor: pointer;
-      transition: background var(--transition-interactive), box-shadow var(--transition-interactive),
-                  transform var(--transition-interactive), border-color var(--transition-interactive);
-    }
-    .btn-primary   { background: var(--color-primary); color: #fff; box-shadow: 0 4px 10px rgba(1,105,111,0.2); border-color: var(--color-primary); }
-    .btn-primary:hover { background: var(--color-primary-hover); transform: translateY(-1px); box-shadow: 0 6px 14px rgba(1,105,111,0.28); }
-    .btn-secondary { background: #fff; color: var(--color-text); border-color: var(--color-border); }
-    .btn-secondary:hover { background: var(--color-surface-alt); }
-    .btn-revision  { background: #fff8f2; color: var(--color-revision); border-color: #e0c4a0; font-size: 0.75rem; }
-    .btn-revision:hover { background: #fdecd8; }
-    .btn-danger    { background: #fff0f5; color: var(--color-error); border-color: #e8b4d0; font-size: 0.75rem; }
-    .btn-danger:hover { background: #fce0ee; }
-    .btn-move      { background: #fff; color: var(--color-text-muted); border-color: var(--color-border); font-size: 0.72rem; padding: 0.15rem 0.35rem; line-height: 1; }
-    .btn-move:hover:not(:disabled) { background: var(--color-surface-alt); color: var(--color-text); }
-    .btn-move:disabled { opacity: 0.28; cursor: default; }
-    .btn-icon { padding-inline: 0.4rem; min-width: 0; }
-    .btn-group { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-3); }
-
-    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-    th, td { padding: 0.3rem 0.4rem; border-bottom: 1px solid #e1dfda; text-align: left; vertical-align: middle; }
-    th { font-weight: 600; font-size: 0.8rem; color: var(--color-text-muted); background: #f0eeea; }
-    tbody tr:nth-child(even) { background: #f9f8f5; }
-    tbody tr.is-revision { background: #fef9f4; }
-    tbody tr.is-revision td:first-child { border-left: 3px solid #e0c4a0; }
-
-    tr.section-header td {
-      background: var(--color-primary);
-      color: #fff;
-      font-weight: 700;
-      font-size: 0.82rem;
-      padding: 0.35rem 0.6rem;
-      letter-spacing: 0.03em;
-    }
-    tr.subsection-header td {
-      background: #d9eeef;
-      color: var(--color-primary-hover);
-      font-weight: 600;
-      font-size: 0.8rem;
-      padding: 0.28rem 0.8rem;
-      border-left: 3px solid var(--color-primary);
-    }
-    tr.urcenie-header td {
-      background: #eaf4f4;
-      color: var(--color-primary-hover);
-      font-weight: 700;
-      font-size: 0.81rem;
-      padding: 0.3rem 0.7rem;
-      border-left: 5px solid var(--color-primary);
-      letter-spacing: 0.02em;
-    }
-
-    .section-title { margin-top: var(--space-8); margin-bottom: var(--space-3); }
-    .tag { display: inline-flex; align-items: center; padding: 0.1rem 0.5rem; border-radius: 999px; font-size: 0.7rem; background: rgba(40,37,29,0.1); }
-    .error { color: var(--color-error); font-size: 0.8rem; margin-top: 0.4rem; }
-    .actions-cell { white-space: nowrap; }
-    .rev-badge { display: inline-block; padding: 0.05rem 0.35rem; border-radius: 4px; font-size: 0.7rem; background: #f0e4d0; color: var(--color-revision); margin-left: 0.3rem; vertical-align: middle; }
-  </style>
+  .alod .actions-cell { white-space:nowrap; display:flex; gap:.35rem; flex-wrap:wrap; }
+  .alod .rev-badge { display:inline-block; padding:.1rem .4rem; border-radius:6px; font-size:.68rem; font-weight:600;
+    background:rgba(226,176,99,.18); color:var(--color-revision); margin-left:.35rem; vertical-align:middle; }
+  .alod code { font-family:'IBM Plex Mono', monospace; font-size:.8rem; word-break:break-all; color:#c9cdf2;
+    background:#11162a; padding:.2rem .45rem; border-radius:6px; border:1px solid #2a3149; }
+</style>
 </head>
 <body>
-  <main>
-    <header class="panel" style="margin-bottom: var(--space-6);">
-      <div class="panel-header">
-        <h1>Zoznam príloh dokumentácie stavby (A00)</h1>
-        <span class="badge">Pozície 1–2 z projektu, 3–4 zo stavebného objektu, 5–9 z príloh</span>
+<div class="alod">
+  <header class="appbar">
+    <div class="appbar-inner">
+      <div class="brand">
+        <span class="brand-mark">A00</span>
+        <span class="brand-text">Generátor názvov dokumentácie stavby</span>
       </div>
-      <p>Táto jednoduchá webová aplikácia vychádza zo schémy tvorby názvov súborov dokumentácie stavieb (pozície 1 až 9) podľa metodického materiálu.</p>
-      <p>Najprv nastav projektové údaje (ID stavby, stupeň dokumentácie, určenie stavby a identifikačný kód stavby). Následne môžeš vytvárať prílohy pre časti A, B, C a E projektu a pre jednotlivé stavebné objekty / prevádzkové súbory (časť D). Úplný prehľad A00 sa generuje automaticky zo všetkých príloh.</p>
-    </header>
+      <div class="appbar-tools">
+        <button class="btn-ghost" id="exportCsvBtn" type="button">↓&nbsp; Export CSV</button>
+        <label class="btn-ghost" for="importCsvInput" style="cursor:pointer;">↑&nbsp; Import CSV</label>
+        <input type="file" id="importCsvInput" accept=".csv,text/csv" style="display:none;" />
+      </div>
+    </div>
+  </header>
+  <main>
+    <div class="hero">
+      <h1>Zoznam príloh dokumentácie stavby <span class="hero-tag">A00</span></h1>
+      <p>Postupuj zhora nadol: nastav projekt, definuj stavebné objekty, pridávaj prílohy. Úplný prehľad A00 a názvy súborov (pozície 1–9) sa generujú automaticky. Dáta celého projektu vieš exportovať a znovu importovať cez CSV (vpravo hore).</p>
+      <div id="csvStatus" class="csv-status"></div>
+    </div>
 
-    <section class="grid">
-      <section class="panel" aria-labelledby="project-settings-heading">
-        <div class="panel-header">
-          <h2 id="project-settings-heading">Projekt – základné pozície 1 – 2</h2>
-          <span class="tag">Projektové údaje</span>
+    <section class="panel step" aria-labelledby="project-settings-heading">
+      <div class="step-head">
+        <span class="step-num">1</span>
+        <div class="step-meta">
+          <h2 id="project-settings-heading">Projekt</h2>
+          <p class="step-sub">Základné pozície 1 – 2 · nastav raz pre celý projekt</p>
         </div>
-        <fieldset>
-          <div class="fieldset-row">
-            <div>
-              <label for="projectName">Názov projektu</label>
-              <input type="text" id="projectName" placeholder="Napr. Rekonštrukcia mosta na I/18" />
-            </div>
-            <div>
-              <label for="idStavby">Pozícia 1 – ID stavby</label>
-              <input type="text" id="idStavby" placeholder="napr. 25AB123" />
-              <div class="help-text">ID pridelené informačným systémom.</div>
-            </div>
+      </div>
+      <fieldset>
+        <div class="fieldset-row cols-3">
+          <div>
+            <label for="projectName">Názov projektu</label>
+            <input type="text" id="projectName" placeholder="Napr. Rekonštrukcia mosta na I/18" />
           </div>
-          <div class="fieldset-row">
-            <div>
-              <label for="stupenDoc">Pozícia 2 – stupeň dokumentácie stavby</label>
-              <select id="stupenDoc">
-                <option value="">-- vyber --</option>
-                <option value="PSO">PSO – projekt stavby na ohlásenie</option>
-                <option value="SZP">SZP – stavebný zámer</option>
-                <option value="SZZ">SZZ – zmena stavebného zámeru</option>
-                <option value="PSP">PSP – projekt stavby</option>
-                <option value="PSZ">PSZ – zmena projektu stavby</option>
-                <option value="VPP">VPP – vykonávací projekt</option>
-                <option value="RDS">RDS – realizačná dokumentácia stavby</option>
-                <option value="DSZ">DSZ – dokumentácia skutočného zhotovenia</option>
-                <option value="ZDS">ZDS – zjednodušená dokumentácia stavby / pasport</option>
-              </select>
-            </div>
+          <div>
+            <label for="idStavby">Pozícia 1 – ID stavby</label>
+            <input type="text" id="idStavby" placeholder="napr. 25AB123" />
+            <div class="help-text">ID pridelené informačným systémom.</div>
           </div>
-          <div class="fieldset-row" style="display:none;">
-            <div>
-              <label for="urcenie">Pozícia 3 (interné)</label>
-              <input type="text" id="urcenie" />
-            </div>
-            <div>
-              <label for="identKod">Pozícia 4 (interné)</label>
-              <select id="identKod">
+          <div>
+            <label for="stupenDoc">Pozícia 2 – stupeň dokumentácie</label>
+            <select id="stupenDoc">
+              <option value="">-- vyber --</option>
+              <option value="PSO">PSO – projekt stavby na ohlásenie</option>
+              <option value="SZP">SZP – stavebný zámer</option>
+              <option value="SZZ">SZZ – zmena stavebného zámeru</option>
+              <option value="PSP">PSP – projekt stavby</option>
+              <option value="PSZ">PSZ – zmena projektu stavby</option>
+              <option value="VPP">VPP – vykonávací projekt</option>
+              <option value="RDS">RDS – realizačná dokumentácia stavby</option>
+              <option value="DSZ">DSZ – dokumentácia skutočného zhotovenia</option>
+              <option value="ZDS">ZDS – zjednodušená dokumentácia stavby / pasport</option>
+            </select>
+          </div>
+        </div>
+        <div class="fieldset-row" style="display:none;">
+          <div>
+            <label for="urcenie">Pozícia 3 (interné)</label>
+            <input type="text" id="urcenie" />
+          </div>
+          <div>
+            <label for="identKod">Pozícia 4 (interné)</label>
+            <select id="identKod">
                 <option value="">-- vyber kód --</option>
-                <optgroup label="1 – Budovy">
                   <optgroup label="11 – Bytové budovy">
                     <option value="1111">1111 – Jednobytové budovy</option>
                     <option value="1112">1112 – Dvojbytové budovy</option>
@@ -283,8 +243,6 @@
                     <option value="1511">1511 – Drobné stavby prízemné</option>
                     <option value="1512">1512 – Drobné stavby podzemné</option>
                   </optgroup>
-                </optgroup>
-                <optgroup label="2 – Inžinierske stavby">
                   <optgroup label="21 – Inžinierske stavby dopravnej vybavenosti">
                     <option value="2111">2111 – Diaľnice</option>
                     <option value="2112">2112 – Cesty I. triedy</option>
@@ -345,177 +303,174 @@
                   <optgroup label="28 – Stavebné úpravy pozemku">
                     <option value="2811">2811 – Terénne úpravy</option>
                     <option value="2812">2812 – Vonkajšie úpravy</option>
-                  </optgroup>
-                </optgroup>
-              </select>
-              <div class="help-text">Kód podľa vyhlášky ÚUPVSR o členení stavieb.</div>
-            </div>
+                </select>
+            <div class="help-text">Kód podľa vyhlášky ÚUPVSR o členení stavieb.</div>
           </div>
-        </fieldset>
-        <div class="btn-group">
-          <button class="btn-primary" id="saveProjectBtn" type="button">Uložiť projektové údaje</button>
-          <button class="btn-secondary" id="resetProjectBtn" type="button">Vyčistiť projekt</button>
         </div>
-        <div id="projectStatus" class="help-text" style="margin-top: var(--space-3);"></div>
-      </section>
-
-      <section class="panel" aria-labelledby="objects-heading">
-        <div class="panel-header">
-          <h2 id="objects-heading">Stavebné objekty / prevádzkové súbory (časť D)</h2>
-          <span class="tag">Pozície 3–5 – Urcenie / IdentKod / Sxx / Pxx</span>
-        </div>
-        <p class="help-text">Podľa schémy sa pri členení časti D používa pozícia 5 ako číslo stavebného objektu (S01, S02…) alebo číslo prevádzkového súboru (P01, P02…). Objekty sú zoradené: najprv Sxx, potom Pxx.</p>
-        <p class="help-text" style="margin-top:0.4rem;">Pozícia 3 a 4 sa zadáva pre každý stavebný objekt. Časti A, B, C, D preberajú pozíciu 3 a 4 zo stavebného objektu S01. Ďalší objekt s rovnakým číslom pozície 3 automaticky zdedí pozíciu 4.</p>
-        <fieldset>
-          <div class="fieldset-row">
-            <div>
-              <label for="objectName">Názov stavebného objektu / súboru</label>
-              <input type="text" id="objectName" placeholder="napr. SO 201 – Most cez rieku" />
-            </div>
-            <div>
-              <label for="objectNumber">Číslo objektu / súboru (01, 02, …)</label>
-              <input type="text" id="objectNumber" placeholder="01" />
-            </div>
-          </div>
-          <div class="fieldset-row">
-            <div>
-              <label for="objectUrcenie">Pozícia 3 – určenie stavby / súboru stavieb</label>
-              <input type="text" id="objectUrcenie" placeholder="napr. 01" maxlength="2" />
-              <div class="help-text" id="objectUrcenieHelp">Dvojciferný kód (01, 02…). Ak existuje objekt s rovnakou pozíciou 3, zdedí sa pozícia 4 automaticky.</div>
-            </div>
-            <div>
-              <label for="objectIdentKod">Pozícia 4 – identifikačný kód stavby</label>
-              <select id="objectIdentKod">
-                <option value="">-- vyber kód --</option>
-                <optgroup label="1 – Budovy">
-                  <optgroup label="11 – Bytové budovy">
-                    <option value="1111">1111 – Jednobytové budovy</option>
-                    <option value="1112">1112 – Dvojbytové budovy</option>
-                    <option value="1113">1113 – Trojbytové budovy</option>
-                    <option value="1120">1120 – Viacbytové budovy</option>
-                    <option value="1130">1130 – Iné bytové budovy</option>
-                  </optgroup>
-                  <optgroup label="12 – Nebytové budovy pre vybavenosť">
-                    <option value="1211">1211 – Hotelové budovy</option>
-                    <option value="1212">1212 – Iné budovy pre cestovný ruch a ubytovanie</option>
-                    <option value="1213">1213 – Budovy verejného stravovania</option>
-                    <option value="1220">1220 – Budovy pre administratívu</option>
-                    <option value="1230">1230 – Budovy pre obchod a služby</option>
-                    <option value="1241">1241 – Budovy pre kultúru</option>
-                    <option value="1242">1242 – Budovy pre cirkev</option>
-                    <option value="1250">1250 – Budovy pre výchovu a vzdelávanie</option>
-                    <option value="1260">1260 – Budovy pre zdravotníctvo</option>
-                    <option value="1271">1271 – Budovy pre šport</option>
-                    <option value="1272">1272 – Budovy pre rekreáciu</option>
-                    <option value="1280">1280 – Budovy pre sociálne služby</option>
-                    <option value="1290">1290 – Iné budovy pre vybavenosť</option>
-                  </optgroup>
-                  <optgroup label="13 – Nebytové budovy pre výrobu">
-                    <option value="1311">1311 – Budovy potravinárskej výroby</option>
-                    <option value="1312">1312 – Budovy spracovatešského priemyslu</option>
-                    <option value="1313">1313 – Iné priemyselné budovy</option>
-                    <option value="1314">1314 – Sklady</option>
-                    <option value="1321">1321 – Poľnohospodárske budovy pre rastlinnú výrobu</option>
-                    <option value="1322">1322 – Poľnohospodárske budovy pre živočíšnú výrobu</option>
-                    <option value="1323">1323 – Budovy pre lesníctvo a poľovníctvo</option>
-                    <option value="1330">1311 – Budovy pre inú výrobu</option>
-                  </optgroup>
-                  <optgroup label="14 – Nebytové budovy pre dopravnú infraštruktúru">
-                    <option value="1410">1410 – Budovy pre dopravnú vybavenosť</option>
-                    <option value="1420">1420 – Budovy pre technickú vybavenosť</option>
-                  </optgroup>
-                  <optgroup label="15 – Iné nebytové budovy">
-                    <option value="1511">1511 – Drobné stavby prízemné</option>
-                    <option value="1512">1512 – Drobné stavby podzemné</option>
-                  </optgroup>
-                </optgroup>
-                <optgroup label="2 – Inžinierske stavby">
-                  <optgroup label="21 – Inžinierske stavby dopravnej vybavenosti">
-                    <option value="2111">2111 – Diaľnice</option>
-                    <option value="2112">2112 – Cesty I. triedy</option>
-                    <option value="2113">2113 – Cesty II. a III. triedy</option>
-                    <option value="2114">2114 – Miestne cesty a účelové cesty</option>
-                    <option value="2115">2115 – Cyklotrasy, chodníky</option>
-                    <option value="2121">2121 – Železničné dráhy</option>
-                    <option value="2122">2122 – Iné dráhy</option>
-                    <option value="2130">2130 – Letiskové stavby</option>
-                    <option value="2141">2141 – Mosty a mimoúrovňové kríženia</option>
-                    <option value="2142">2142 – Tunely</option>
-                    <option value="2151">2151 – Iné stavby a zariadenia dopravnej vybavenosti</option>
-                  </optgroup>
-                  <optgroup label="22 – Inžinierske vodné stavby">
-                    <option value="2211">2211 – Prístavy, vodné cesty</option>
-                    <option value="2212">2212 – Vodné nádrže, priehrady a iné vodné stavby</option>
-                    <option value="2213">2213 – Hydromeliorácie</option>
-                    <option value="2214">2214 – Stavby pre zásobovanie vodou</option>
-                    <option value="2215">2215 – Stavby pre odpadové vody a vody z povrchového odtoku</option>
-                    <option value="2216">2216 – Historické vodohospodárske diela, fontány</option>
-                  </optgroup>
-                  <optgroup label="23 – Inžinierske stavby technického vybavenia územia">
-                    <option value="2311">2311 – Rozvody ropy a plynu</option>
-                    <option value="2312">2312 – Rozvody vody</option>
-                    <option value="2313">2313 – Kanalizačné a stokové siete</option>
-                    <option value="2314">2314 – Elektronické komunikačné siete</option>
-                    <option value="2315">2315 – Prenosové a distribučné sústavy elektrickej energie</option>
-                    <option value="2321">2321 – Prípojky plynu</option>
-                    <option value="2322">2322 – Prípojky vody</option>
-                    <option value="2323">2323 – Prípojky elektronických komunikačných sietí</option>
-                    <option value="2324">2324 – Prípojky elektrické</option>
-                    <option value="2325">2325 – Prípojky kanalizácie</option>
-                    <option value="2331">2331 – Stavby energetických zdrojov</option>
-                    <option value="2332">2332 – Iné stavby a zariadenia technického vybavenia územia</option>
-                  </optgroup>
-                  <optgroup label="24 – Inžinierske stavby priemyselnej výroby">
-                    <option value="2411">2411 – Bánské stavby a ťažobné zariadenia</option>
-                    <option value="2412">2412 – Stavby chemických zariadení</option>
-                    <option value="2413">2413 – Stavby ťažkého priemyslu</option>
-                    <option value="2420">2420 – Nádržé a silá, priemyselné kolóny a veže</option>
-                  </optgroup>
-                  <optgroup label="25 – Inžinierske stavby vybavenosti">
-                    <option value="2511">2511 – Športové ihriská</option>
-                    <option value="2512">2512 – Iné športové a rekreačné stavby</option>
-                    <option value="2520">2520 – Stavby pre kultúru</option>
-                    <option value="2530">2530 – Iné stavby pre vybavenosť</option>
-                  </optgroup>
-                  <optgroup label="26 – Informačné konštruckie">
-                    <option value="2611">2611 – Drobné informačné konštrukcie</option>
-                    <option value="2612">2612 – Jednoduché informačné konštrukcie</option>
-                  </optgroup>
-                  <optgroup label="27 – Iné inžinierske stavby">
-                    <option value="2711">2711 – Drobné inžinierské stavby nadzemné</option>
-                    <option value="2712">2712 – Drobné inžinierské stavby podzmené</option>
-                    <option value="2713">2713 – Drobné inžinierské stavby energetické</option>
-                    <option value="2720">2720 – Výškobé konštrukcie</option>
-                  </optgroup>
-                  <optgroup label="28 – Stavebné úpravy pozemku">
-                    <option value="2811">2811 – Terénne úpravy</option>
-                    <option value="2812">2812 – Vonkajšie úpravy</option>
-                  </optgroup>
-                </optgroup>
-              </select>
-              <div class="help-text" id="objectIdentKodHelp">Kód podľa vyhlášky ÚUPVSR o členení stavieb. Zdedí sa automaticky, ak existuje objekt s rovnakou pozíciou 3.</div>
-            </div>
-          </div>
-          <div class="inline-radio">
-            <label><input type="radio" name="objectType" value="S" checked /><span>Stavebný objekt (Sxx)</span></label>
-            <label><input type="radio" name="objectType" value="P" /><span>Prevádzkový súbor (Pxx)</span></label>
-          </div>
-        </fieldset>
-        <div class="btn-group">
-          <button class="btn-primary" id="addObjectBtn" type="button">Pridať objekt / súbor</button>
-        </div>
-        <h3 class="section-title" style="font-size: 1rem;">Definované stavebné objekty a súbory</h3>
-        <table aria-label="Zoznam stavebných objektov">
-          <thead><tr><th>Kód (Poz. 5)</th><th>Názov</th><th>Typ</th><th>Poz. 3</th><th>Poz. 4</th><th>Akcie</th></tr></thead>
-          <tbody id="objectsTableBody"></tbody>
-        </table>
-      </section>
+      </fieldset>
+      <div class="btn-group">
+        <button class="btn-primary" id="saveProjectBtn" type="button">Uložiť projektové údaje</button>
+        <button class="btn-secondary" id="resetProjectBtn" type="button">Vyčistiť projekt</button>
+      </div>
+      <div id="projectStatus" class="help-text" style="margin-top: var(--space-3);"></div>
     </section>
 
-    <section class="panel" aria-labelledby="attachments-heading">
-      <div class="panel-header">
-        <h2 id="attachments-heading">Prílohy dokumentácie – generovanie názvu súboru</h2>
-        <span class="tag">Pozície 5 – 9</span>
+    <section class="panel step" aria-labelledby="objects-heading">
+      <div class="step-head">
+        <span class="step-num">2</span>
+        <div class="step-meta">
+          <h2 id="objects-heading">Stavebné objekty a prevádzkové súbory</h2>
+          <p class="step-sub">Časť D · pozícia 5 (Sxx / Pxx) + pozície 3 a 4 pre každý objekt</p>
+        </div>
+      </div>
+      <p class="help-text">Pozícia 5 je číslo stavebného objektu (S01, S02…) alebo prevádzkového súboru (P01, P02…). Objekty sú zoradené: najprv Sxx, potom Pxx. Časti A, B, C, E preberajú pozíciu 3 a 4 zo stavebného objektu S01. Ďalší objekt s rovnakou pozíciou 3 automaticky zdedí pozíciu 4.</p>
+      <fieldset style="margin-top:var(--space-4);">
+        <div class="fieldset-row">
+          <div>
+            <label for="objectName">Názov stavebného objektu / súboru</label>
+            <input type="text" id="objectName" placeholder="napr. SO 201 – Most cez rieku" />
+          </div>
+          <div>
+            <label for="objectNumber">Číslo objektu / súboru (01, 02, …)</label>
+            <input type="text" id="objectNumber" placeholder="01" />
+          </div>
+        </div>
+        <div class="fieldset-row">
+          <div>
+            <label for="objectUrcenie">Pozícia 3 – určenie stavby / súboru stavieb</label>
+            <input type="text" id="objectUrcenie" placeholder="napr. 01" maxlength="2" />
+            <div class="help-text" id="objectUrcenieHelp">Dvojciferný kód (01, 02…). Ak existuje objekt s rovnakou pozíciou 3, zdedí sa pozícia 4 automaticky.</div>
+          </div>
+          <div>
+            <label for="objectIdentKod">Pozícia 4 – identifikačný kód stavby</label>
+            <select id="objectIdentKod">
+                <option value="">-- vyber kód --</option>
+                  <optgroup label="11 – Bytové budovy">
+                    <option value="1111">1111 – Jednobytové budovy</option>
+                    <option value="1112">1112 – Dvojbytové budovy</option>
+                    <option value="1113">1113 – Trojbytové budovy</option>
+                    <option value="1120">1120 – Viacbytové budovy</option>
+                    <option value="1130">1130 – Iné bytové budovy</option>
+                  </optgroup>
+                  <optgroup label="12 – Nebytové budovy pre vybavenosť">
+                    <option value="1211">1211 – Hotelové budovy</option>
+                    <option value="1212">1212 – Iné budovy pre cestovný ruch a ubytovanie</option>
+                    <option value="1213">1213 – Budovy verejného stravovania</option>
+                    <option value="1220">1220 – Budovy pre administratívu</option>
+                    <option value="1230">1230 – Budovy pre obchod a služby</option>
+                    <option value="1241">1241 – Budovy pre kultúru</option>
+                    <option value="1242">1242 – Budovy pre cirkev</option>
+                    <option value="1250">1250 – Budovy pre výchovu a vzdelávanie</option>
+                    <option value="1260">1260 – Budovy pre zdravotníctvo</option>
+                    <option value="1271">1271 – Budovy pre šport</option>
+                    <option value="1272">1272 – Budovy pre rekreáciu</option>
+                    <option value="1280">1280 – Budovy pre sociálne služby</option>
+                    <option value="1290">1290 – Iné budovy pre vybavenosť</option>
+                  </optgroup>
+                  <optgroup label="13 – Nebytové budovy pre výrobu">
+                    <option value="1311">1311 – Budovy potravinárskej výroby</option>
+                    <option value="1312">1312 – Budovy spracovatešského priemyslu</option>
+                    <option value="1313">1313 – Iné priemyselné budovy</option>
+                    <option value="1314">1314 – Sklady</option>
+                    <option value="1321">1321 – Poľnohospodárske budovy pre rastlinnú výrobu</option>
+                    <option value="1322">1322 – Poľnohospodárske budovy pre živočíšnú výrobu</option>
+                    <option value="1323">1323 – Budovy pre lesníctvo a poľovníctvo</option>
+                    <option value="1330">1311 – Budovy pre inú výrobu</option>
+                  </optgroup>
+                  <optgroup label="14 – Nebytové budovy pre dopravnú infraštruktúru">
+                    <option value="1410">1410 – Budovy pre dopravnú vybavenosť</option>
+                    <option value="1420">1420 – Budovy pre technickú vybavenosť</option>
+                  </optgroup>
+                  <optgroup label="15 – Iné nebytové budovy">
+                    <option value="1511">1511 – Drobné stavby prízemné</option>
+                    <option value="1512">1512 – Drobné stavby podzemné</option>
+                  </optgroup>
+                  <optgroup label="21 – Inžinierske stavby dopravnej vybavenosti">
+                    <option value="2111">2111 – Diaľnice</option>
+                    <option value="2112">2112 – Cesty I. triedy</option>
+                    <option value="2113">2113 – Cesty II. a III. triedy</option>
+                    <option value="2114">2114 – Miestne cesty a účelové cesty</option>
+                    <option value="2115">2115 – Cyklotrasy, chodníky</option>
+                    <option value="2121">2121 – Železničné dráhy</option>
+                    <option value="2122">2122 – Iné dráhy</option>
+                    <option value="2130">2130 – Letiskové stavby</option>
+                    <option value="2141">2141 – Mosty a mimoúrovňové kríženia</option>
+                    <option value="2142">2142 – Tunely</option>
+                    <option value="2151">2151 – Iné stavby a zariadenia dopravnej vybavenosti</option>
+                  </optgroup>
+                  <optgroup label="22 – Inžinierske vodné stavby">
+                    <option value="2211">2211 – Prístavy, vodné cesty</option>
+                    <option value="2212">2212 – Vodné nádrže, priehrady a iné vodné stavby</option>
+                    <option value="2213">2213 – Hydromeliorácie</option>
+                    <option value="2214">2214 – Stavby pre zásobovanie vodou</option>
+                    <option value="2215">2215 – Stavby pre odpadové vody a vody z povrchového odtoku</option>
+                    <option value="2216">2216 – Historické vodohospodárske diela, fontány</option>
+                  </optgroup>
+                  <optgroup label="23 – Inžinierske stavby technického vybavenia územia">
+                    <option value="2311">2311 – Rozvody ropy a plynu</option>
+                    <option value="2312">2312 – Rozvody vody</option>
+                    <option value="2313">2313 – Kanalizačné a stokové siete</option>
+                    <option value="2314">2314 – Elektronické komunikačné siete</option>
+                    <option value="2315">2315 – Prenosové a distribučné sústavy elektrickej energie</option>
+                    <option value="2321">2321 – Prípojky plynu</option>
+                    <option value="2322">2322 – Prípojky vody</option>
+                    <option value="2323">2323 – Prípojky elektronických komunikačných sietí</option>
+                    <option value="2324">2324 – Prípojky elektrické</option>
+                    <option value="2325">2325 – Prípojky kanalizácie</option>
+                    <option value="2331">2331 – Stavby energetických zdrojov</option>
+                    <option value="2332">2332 – Iné stavby a zariadenia technického vybavenia územia</option>
+                  </optgroup>
+                  <optgroup label="24 – Inžinierske stavby priemyselnej výroby">
+                    <option value="2411">2411 – Bánské stavby a ťažobné zariadenia</option>
+                    <option value="2412">2412 – Stavby chemických zariadení</option>
+                    <option value="2413">2413 – Stavby ťažkého priemyslu</option>
+                    <option value="2420">2420 – Nádržé a silá, priemyselné kolóny a veže</option>
+                  </optgroup>
+                  <optgroup label="25 – Inžinierske stavby vybavenosti">
+                    <option value="2511">2511 – Športové ihriská</option>
+                    <option value="2512">2512 – Iné športové a rekreačné stavby</option>
+                    <option value="2520">2520 – Stavby pre kultúru</option>
+                    <option value="2530">2530 – Iné stavby pre vybavenosť</option>
+                  </optgroup>
+                  <optgroup label="26 – Informačné konštruckie">
+                    <option value="2611">2611 – Drobné informačné konštrukcie</option>
+                    <option value="2612">2612 – Jednoduché informačné konštrukcie</option>
+                  </optgroup>
+                  <optgroup label="27 – Iné inžinierske stavby">
+                    <option value="2711">2711 – Drobné inžinierské stavby nadzemné</option>
+                    <option value="2712">2712 – Drobné inžinierské stavby podzmené</option>
+                    <option value="2713">2713 – Drobné inžinierské stavby energetické</option>
+                    <option value="2720">2720 – Výškobé konštrukcie</option>
+                  </optgroup>
+                  <optgroup label="28 – Stavebné úpravy pozemku">
+                    <option value="2811">2811 – Terénne úpravy</option>
+                    <option value="2812">2812 – Vonkajšie úpravy</option>
+                </select>
+            <div class="help-text" id="objectIdentKodHelp">Kód podľa vyhlášky ÚUPVSR o členení stavieb. Zdedí sa automaticky, ak existuje objekt s rovnakou pozíciou 3.</div>
+          </div>
+        </div>
+        <div class="inline-radio">
+          <label><input type="radio" name="objectType" value="S" checked /><span>Stavebný objekt (Sxx)</span></label>
+          <label><input type="radio" name="objectType" value="P" /><span>Prevádzkový súbor (Pxx)</span></label>
+        </div>
+      </fieldset>
+      <div class="btn-group">
+        <button class="btn-primary" id="addObjectBtn" type="button">Pridať objekt / súbor</button>
+      </div>
+      <h3 class="section-title" style="font-size: 1rem;">Definované stavebné objekty a súbory</h3>
+      <table aria-label="Zoznam stavebných objektov">
+        <thead><tr><th>Kód (Poz. 5)</th><th>Názov</th><th>Typ</th><th>Poz. 3</th><th>Poz. 4</th><th>Akcie</th></tr></thead>
+        <tbody id="objectsTableBody"></tbody>
+      </table>
+    </section>
+
+    <section class="panel step" aria-labelledby="attachments-heading">
+      <div class="step-head">
+        <span class="step-num">3</span>
+        <div class="step-meta">
+          <h2 id="attachments-heading">Prílohy dokumentácie</h2>
+          <p class="step-sub">Pozície 5 – 9 · generovanie názvu súboru prílohy</p>
+        </div>
       </div>
       <fieldset>
         <div class="fieldset-row">
@@ -528,7 +483,7 @@
               <option value="D">D – Dokumentácia stavebných objektov</option>
               <option value="E">E – Prílohy</option>
             </select>
-            <div class="help-text">Pre časti A, B kódovanie končí na pozícii 6. Pre časti C, E kódovanie končí na pozícii 7. Pre časť D pokračuje ďalej.</div>
+            <div class="help-text">Pre časti A, B kódovanie končí na pozícii 6. Pre časti C, E na pozícii 7. Pre časť D pokračuje ďalej.</div>
           </div>
           <div>
             <label for="attachmentObject">Stavebný objekt / súbor (aktívny len pre časť D)</label>
@@ -543,7 +498,7 @@
             <div class="help-text" id="poz6HelpText"></div>
           </div>
           <div>
-            <label for="poz7">Pozícia 7 – poradové číslo dokumentu (generuje sa automaticky)</label>
+            <label for="poz7">Pozícia 7 – poradové číslo (generuje sa automaticky)</label>
             <input type="text" id="poz7" placeholder="generuje aplikácia" disabled />
             <div class="help-text">Pri TXT a AAA je vždy 000. Revízie tej istej prílohy zdieľajú rovnaké číslo.</div>
           </div>
@@ -595,24 +550,13 @@
       <div id="attachmentError" class="error" aria-live="polite"></div>
     </section>
 
-    <section class="panel" aria-labelledby="csv-heading">
-      <div class="panel-header">
-        <h2 id="csv-heading">Import / export CSV</h2>
-        <span class="tag">Prenos dát projektu</span>
-      </div>
-      <p class="help-text">Môžeš exportovať celý projekt aj všetky prílohy (vrátane revízií a previazaní) do CSV a znovu ich importovať späť.</p>
-      <div class="btn-group">
-        <button class="btn-primary" id="exportCsvBtn" type="button">Exportovať CSV</button>
-        <label class="btn-secondary" for="importCsvInput" style="cursor:pointer;">Importovať CSV</label>
-        <input type="file" id="importCsvInput" accept=".csv,text/csv" style="display:none;" />
-      </div>
-      <div id="csvStatus" class="help-text" style="margin-top: var(--space-3);"></div>
-    </section>
-
-    <section class="panel" aria-labelledby="overview-heading">
-      <div class="panel-header">
-        <h2 id="overview-heading">Úplný prehľad zoznamu dokumentácie – A00</h2>
-        <span class="tag">Generovaný zo všetkých príloh</span>
+    <section class="panel step step-output" aria-labelledby="overview-heading">
+      <div class="step-head">
+        <span class="step-num">4</span>
+        <div class="step-meta">
+          <h2 id="overview-heading">Úplný prehľad zoznamu dokumentácie – A00</h2>
+          <p class="step-sub">Generovaný automaticky zo všetkých príloh</p>
+        </div>
       </div>
       <p class="help-text">Prílohy sú zoradené do sekcií A → B → C → D → E. V rámci časti D sú členené po objektoch (Sxx pred Pxx). Tlačidlami ▲ / ▼ môžeš zmeniť poradie prílohy <em>iba v rámci jej sekcie alebo objektu</em>. Pozícia 9 = 00 sa v názve súboru nezobrazuje; revízie 01+ sa zobrazia.</p>
       <table aria-label="Úplný prehľad zoznamu dokumentácie A00">
@@ -631,9 +575,26 @@
       </table>
     </section>
   </main>
+</div>
+<script>
+(function () {
+  function initAlod() {
 
-  <script>
-  (function () {
+    // Flatten illegally-nested <optgroup> elements (defensive – a real browser
+    // auto-corrects sequential optgroups, but keep this so deeply-nested markup
+    // still yields selectable options).
+    document.querySelectorAll("select").forEach(function (sel) {
+      Array.prototype.slice.call(sel.children).forEach(function (child) {
+        if (child.tagName === "OPTGROUP" && child.querySelector("optgroup")) {
+          var frag = document.createDocumentFragment();
+          Array.prototype.slice.call(child.children).forEach(function (c) {
+            if (c.tagName === "OPTGROUP") frag.appendChild(c);
+          });
+          sel.replaceChild(frag, child);
+        }
+      });
+    });
+
     const project = { name: "", id: "", stupen: "", urcenie: "", identKod: "", objects: [], attachments: [] };
 
     // Časti kde kódovanie končí na pozícii 6 (poz7 a poz8 sa nepoužívajú)
@@ -1122,6 +1083,8 @@
       }
       const scope = getAttachmentScope(), part = attachmentPartSelect.value;
       const objectId = attachmentObjectSelect.value;
+      const poz6 = getPoz6Value();
+      const title = attachmentTitleInput.value.trim();
 
       // Pre časti A/B/C/E skontroluj či existuje referenčný objekt S01
       if (part !== "D") {
@@ -1381,7 +1344,7 @@
       rows.push(["PROJECT", project.name, project.id, project.stupen, project.urcenie, project.identKod,
         "","","","","","","","","","","","","","","","","",""]);
       project.objects.forEach(obj =>
-        rows.push(["OBJECT","","","","","",obj.id,obj.name,obj.number,obj.type,obj.urcenie||"",obj.identKod||"","","","","","","","","","","",""]));
+        rows.push(["OBJECT","","","","","",obj.id,obj.name,obj.number,obj.type,obj.urcenie||"",obj.identKod||"","","","","","","","","","","","",""]));
       project.attachments.forEach(att =>
         rows.push(["ATTACHMENT","","","","","","","","","","","",
           att.scope,att.part,att.poz5,att.poz6,att.poz7,att.poz8,att.poz9,att.title||"",
@@ -1523,7 +1486,14 @@
 
     updateObjectSelectState();
     updatePoz6Mode();
-  })();
-  </script>
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initAlod);
+  } else {
+    initAlod();
+  }
+})();
+</script>
 </body>
 </html>
