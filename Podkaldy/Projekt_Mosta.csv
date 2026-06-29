@@ -1,0 +1,26 @@
+TYPE;projectName;idStavby;stupenDoc;urcenie;identKod;objectId;objectName;objectNumber;objectType;objectUrcenie;objectIdentKod;scope;part;poz5;poz6;poz7;poz8;poz9;title;attachmentObjectId;uid;parentUid;sortOrder
+PROJECT;Projekt Mosta;25AB123;SZP;01;1111;;;;;;;;;;;;;;;;;;
+OBJECT;;;;;;mqy7drp0mdvr0;Cesta;01;S;01;2111;;;;;;;;;;;
+OBJECT;;;;;;mqy7e6otomyti;Hotel;01;S;02;1211;;;;;;;;;;;
+OBJECT;;;;;;mqy7ijxbe6ylu;Letisko;01;S;03;2411;;;;;;;;;;;
+OBJECT;;;;;;mqy7drp02f92m;Most;02;S;01;2111;;;;;;;;;;;
+ATTACHMENT;;;;;;;;;;;;S01;STA;000;TXT;001;Statika;mqxwxhhx2sr65;mqxdgmjlvugan;;0;;0
+ATTACHMENT;;;;;;;;;;;;S01;STA;001;SIT;002;Situacia 2;mqxwxhhx2sr65;mqxdgmjluzugk;;1;;1
+ATTACHMENT;;;;;;;;;;;;S01;STA;002;SIT;003;Situacia;mqxwxhhx2sr65;mqxdgmjlztlie;;2;;2
+ATTACHMENT;;;;;;;;;;;;S01;PLY;003;VYZ;001;Zaklady;mqxwxhhx2sr65;mqxdi7ynmfcqj;;3;;0
+ATTACHMENT;;;;;;;;;;;;P01;011;001;SIT;001;;mqxwxhhxmu2zv;mqxh8sl2pe6t1;;0;;0
+ATTACHMENT;;;;;;;;;;;;S02;ASR;001;VYT;001;Cesta;mqxwxhhxae2y1;mqxi6cozajolp;;0;;0
+ATTACHMENT;;;;;;;;;;;;A00;AAA;;AAA;001;;00;mqxi6wu47hn0c;;0;;0
+ATTACHMENT;;;;;;;;;;;;B00;SPR;;AAA;001;;00;mqxi739dfnqqd;;0;;0
+ATTACHMENT;;;;;;;;;;;;C00;SIT;001;;001;Situacia;00;mqxwy290k7xix;;0;;0
+ATTACHMENT;;;;;;;;;;;;E00;STD;001;SIT;001;Ecko;00;mqxx15you78ld;;0;;0
+ATTACHMENT;;;;;;;;;;;;project;B;B00;SPR;;;00;;;mqy79agxjlybo;;0
+ATTACHMENT;;;;;;;;;;;;project;C;C00;SIT;001;;00;;;mqy79deqt87gr;;0
+ATTACHMENT;;;;;;;;;;;;object;D;S01;VYK;001;SIT;00;;mqy7drp0mdvr0;mqy79q7r2gsze;;0
+ATTACHMENT;;;;;;;;;;;;project;E;E00;SZS;001;;00;;;mqy7a0hpmb2a4;;0
+ATTACHMENT;;;;;;;;;;;;project;A;A00;AAA;;;00;;;mqy7enyc0kfvk;;0
+ATTACHMENT;;;;;;;;;;;;object;D;S01;PLY;001;VYT;00;;mqy7e6otomyti;mqy7fhkdbi6gt;;0
+ATTACHMENT;;;;;;;;;;;;object;D;S02;VZT;001;VYS;00;;mqy7drp02f92m;mqy7gx20rcd8j;;0
+ATTACHMENT;;;;;;;;;;;;project;E;E00;STD;002;;00;;;mqy7itykdvkfv;;1
+ATTACHMENT;;;;;;;;;;;;project;C;C00;SIT;002;;00;Situacia 01;;mqy7k86rq2pry;;1
+ATTACHMENT;;;;;;;;;;;;project;C;C00;SIT;003;;00;Situacia 02;;mqy7kaj9jklua;;2

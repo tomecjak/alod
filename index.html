@@ -229,7 +229,7 @@
                 <option value="VPP">VPP – vykonávací projekt</option>
                 <option value="RDS">RDS – realizačná dokumentácia stavby</option>
                 <option value="DSZ">DSZ – dokumentácia skutočného zhotovenia</option>
-                <option value="ZDS">ZDS – zjednodušená dokumentácia / pasport</option>
+                <option value="ZDS">ZDS – zjednodušená dokumentácia stavby / pasport</option>
               </select>
             </div>
           </div>
@@ -244,70 +244,107 @@
                 <option value="">-- vyber kód --</option>
                 <optgroup label="1 – Budovy">
                   <optgroup label="11 – Bytové budovy">
-                    <option value="1110">1110 – Jednobytové a dvojbytové budovy</option>
                     <option value="1111">1111 – Jednobytové budovy</option>
                     <option value="1112">1112 – Dvojbytové budovy</option>
-                    <option value="1120">1120 – Ostatné bytové budovy</option>
-                    <option value="1121">1121 – Trojbytové a viacbytové budovy</option>
-                    <option value="1122">1122 – Obytné budovy pre spoločenstvá</option>
-                    <option value="1130">1130 – Bytové budovy inde neuvedené</option>
+                    <option value="1113">1113 – Trojbytové budovy</option>
+                    <option value="1120">1120 – Viacbytové budovy</option>
+                    <option value="1130">1130 – Iné bytové budovy</option>
                   </optgroup>
-                  <optgroup label="12 – Nebytové budovy">
+                  <optgroup label="12 – Nebytové budovy pre vybavenosť">
                     <option value="1211">1211 – Hotelové budovy</option>
-                    <option value="1212">1212 – Ostatné ubytovacie budovy</option>
-                    <option value="1220">1220 – Administratívne budovy</option>
-                    <option value="1230">1230 – Budovy pre obchod</option>
-                    <option value="1241">1241 – Budovy pre dopravu a telekomunikácie</option>
-                    <option value="1242">1242 – Garáže</option>
-                    <option value="1251">1251 – Priemyselné budovy</option>
-                    <option value="1252">1252 – Nádrže, sila a sklady</option>
-                    <option value="1261">1261 – Budovy pre verejnú zábavu, vzdelávanie, nemocnice</option>
-                    <option value="1262">1262 – Múzeá a knižnice</option>
-                    <option value="1263">1263 – Školy a vzdelávacie zariadenia</option>
-                    <option value="1264">1264 – Nemocnice a zdravotnícke zariadenia</option>
-                    <option value="1265">1265 – Športové haly a zariadenia</option>
-                    <option value="1271">1271 – Poľnohospodárske budovy</option>
-                    <option value="1272">1272 – Budovy pre lesné hospodárstvo</option>
-                    <option value="1273">1273 – Akvakulturné a poľnohospodárske budovy inde neuvedené</option>
-                    <option value="1274">1274 – Budovy pre náboženské a pohrebné služby</option>
-                    <option value="1275">1275 – Historické a chránené budovy</option>
-                    <option value="1276">1276 – Ostatné nebytové budovy inde neuvedené</option>
+                    <option value="1212">1212 – Iné budovy pre cestovný ruch a ubytovanie</option>
+                    <option value="1213">1213 – Budovy verejného stravovania</option>
+                    <option value="1220">1220 – Budovy pre administratívu</option>
+                    <option value="1230">1230 – Budovy pre obchod a služby</option>
+                    <option value="1241">1241 – Budovy pre kultúru</option>
+                    <option value="1242">1242 – Budovy pre cirkev</option>
+                    <option value="1250">1250 – Budovy pre výchovu a vzdelávanie</option>
+                    <option value="1260">1260 – Budovy pre zdravotníctvo</option>
+                    <option value="1271">1271 – Budovy pre šport</option>
+                    <option value="1272">1272 – Budovy pre rekreáciu</option>
+                    <option value="1280">1280 – Budovy pre sociálne služby</option>
+                    <option value="1290">1290 – Iné budovy pre vybavenosť</option>
+                  </optgroup>
+                  <optgroup label="13 – Nebytové budovy pre výrobu">
+                    <option value="1311">1311 – Budovy potravinárskej výroby</option>
+                    <option value="1312">1312 – Budovy spracovatešského priemyslu</option>
+                    <option value="1313">1313 – Iné priemyselné budovy</option>
+                    <option value="1314">1314 – Sklady</option>
+                    <option value="1321">1321 – Poľnohospodárske budovy pre rastlinnú výrobu</option>
+                    <option value="1322">1322 – Poľnohospodárske budovy pre živočíšnú výrobu</option>
+                    <option value="1323">1323 – Budovy pre lesníctvo a poľovníctvo</option>
+                    <option value="1330">1311 – Budovy pre inú výrobu</option>
+                  </optgroup>
+                  <optgroup label="14 – Nebytové budovy pre dopravnú infraštruktúru">
+                    <option value="1410">1410 – Budovy pre dopravnú vybavenosť</option>
+                    <option value="1420">1420 – Budovy pre technickú vybavenosť</option>
+                  </optgroup>
+                  <optgroup label="15 – Iné nebytové budovy">
+                    <option value="1511">1511 – Drobné stavby prízemné</option>
+                    <option value="1512">1512 – Drobné stavby podzemné</option>
                   </optgroup>
                 </optgroup>
                 <optgroup label="2 – Inžinierske stavby">
-                  <optgroup label="21 – Dopravná infraštruktúra">
-                    <option value="2111">2111 – Diaľnice a rýchlostné cesty</option>
-                    <option value="2112">2112 – Ostatné cesty</option>
-                    <option value="2121">2121 – Železničné trate</option>
-                    <option value="2122">2122 – Mestské dráhy</option>
-                    <option value="2130">2130 – Letiská</option>
-                    <option value="2141">2141 – Mosty a nadjazdy</option>
-                    <option value="2142">2142 – Tunely a podchody</option>
-                    <option value="2211">2211 – Prístavné stavby</option>
-                    <option value="2212">2212 – Vodné cesty</option>
-                    <option value="2213">2213 – Plavebné komory a prístavy</option>
+                  <optgroup label="21 – Inžinierske stavby dopravnej vybavenosti">
+                    <option value="2111">2111 – Diaľnice</option>
+                    <option value="2112">2112 – Cesty I. triedy</option>
+                    <option value="2113">2113 – Cesty II. a III. triedy</option>
+                    <option value="2114">2114 – Miestne cesty a účelové cesty</option>
+                    <option value="2115">2115 – Cyklotrasy, chodníky</option>
+                    <option value="2121">2121 – Železničné dráhy</option>
+                    <option value="2122">2122 – Iné dráhy</option>
+                    <option value="2130">2130 – Letiskové stavby</option>
+                    <option value="2141">2141 – Mosty a mimoúrovňové kríženia</option>
+                    <option value="2142">2142 – Tunely</option>
+                    <option value="2151">2151 – Iné stavby a zariadenia dopravnej vybavenosti</option>
                   </optgroup>
-                  <optgroup label="22 – Siete a rozvody">
-                    <option value="2221">2221 – Diaľkové potrubia na ropu a plyn</option>
-                    <option value="2222">2222 – Miestne plynovodné siete</option>
-                    <option value="2223">2223 – Rozvod tepla a teplej vody</option>
-                    <option value="2224">2224 – Vodovody a vodovodné siete</option>
-                    <option value="2225">2225 – Kanalizačné siete</option>
-                    <option value="2226">2226 – Elektrické vedenia a káble</option>
-                    <option value="2227">2227 – Telekomunikačné vedenia a siete</option>
+                  <optgroup label="22 – Inžinierske vodné stavby">
+                    <option value="2211">2211 – Prístavy, vodné cesty</option>
+                    <option value="2212">2212 – Vodné nádrže, priehrady a iné vodné stavby</option>
+                    <option value="2213">2213 – Hydromeliorácie</option>
+                    <option value="2214">2214 – Stavby pre zásobovanie vodou</option>
+                    <option value="2215">2215 – Stavby pre odpadové vody a vody z povrchového odtoku</option>
+                    <option value="2216">2216 – Historické vodohospodárske diela, fontány</option>
                   </optgroup>
-                  <optgroup label="23 – Priemyselné stavby">
-                    <option value="2301">2301 – Priemyselné stavby pre energetiku</option>
-                    <option value="2302">2302 – Priemyselné stavby pre ťažbu</option>
-                    <option value="2303">2303 – Priemyselné stavby pre spracovanie</option>
-                    <option value="2304">2304 – Priemyselné stavby pre chemický priemysel</option>
+                  <optgroup label="23 – Inžinierske stavby technického vybavenia územia">
+                    <option value="2311">2311 – Rozvody ropy a plynu</option>
+                    <option value="2312">2312 – Rozvody vody</option>
+                    <option value="2313">2313 – Kanalizačné a stokové siete</option>
+                    <option value="2314">2314 – Elektronické komunikačné siete</option>
+                    <option value="2315">2315 – Prenosové a distribučné sústavy elektrickej energie</option>
+                    <option value="2321">2321 – Prípojky plynu</option>
+                    <option value="2322">2322 – Prípojky vody</option>
+                    <option value="2323">2323 – Prípojky elektronických komunikačných sietí</option>
+                    <option value="2324">2324 – Prípojky elektrické</option>
+                    <option value="2325">2325 – Prípojky kanalizácie</option>
+                    <option value="2331">2331 – Stavby energetických zdrojov</option>
+                    <option value="2332">2332 – Iné stavby a zariadenia technického vybavenia územia</option>
                   </optgroup>
-                  <optgroup label="24 – Ostatné inžinierske stavby">
-                    <option value="2411">2411 – Vodohospodárske stavby</option>
-                    <option value="2412">2412 – Protipovodňové stavby</option>
-                    <option value="2420">2420 – Športové a rekreačné stavby vonkajšie</option>
-                    <option value="2430">2430 – Ostatné inžinierske stavby inde neuvedené</option>
-                    <option value="2611">2611 – Čistenie odpadových vôd</option>
+                  <optgroup label="24 – Inžinierske stavby priemyselnej výroby">
+                    <option value="2411">2411 – Bánské stavby a ťažobné zariadenia</option>
+                    <option value="2412">2412 – Stavby chemických zariadení</option>
+                    <option value="2413">2413 – Stavby ťažkého priemyslu</option>
+                    <option value="2420">2420 – Nádržé a silá, priemyselné kolóny a veže</option>
+                  </optgroup>
+                  <optgroup label="25 – Inžinierske stavby vybavenosti">
+                    <option value="2511">2511 – Športové ihriská</option>
+                    <option value="2512">2512 – Iné športové a rekreačné stavby</option>
+                    <option value="2520">2520 – Stavby pre kultúru</option>
+                    <option value="2530">2530 – Iné stavby pre vybavenosť</option>
+                  </optgroup>
+                  <optgroup label="26 – Informačné konštruckie">
+                    <option value="2611">2611 – Drobné informačné konštrukcie</option>
+                    <option value="2612">2612 – Jednoduché informačné konštrukcie</option>
+                  </optgroup>
+                  <optgroup label="27 – Iné inžinierske stavby">
+                    <option value="2711">2711 – Drobné inžinierské stavby nadzemné</option>
+                    <option value="2712">2712 – Drobné inžinierské stavby podzmené</option>
+                    <option value="2713">2713 – Drobné inžinierské stavby energetické</option>
+                    <option value="2720">2720 – Výškobé konštrukcie</option>
+                  </optgroup>
+                  <optgroup label="28 – Stavebné úpravy pozemku">
+                    <option value="2811">2811 – Terénne úpravy</option>
+                    <option value="2812">2812 – Vonkajšie úpravy</option>
                   </optgroup>
                 </optgroup>
               </select>
@@ -352,70 +389,107 @@
                 <option value="">-- vyber kód --</option>
                 <optgroup label="1 – Budovy">
                   <optgroup label="11 – Bytové budovy">
-                    <option value="1110">1110 – Jednobytové a dvojbytové budovy</option>
                     <option value="1111">1111 – Jednobytové budovy</option>
                     <option value="1112">1112 – Dvojbytové budovy</option>
-                    <option value="1120">1120 – Ostatné bytové budovy</option>
-                    <option value="1121">1121 – Trojbytové a viacbytové budovy</option>
-                    <option value="1122">1122 – Obytné budovy pre spoločenstvá</option>
-                    <option value="1130">1130 – Bytové budovy inde neuvedené</option>
+                    <option value="1113">1113 – Trojbytové budovy</option>
+                    <option value="1120">1120 – Viacbytové budovy</option>
+                    <option value="1130">1130 – Iné bytové budovy</option>
                   </optgroup>
-                  <optgroup label="12 – Nebytové budovy">
+                  <optgroup label="12 – Nebytové budovy pre vybavenosť">
                     <option value="1211">1211 – Hotelové budovy</option>
-                    <option value="1212">1212 – Ostatné ubytovacie budovy</option>
-                    <option value="1220">1220 – Administratívne budovy</option>
-                    <option value="1230">1230 – Budovy pre obchod</option>
-                    <option value="1241">1241 – Budovy pre dopravu a telekomunikácie</option>
-                    <option value="1242">1242 – Garáže</option>
-                    <option value="1251">1251 – Priemyselné budovy</option>
-                    <option value="1252">1252 – Nádrže, sila a sklady</option>
-                    <option value="1261">1261 – Budovy pre verejnú zábavu, vzdelávanie, nemocnice</option>
-                    <option value="1262">1262 – Múzeá a knižnice</option>
-                    <option value="1263">1263 – Školy a vzdelávacie zariadenia</option>
-                    <option value="1264">1264 – Nemocnice a zdravotnícke zariadenia</option>
-                    <option value="1265">1265 – Športové haly a zariadenia</option>
-                    <option value="1271">1271 – Poľnohospodárske budovy</option>
-                    <option value="1272">1272 – Budovy pre lesné hospodárstvo</option>
-                    <option value="1273">1273 – Akvakulturné a poľnohospodárske budovy inde neuvedené</option>
-                    <option value="1274">1274 – Budovy pre náboženské a pohrebné služby</option>
-                    <option value="1275">1275 – Historické a chránené budovy</option>
-                    <option value="1276">1276 – Ostatné nebytové budovy inde neuvedené</option>
+                    <option value="1212">1212 – Iné budovy pre cestovný ruch a ubytovanie</option>
+                    <option value="1213">1213 – Budovy verejného stravovania</option>
+                    <option value="1220">1220 – Budovy pre administratívu</option>
+                    <option value="1230">1230 – Budovy pre obchod a služby</option>
+                    <option value="1241">1241 – Budovy pre kultúru</option>
+                    <option value="1242">1242 – Budovy pre cirkev</option>
+                    <option value="1250">1250 – Budovy pre výchovu a vzdelávanie</option>
+                    <option value="1260">1260 – Budovy pre zdravotníctvo</option>
+                    <option value="1271">1271 – Budovy pre šport</option>
+                    <option value="1272">1272 – Budovy pre rekreáciu</option>
+                    <option value="1280">1280 – Budovy pre sociálne služby</option>
+                    <option value="1290">1290 – Iné budovy pre vybavenosť</option>
+                  </optgroup>
+                  <optgroup label="13 – Nebytové budovy pre výrobu">
+                    <option value="1311">1311 – Budovy potravinárskej výroby</option>
+                    <option value="1312">1312 – Budovy spracovatešského priemyslu</option>
+                    <option value="1313">1313 – Iné priemyselné budovy</option>
+                    <option value="1314">1314 – Sklady</option>
+                    <option value="1321">1321 – Poľnohospodárske budovy pre rastlinnú výrobu</option>
+                    <option value="1322">1322 – Poľnohospodárske budovy pre živočíšnú výrobu</option>
+                    <option value="1323">1323 – Budovy pre lesníctvo a poľovníctvo</option>
+                    <option value="1330">1311 – Budovy pre inú výrobu</option>
+                  </optgroup>
+                  <optgroup label="14 – Nebytové budovy pre dopravnú infraštruktúru">
+                    <option value="1410">1410 – Budovy pre dopravnú vybavenosť</option>
+                    <option value="1420">1420 – Budovy pre technickú vybavenosť</option>
+                  </optgroup>
+                  <optgroup label="15 – Iné nebytové budovy">
+                    <option value="1511">1511 – Drobné stavby prízemné</option>
+                    <option value="1512">1512 – Drobné stavby podzemné</option>
                   </optgroup>
                 </optgroup>
                 <optgroup label="2 – Inžinierske stavby">
-                  <optgroup label="21 – Dopravná infraštruktúra">
-                    <option value="2111">2111 – Diaľnice a rýchlostné cesty</option>
-                    <option value="2112">2112 – Ostatné cesty</option>
-                    <option value="2121">2121 – Železničné trate</option>
-                    <option value="2122">2122 – Mestské dráhy</option>
-                    <option value="2130">2130 – Letiská</option>
-                    <option value="2141">2141 – Mosty a nadjazdy</option>
-                    <option value="2142">2142 – Tunely a podchody</option>
-                    <option value="2211">2211 – Prístavné stavby</option>
-                    <option value="2212">2212 – Vodné cesty</option>
-                    <option value="2213">2213 – Plavebné komory a prístavy</option>
+                  <optgroup label="21 – Inžinierske stavby dopravnej vybavenosti">
+                    <option value="2111">2111 – Diaľnice</option>
+                    <option value="2112">2112 – Cesty I. triedy</option>
+                    <option value="2113">2113 – Cesty II. a III. triedy</option>
+                    <option value="2114">2114 – Miestne cesty a účelové cesty</option>
+                    <option value="2115">2115 – Cyklotrasy, chodníky</option>
+                    <option value="2121">2121 – Železničné dráhy</option>
+                    <option value="2122">2122 – Iné dráhy</option>
+                    <option value="2130">2130 – Letiskové stavby</option>
+                    <option value="2141">2141 – Mosty a mimoúrovňové kríženia</option>
+                    <option value="2142">2142 – Tunely</option>
+                    <option value="2151">2151 – Iné stavby a zariadenia dopravnej vybavenosti</option>
                   </optgroup>
-                  <optgroup label="22 – Siete a rozvody">
-                    <option value="2221">2221 – Diaľkové potrubia na ropu a plyn</option>
-                    <option value="2222">2222 – Miestne plynovodné siete</option>
-                    <option value="2223">2223 – Rozvod tepla a teplej vody</option>
-                    <option value="2224">2224 – Vodovody a vodovodné siete</option>
-                    <option value="2225">2225 – Kanalizačné siete</option>
-                    <option value="2226">2226 – Elektrické vedenia a káble</option>
-                    <option value="2227">2227 – Telekomunikačné vedenia a siete</option>
+                  <optgroup label="22 – Inžinierske vodné stavby">
+                    <option value="2211">2211 – Prístavy, vodné cesty</option>
+                    <option value="2212">2212 – Vodné nádrže, priehrady a iné vodné stavby</option>
+                    <option value="2213">2213 – Hydromeliorácie</option>
+                    <option value="2214">2214 – Stavby pre zásobovanie vodou</option>
+                    <option value="2215">2215 – Stavby pre odpadové vody a vody z povrchového odtoku</option>
+                    <option value="2216">2216 – Historické vodohospodárske diela, fontány</option>
                   </optgroup>
-                  <optgroup label="23 – Priemyselné stavby">
-                    <option value="2301">2301 – Priemyselné stavby pre energetiku</option>
-                    <option value="2302">2302 – Priemyselné stavby pre ťažbu</option>
-                    <option value="2303">2303 – Priemyselné stavby pre spracovanie</option>
-                    <option value="2304">2304 – Priemyselné stavby pre chemický priemysel</option>
+                  <optgroup label="23 – Inžinierske stavby technického vybavenia územia">
+                    <option value="2311">2311 – Rozvody ropy a plynu</option>
+                    <option value="2312">2312 – Rozvody vody</option>
+                    <option value="2313">2313 – Kanalizačné a stokové siete</option>
+                    <option value="2314">2314 – Elektronické komunikačné siete</option>
+                    <option value="2315">2315 – Prenosové a distribučné sústavy elektrickej energie</option>
+                    <option value="2321">2321 – Prípojky plynu</option>
+                    <option value="2322">2322 – Prípojky vody</option>
+                    <option value="2323">2323 – Prípojky elektronických komunikačných sietí</option>
+                    <option value="2324">2324 – Prípojky elektrické</option>
+                    <option value="2325">2325 – Prípojky kanalizácie</option>
+                    <option value="2331">2331 – Stavby energetických zdrojov</option>
+                    <option value="2332">2332 – Iné stavby a zariadenia technického vybavenia územia</option>
                   </optgroup>
-                  <optgroup label="24 – Ostatné inžinierske stavby">
-                    <option value="2411">2411 – Vodohospodárske stavby</option>
-                    <option value="2412">2412 – Protipovodňové stavby</option>
-                    <option value="2420">2420 – Športové a rekreačné stavby vonkajšie</option>
-                    <option value="2430">2430 – Ostatné inžinierske stavby inde neuvedené</option>
-                    <option value="2611">2611 – Čistenie odpadových vôd</option>
+                  <optgroup label="24 – Inžinierske stavby priemyselnej výroby">
+                    <option value="2411">2411 – Bánské stavby a ťažobné zariadenia</option>
+                    <option value="2412">2412 – Stavby chemických zariadení</option>
+                    <option value="2413">2413 – Stavby ťažkého priemyslu</option>
+                    <option value="2420">2420 – Nádržé a silá, priemyselné kolóny a veže</option>
+                  </optgroup>
+                  <optgroup label="25 – Inžinierske stavby vybavenosti">
+                    <option value="2511">2511 – Športové ihriská</option>
+                    <option value="2512">2512 – Iné športové a rekreačné stavby</option>
+                    <option value="2520">2520 – Stavby pre kultúru</option>
+                    <option value="2530">2530 – Iné stavby pre vybavenosť</option>
+                  </optgroup>
+                  <optgroup label="26 – Informačné konštruckie">
+                    <option value="2611">2611 – Drobné informačné konštrukcie</option>
+                    <option value="2612">2612 – Jednoduché informačné konštrukcie</option>
+                  </optgroup>
+                  <optgroup label="27 – Iné inžinierske stavby">
+                    <option value="2711">2711 – Drobné inžinierské stavby nadzemné</option>
+                    <option value="2712">2712 – Drobné inžinierské stavby podzmené</option>
+                    <option value="2713">2713 – Drobné inžinierské stavby energetické</option>
+                    <option value="2720">2720 – Výškobé konštrukcie</option>
+                  </optgroup>
+                  <optgroup label="28 – Stavebné úpravy pozemku">
+                    <option value="2811">2811 – Terénne úpravy</option>
+                    <option value="2812">2812 – Vonkajšie úpravy</option>
                   </optgroup>
                 </optgroup>
               </select>
@@ -492,9 +566,10 @@
               <option value="P02">P02 – pôdorys 2. podzemného podlažia</option>
               <option value="POH">POH – pohľad</option>
               <option value="REZ">REZ – rez</option>
+              <option value="VIZ">VIZ – vizualizácia</option>
               <option value="DET">DET – detail</option>
               <option value="SCH">SCH – schéma</option>
-              <option value="VVZ">VVZ – výkaz výrobkov a zariadení</option>
+              <option value="VVZ">VVZ – výkaz výrobkov a zariadení, výkaz prvkov</option>
               <option value="VYV">VYV – výkaz výmer</option>
               <option value="ROZ">ROZ – rozpočet</option>
             </select>
@@ -578,42 +653,82 @@
       { value: "STA", label: "STA – statika" },
       { value: "ZTI", label: "ZTI – zdravotechnická inštalácia" },
       { value: "VYK", label: "VYK – vykurovanie" },
-      { value: "PLY", label: "PLY – plyn" },
+      { value: "PLY", label: "PLY – plynoinštalácia" },
       { value: "VZT", label: "VZT – vzduchotechnika a chladenie" },
       { value: "MAR", label: "MAR – meranie a regulácia" },
       { value: "ELI", label: "ELI – elektroinštalácia" },
       { value: "BLZ", label: "BLZ – bleskozvod a uzemnenie" },
-      { value: "SLP", label: "SLP – slaboprúdové rozvody" },
+      { value: "SLP", label: "SLP – slaboprúdová inštalácia, štruk. káblove rozvody" },
       { value: "HSP", label: "HSP – hlasová signalizácia požiaru" },
       { value: "EPS", label: "EPS – elektrická požiarna signalizácia" },
       { value: "SHZ", label: "SHZ – stabilné hasiace zariadenia" },
-      { value: "ODT", label: "ODT – odvod dymu a tepla" },
+      { value: "ODT", label: "ODT – zariadenie na odvod dymu a tepla" },
       { value: "USV", label: "USV – umelé osvetlenie" },
-      { value: "KRA", label: "KRA – krajinné úpravy" },
+      { value: "KRA", label: "KRA – krajinné, sadové a terénne úpravy" },
       { value: "DOP", label: "DOP – dopravné riešenie" },
       { value: "POD", label: "POD – projekt organizácie dopravy" },
       { value: "TDZ", label: "TDZ – trvalé dopravné značenie" },
       { value: "DDZ", label: "DDZ – dočasné dopravné značenie" },
+      { value: "PNN", label: "PNN – elektrická prípojka nízkeho napätia" },
+      { value: "PVN", label: "PVN – elektrická prípojka vysokého napátia" },
+      { value: "VUO", label: "VUO – vonkajšie / verejné osvetlenie" },
+      { value: "ARS", label: "ARS – areálové / miestne rozvody silnoprúdu" },
+      { value: "AEK", label: "AEK – areálové / miestne rozvody elektronických komunikácií" },
+      { value: "REK", label: "REK – rozvody elektronických komunikácií" },
+      { value: "VDS", label: "VDS – vedenie distribučnej sústavy" },
+      { value: "BK", label: "BK – betónové konštrukcie" },
+      { value: "OK", label: "OK – oceľové konštrukcie" },
+      { value: "SVK", label: "SVK – systém kontroly vstupu" },
+      { value: "ESZ", label: "ESZ – elektrická zabezpečovacia signalizácia" },
+      { value: "UTO", label: "UTO – uzatvorený televízny okruh (CCIR)" },
+      { value: "HSR", label: "HSR – hetelový systém riadenia" },
+      { value: "NKS", label: "NKS – nemocičný komunikačný systém" },
+      { value: "SKR", label: "SKR – systém riadenia precesov (SRTP, ASRTP, SKR)" },
+      { value: "CRS", label: "CRS – centrálne riadiace systémy budov (BMS)" },
+      { value: "ADR", label: "ADR – automatický systém dispečerského riadenia (ASDR)" },
+      { value: "ZDT", label: "ZDT – zdravotnícka technológia" },
+      { value: "RTG", label: "RTG – projekt radiačnej ochrany" },
+      { value: "MED", label: "MED – medicinálne plyny" },
+      { value: "TZG", label: "TZG – výrobné technologické zariadenia" },
+      { value: "ETS", label: "ETS – elektrická stanica" },
+      { value: "PRS", label: "PRS – prevádzkový rozvod silnoprúdu" },
+      { value: "NZE", label: "NZE – náhradný zdroj (elektrickej energie)" },
+      { value: "FVZ", label: "FVZ – fotovoltický zdroj (výkon meniča do 10 kv)" },
+      { value: "FVE", label: "FVE – fotovoltická elektráreň (výkon meniča nad 10 kv)" },
+      { value: "KGZ", label: "KGZ – kogeneračný zdroj / KVET" },
+      { value: "BAT", label: "BAT – batériové uložisko" },
+      { value: "KTO", label: "KTO – katódová ochrana" },
       { value: "SZS", label: "SZS – správa o prerokovaní stavebného zámeru" },
       { value: "STD", label: "STD – stavebný denník" },
       { value: "ZSS", label: "ZSS – záverečné stanovisko stavbyvedúceho" },
-      { value: "PBS", label: "PBS – posúdenie protipožiarnej bezpečnosti" },
+      { value: "PBS", label: "PBS – protipožiarna bezpečnosť stavby" },
       { value: "POV", label: "POV – plán organizácie výstavby" },
+      { value: "STP", label: "STP – protokol z kontrolného statického posúdenia" },
       { value: "GDP", label: "GDP – geodetické podklady" },
       { value: "PAM", label: "PAM – pamiatkový výskum" },
       { value: "EIA", label: "EIA – posúdenie vplyvov na životné prostredie" },
+      { value: "EHB", label: "EHB – energetické hodnotenie budovy" },
+      { value: "DEN", label: "DEN – dendrologické posúdenie" },
+      { value: "DEV", label: "DEV – náhradná výsadba drevín" },
+      { value: "SVP", label: "SVP – svetelno-technické posúdenie" },
+      { value: "HGP", label: "HGP – hydrogeologické posúdenie" },
+      { value: "IGP", label: "IGP – inžinierskogeologické posúdenie" },
+      { value: "HLU", label: "HLU – hluková štúdia" },
+      { value: "IPP", label: "IPP – imisno-prenosové (rozpylobá štúdia) posúdenie" },
+      { value: "PEZ", label: "PEZ – prieskum environmentálnej záťaže" },
       { value: "ECB", label: "ECB – energetický certifikát budovy" },
-      { value: "INE", label: "INE – iná profesia / príloha" }
+      { value: "STP", label: "STP – svetelno-technické riešenie umelého osvetlenia" },
+      { value: "INE", label: "INE – iná profesia / posúdenie vyššie neuvedené" },
     ];
 
-    const POZ6_EXCLUDED_FOR_D = new Set(["AAA", "SPR", "SIT"]);
+    const POZ6_EXCLUDED_FOR_D = new Set(["AAA", "SPR", "SIT", "SZS", "STD", "ZSS", "PBS", "POV", "STP", "GDP", "PAM", "EIA", "EHB", "DEN", "DEV", "SVP", "HGP", "IGP", "HLU", "IPP", "PEZ", "ECB", "STP"]);
     const POZ6_ALLOWED_BY_PART = {
       A: ["AAA"], B: ["SPR"], C: ["SIT"],
       D: ALL_POZ6_OPTIONS.map(o => o.value).filter(v => !POZ6_EXCLUDED_FOR_D.has(v)),
-      E: ["SZS", "STD"]
+      E: ["SZS", "STD", "ZSS", "PBS", "POV", "STP", "GDP", "PAM", "EIA", "EHB", "DEN", "DEV", "SVP", "HGP", "IGP", "HLU", "IPP", "PEZ", "ECB", "STP", "INE"]
     };
     const allowedPoz6 = new Set(ALL_POZ6_OPTIONS.map(o => o.value));
-    const allowedPoz8 = new Set(["AAA","TXT","SIT","VYT","VYZ","VYS","STV","N01","N02","P01","P02","POH","REZ","DET","SCH","VVZ","VYV","ROZ"]);
+    const allowedPoz8 = new Set(["AAA","TXT","SIT","VYT","VYZ","VYS","STV","N01","N02","P01","P02","POH","REZ","VIZ","DET","SCH","VVZ","VYV","ROZ"]);
 
     const PART_LABELS = { A: "A – Zoznam dokumentácie", B: "B – Súhrnná správa", C: "C – Situačné výkresy", D: "D – Dokumentácia stavebných objektov a prevádzkových súborov", E: "E – Prílohy" };
     const PART_ORDER  = ["A", "B", "C", "D", "E"];
